@@ -2,10 +2,12 @@
   "name": "ai-math-tutor-frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "ng serve",
-    "build": "ng build"
+    "start": "serve -s dist/frontend/browser -l $PORT",
+    "build": "ng build",
+    "dev": "ng serve"
   },
   "dependencies": {
+    "serve": "^14.2.4",
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
