@@ -6,9 +6,10 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const API_TARGET = 'https://ai-math-tutor-api-demo-production.up.railway.app';
 
-app.use('/api', createProxyMiddleware({
+app.use(createProxyMiddleware({
   target: API_TARGET,
   changeOrigin: true,
+  pathFilter: '/api',
 }));
 
 app.use(express.static(path.join(__dirname, 'dist/frontend/browser')));
