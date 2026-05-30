@@ -27,7 +27,7 @@ export const SCENARIOS: ScenarioMeta[] = [
   { id: 'water-tank', icon: '💧', title: 'ถังน้ำ' },
 ];
 
-const API = 'https://ai-math-tutor-api-demo-production.up.railway.app/api/learning';
+const API = '/api/learning';
 
 const TRIGGER_WORDS = ['ไม่รู้', 'งง', 'ไม่เข้าใจ', 'ขอเฉลย', 'ไม่ทราบ', 'ช่วยด้วย'];
 
