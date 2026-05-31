@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-const FORM_URL = 'https://forms.gle/YOUR_GOOGLE_FORM_ID'; // TODO: replace with actual Google Form URL
+const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
 
 @Component({
   selector: 'app-feedback-collection',
