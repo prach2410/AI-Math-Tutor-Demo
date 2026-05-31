@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
+import { AboutComponent } from './about/about.component';
 import { ChatComponent } from './chat/chat.component';
 import { StudentNoteComponent } from './student-note/student-note.component';
 import { ParentSummaryComponent } from './parent-summary/parent-summary.component';
@@ -14,6 +15,7 @@ import { TutorService } from './tutor.service';
   standalone: true,
   imports: [
     FirstTimeGuideComponent,
+    AboutComponent,
     ChatComponent,
     StudentNoteComponent,
     ParentSummaryComponent,
@@ -31,19 +33,22 @@ import { TutorService } from './tutor.service';
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
             <p class="header-sub">{{ tutor.scenario().title }}</p>
           </div>
-          <nav class="scenario-nav">
-            @for (s of tutor.scenarios; track s.id) {
-              <button
-                class="scenario-btn"
-                [class.active]="tutor.scenario().id === s.id"
-                [disabled]="tutor.loading()"
-                (click)="tutor.selectScenario(s.id)"
-              >
-                <span>{{ s.icon }}</span>
-                <span>{{ s.title }}</span>
-              </button>
-            }
-          </nav>
+          <div class="header-right">
+            <nav class="scenario-nav">
+              @for (s of tutor.scenarios; track s.id) {
+                <button
+                  class="scenario-btn"
+                  [class.active]="tutor.scenario().id === s.id"
+                  [disabled]="tutor.loading()"
+                  (click)="tutor.selectScenario(s.id)"
+                >
+                  <span>{{ s.icon }}</span>
+                  <span>{{ s.title }}</span>
+                </button>
+              }
+            </nav>
+            <app-about />
+          </div>
         </div>
       </header>
 
@@ -108,6 +113,13 @@ import { TutorService } from './tutor.service';
       font-size: 12px;
       opacity: 0.75;
       margin-top: 2px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .scenario-nav {
@@ -205,6 +217,15 @@ import { TutorService } from './tutor.service';
         align-items: flex-start;
         gap: 8px;
       }
+
+      .header-right {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .header-right::-webkit-scrollbar { display: none; }
 
       .header-title { font-size: 15px; }
       .header-sub   { font-size: 11px; }
