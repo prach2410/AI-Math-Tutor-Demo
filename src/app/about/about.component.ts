@@ -5,7 +5,7 @@ import { Component, signal } from '@angular/core';
   standalone: true,
   template: `
     <button class="about-btn" (click)="open()" title="เกี่ยวกับโครงการ">
-      ℹ️ เกี่ยวกับโครงการ
+      ℹ️ เกี่ยวกับ
     </button>
 
     @if (visible()) {
@@ -13,7 +13,7 @@ import { Component, signal } from '@angular/core';
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
 
           <div class="modal-header">
-            <h1 id="about-title" class="modal-title">เกี่ยวกับโครงการ</h1>
+            <h1 id="about-title" class="modal-title">เกี่ยวกับ</h1>
             <button class="close-btn" (click)="close()" aria-label="ปิด">✕</button>
           </div>
 

@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
+import { OnboardingComponent } from './onboarding/onboarding.component';
+import { OnboardingService } from './onboarding/onboarding.service';
 import { ChatComponent } from './chat/chat.component';
 import { StudentNoteComponent } from './student-note/student-note.component';
 import { ParentSummaryComponent } from './parent-summary/parent-summary.component';
@@ -16,6 +18,7 @@ import { TutorService } from './tutor.service';
   imports: [
     FirstTimeGuideComponent,
     AboutComponent,
+    OnboardingComponent,
     ChatComponent,
     StudentNoteComponent,
     ParentSummaryComponent,
@@ -53,10 +56,14 @@ import { TutorService } from './tutor.service';
       </header>
 
       <div class="content">
-        <!-- Chat + Reflection -->
+        <!-- Chat + Reflection (or Onboarding) -->
         <section class="chat-section">
-          <app-learning-reflection />
-          <app-chat />
+          @if (onboarding.isActive()) {
+            <app-onboarding />
+          } @else {
+            <app-learning-reflection />
+            <app-chat />
+          }
         </section>
 
         <!-- Right panels: Real-world + Student Note + Parent Summary -->
@@ -280,9 +287,13 @@ import { TutorService } from './tutor.service';
   `]
 })
 export class AppComponent implements OnInit {
-  protected tutor = inject(TutorService);
+  protected tutor       = inject(TutorService);
+  protected onboarding  = inject(OnboardingService);
 
   ngOnInit(): void {
-    this.tutor.init();
+    this.onboarding.init();
+    if (!this.onboarding.isActive()) {
+      this.tutor.init();
+    }
   }
 }

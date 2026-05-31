@@ -21,7 +21,7 @@ const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
           ให้ตอบโจทย์นักเรียนและผู้ปกครองได้ดียิ่งขึ้น
         </p>
         <a class="feedback-btn" [href]="formUrl" target="_blank" rel="noopener">
-          ส่งความคิดเห็น →
+          💬 ความคิดเห็น
         </a>
       </div>
     </div>
