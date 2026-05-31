@@ -4,6 +4,8 @@ import { StudentNoteComponent } from './student-note/student-note.component';
 import { ParentSummaryComponent } from './parent-summary/parent-summary.component';
 import { RealWorldComponent } from './real-world/real-world.component';
 import { LearningReflectionComponent } from './learning-reflection/learning-reflection.component';
+import { LearningFeedbackComponent } from './learning-feedback/learning-feedback.component';
+import { FeedbackCollectionComponent } from './feedback-collection/feedback-collection.component';
 import { TutorService } from './tutor.service';
 
 @Component({
@@ -15,6 +17,8 @@ import { TutorService } from './tutor.service';
     ParentSummaryComponent,
     RealWorldComponent,
     LearningReflectionComponent,
+    LearningFeedbackComponent,
+    FeedbackCollectionComponent,
   ],
   template: `
     <div class="layout">
@@ -57,6 +61,12 @@ import { TutorService } from './tutor.service';
           </div>
           <div class="side-summary">
             <app-parent-summary />
+          </div>
+          <div class="side-feedback">
+            <app-learning-feedback />
+          </div>
+          <div class="side-collect">
+            <app-feedback-collection />
           </div>
         </aside>
       </div>
@@ -168,6 +178,17 @@ import { TutorService } from './tutor.service';
       min-height: 0;
       display: flex;
       flex-direction: column;
+    }
+
+    .side-feedback {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-collect {
+      flex: 0 0 auto;
     }
   `]
 })

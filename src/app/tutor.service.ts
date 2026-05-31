@@ -43,9 +43,13 @@ export class TutorService {
   private _currentStep   = signal(0);
   private _totalSteps    = signal(0);
   private _finished      = signal(false);
-  private _realWorldUses = signal<string[]>([]);
-  private _reflection    = signal<string[]>([]);
-  private _wrongCount    = 0;
+  private _realWorldUses    = signal<string[]>([]);
+  private _reflection       = signal<string[]>([]);
+  private _studentFeedback  = signal('');
+  private _parentCoaching   = signal('');
+  private _wrongCount       = 0;
+  private _hintCount        = 0;
+  private _guidedCount      = 0;
 
   readonly scenario      = this._scenario.asReadonly();
   readonly messages      = this._messages.asReadonly();
@@ -55,9 +59,11 @@ export class TutorService {
   readonly currentStep   = this._currentStep.asReadonly();
   readonly totalSteps    = this._totalSteps.asReadonly();
   readonly finished      = this._finished.asReadonly();
-  readonly realWorldUses = this._realWorldUses.asReadonly();
-  readonly reflection    = this._reflection.asReadonly();
-  readonly scenarios     = SCENARIOS;
+  readonly realWorldUses   = this._realWorldUses.asReadonly();
+  readonly reflection      = this._reflection.asReadonly();
+  readonly studentFeedback = this._studentFeedback.asReadonly();
+  readonly parentCoaching  = this._parentCoaching.asReadonly();
+  readonly scenarios       = SCENARIOS;
 
   async selectScenario(id: string): Promise<void> {
     const meta = SCENARIOS.find(s => s.id === id);
@@ -70,7 +76,11 @@ export class TutorService {
     this._finished.set(false);
     this._realWorldUses.set([]);
     this._reflection.set([]);
-    this._wrongCount = 0;
+    this._studentFeedback.set('');
+    this._parentCoaching.set('');
+    this._wrongCount  = 0;
+    this._hintCount   = 0;
+    this._guidedCount = 0;
     this._loading.set(true);
 
     try {
@@ -102,6 +112,8 @@ export class TutorService {
       stepNumber: this._currentStep(),
       answer: text,
       wrongCount: this._wrongCount,
+      hintCount: this._hintCount,
+      guidedCount: this._guidedCount,
     };
 
     try {
@@ -138,7 +150,9 @@ export class TutorService {
         ...msgs,
         { role: 'assistant', content: res.message, ...flags },
       ]);
-      if (type === 'guided') this._wrongCount = 0;
+      if (type === 'hint')           this._hintCount++;
+      if (type === 'guided')       { this._guidedCount++; this._wrongCount = 0; }
+      if (type === 'worked-example') this._hintCount++;
     } catch {
       this._messages.update(msgs => [
         ...msgs,
@@ -188,6 +202,8 @@ export class TutorService {
     if (res.studentNote)        this._studentNote.set(res.studentNote);
     if (res.parentSummary)      this._parentSummary.set(res.parentSummary);
     if (res.learningReflection) this._reflection.set(res.learningReflection);
+    if (res.studentFeedback)    this._studentFeedback.set(res.studentFeedback);
+    if (res.parentCoachingTips) this._parentCoaching.set(res.parentCoachingTips);
     if (!res.nextStep)          this._finished.set(true);
   }
 

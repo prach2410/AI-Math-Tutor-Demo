@@ -14,6 +14,8 @@ export interface EvaluateRequest {
   stepNumber: number;
   answer: string;
   wrongCount: number;
+  hintCount: number;
+  guidedCount: number;
 }
 
 export interface EvaluateResponse {
@@ -25,6 +27,8 @@ export interface EvaluateResponse {
   parentSummary: string | null;
   isGuidedAssistance: boolean;
   learningReflection: string[] | null;
+  studentFeedback: string | null;
+  parentCoachingTips: string | null;
 }
 
 export interface AssistResponse {
