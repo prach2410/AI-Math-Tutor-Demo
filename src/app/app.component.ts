@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { ChatComponent } from './chat/chat.component';
 import { StudentNoteComponent } from './student-note/student-note.component';
 import { ParentSummaryComponent } from './parent-summary/parent-summary.component';
@@ -12,6 +13,7 @@ import { TutorService } from './tutor.service';
   selector: 'app-root',
   standalone: true,
   imports: [
+    FirstTimeGuideComponent,
     ChatComponent,
     StudentNoteComponent,
     ParentSummaryComponent,
@@ -21,6 +23,7 @@ import { TutorService } from './tutor.service';
     FeedbackCollectionComponent,
   ],
   template: `
+    <app-first-time-guide />
     <div class="layout">
       <header class="header">
         <div class="header-inner">
@@ -189,6 +192,69 @@ import { TutorService } from './tutor.service';
 
     .side-collect {
       flex: 0 0 auto;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .header {
+        padding: 10px 14px;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .header-title { font-size: 15px; }
+      .header-sub   { font-size: 11px; }
+
+      .scenario-nav {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+      .scenario-nav::-webkit-scrollbar { display: none; }
+
+      .scenario-btn {
+        font-size: 12px;
+        padding: 6px 11px;
+        flex-shrink: 0;
+      }
+
+      .content {
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 8px;
+        gap: 8px;
+      }
+
+      .chat-section {
+        flex: none;
+        height: 70vh;
+        min-height: 360px;
+      }
+
+      .side-section {
+        flex: none;
+        min-width: 0;
+        max-width: none;
+        overflow: visible;
+        height: auto;
+      }
+
+      .side-realworld { max-height: none; }
+
+      .side-note,
+      .side-summary,
+      .side-feedback {
+        flex: none;
+        min-height: 120px;
+        height: auto;
+      }
     }
   `]
 })

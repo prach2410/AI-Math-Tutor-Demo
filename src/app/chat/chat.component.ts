@@ -63,7 +63,7 @@ import { TutorService } from '../tutor.service';
       @if (!tutor.finished() && !tutor.loading()) {
         <div class="assist-bar">
           <button class="assist-btn hint-btn" (click)="tutor.requestAssist('hint')">
-            💡 ขอ Hint
+            💡 ขอคำใบ้
           </button>
           <button class="assist-btn guided-btn" (click)="tutor.requestAssist('guided')">
             🆘 ช่วยเริ่มให้หน่อย
