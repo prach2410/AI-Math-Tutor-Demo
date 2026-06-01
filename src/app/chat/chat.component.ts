@@ -34,26 +34,31 @@ import { TutorService } from '../tutor.service';
 
         @if (!hasUserMsg() && tutor.messages().length > 0) {
           <div class="empty-state-guide">
-            <p class="guide-title">🤖 AI Tutor จะช่วยหนูคิดทีละขั้น</p>
-            <p class="guide-sub">หนูสามารถกดปุ่มด้านล่างได้เลย</p>
+            <p class="guide-title">😊 ไม่จำเป็นต้องตอบถูกทันที</p>
+            <p class="guide-sub">ค่อย ๆ คิดไปด้วยกันนะ — ถ้าติดตรงไหน ใช้ปุ่มด้านล่างได้เลย</p>
             <div class="guide-items">
               <div class="guide-item">
                 <span class="guide-icon">💡</span>
-                <strong>ขอคำใบ้</strong>
-                <p>— เมื่อไม่แน่ใจ</p>
+                <div class="guide-item-text">
+                  <strong>ขอคำใบ้</strong>
+                  <p>ช่วยบอกแนวทาง โดยไม่เฉลยคำตอบ</p>
+                </div>
               </div>
               <div class="guide-item">
                 <span class="guide-icon">🆘</span>
-                <strong>ช่วยเริ่มให้หน่อย</strong>
-                <p>— เมื่อไม่รู้จะเริ่มอย่างไร</p>
+                <div class="guide-item-text">
+                  <strong>ช่วยเริ่มให้หน่อย</strong>
+                  <p>เหมาะเมื่อไม่รู้ว่าจะเริ่มตรงไหน</p>
+                </div>
               </div>
               <div class="guide-item">
                 <span class="guide-icon">👀</span>
-                <strong>ทำตัวอย่างให้ดู</strong>
-                <p>— เมื่ออยากดูตัวอย่างคล้ายกัน</p>
+                <div class="guide-item-text">
+                  <strong>ทำตัวอย่างให้ดู</strong>
+                  <p>เมื่ออยากดูตัวอย่างคล้ายกัน</p>
+                </div>
               </div>
             </div>
-            <p class="guide-goal">😊 เป้าหมายคือการเข้าใจวิธีคิด ไม่ใช่แค่หาคำตอบ</p>
           </div>
         }
 
@@ -386,29 +391,22 @@ import { TutorService } from '../tutor.service';
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 0;
     }
     .guide-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
-      padding: 5px 8px;
+      padding: 6px 10px;
       background: white;
       border-radius: 6px;
       border: 1px solid #e2e8f0;
+      cursor: default;
     }
-    .guide-icon { font-size: 15px; flex-shrink: 0; line-height: 1; }
+    .guide-icon { font-size: 15px; flex-shrink: 0; line-height: 1.4; }
+    .guide-item-text { display: flex; flex-direction: column; gap: 1px; }
     .guide-item strong { font-size: 12.5px; color: #1e293b; }
-    .guide-item p { font-size: 11.5px; color: #64748b; margin: 0 0 0 4px; }
-    .guide-goal {
-      font-size: 12px;
-      color: #166534;
-      text-align: center;
-      line-height: 1.5;
-      padding: 5px 8px;
-      background: #f0fdf4;
-      border-radius: 6px;
-    }
+    .guide-item p { font-size: 11.5px; color: #64748b; margin: 0; line-height: 1.4; }
   `]
 })
 export class ChatComponent implements AfterViewInit, AfterViewChecked {
