@@ -1,22 +1,26 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { TutorService } from '../tutor.service';
 
 @Component({
   selector: 'app-student-note',
   standalone: true,
+  host: { '[class.collapsed]': 'collapsed()' },
   template: `
     <div class="panel">
-      <div class="panel-header">
+      <button class="panel-header" (click)="toggle()" type="button">
         <span class="panel-icon">📓</span>
         <h2 class="panel-title">บันทึกของหนู</h2>
-      </div>
-      <div class="panel-body">
-        @if (tutorService.studentNote()) {
-          <pre class="note-content">{{ tutorService.studentNote() }}</pre>
-        } @else {
-          <p class="empty-hint">บันทึกจะปรากฏเมื่อเริ่มเรียน...</p>
-        }
-      </div>
+        <span class="toggle-icon">{{ collapsed() ? '▶' : '▼' }}</span>
+      </button>
+      @if (!collapsed()) {
+        <div class="panel-body">
+          @if (tutorService.studentNote()) {
+            <pre class="note-content">{{ tutorService.studentNote() }}</pre>
+          } @else {
+            <p class="empty-hint">บันทึกจะปรากฏเมื่อเริ่มเรียน...</p>
+          }
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -26,6 +30,7 @@ import { TutorService } from '../tutor.service';
       flex: 1;
       min-height: 0;
     }
+    :host.collapsed { flex: 0 0 auto !important; min-height: 0 !important; }
 
     .panel {
       background: var(--color-note-bg);
@@ -35,7 +40,6 @@ import { TutorService } from '../tutor.service';
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      height: 100%;
     }
 
     .panel-header {
@@ -45,16 +49,28 @@ import { TutorService } from '../tutor.service';
       padding: 12px 16px;
       border-bottom: 1px solid var(--color-note-border);
       background: #fef9c3;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--color-note-border);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
     }
+    .panel-header:hover { background: #fef08a; }
 
-    .panel-icon {
-      font-size: 20px;
-    }
+    .panel-icon { font-size: 20px; }
 
     .panel-title {
       font-size: 15px;
       font-weight: 700;
       color: #92400e;
+      flex: 1;
+    }
+
+    .toggle-icon {
+      font-size: 11px;
+      color: #92400e;
+      opacity: 0.7;
     }
 
     .panel-body {
@@ -82,4 +98,6 @@ import { TutorService } from '../tutor.service';
 })
 export class StudentNoteComponent {
   protected tutorService = inject(TutorService);
+  protected collapsed = signal(false);
+  protected toggle() { this.collapsed.update(v => !v); }
 }

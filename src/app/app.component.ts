@@ -10,6 +10,7 @@ import { RealWorldComponent } from './real-world/real-world.component';
 import { LearningReflectionComponent } from './learning-reflection/learning-reflection.component';
 import { LearningFeedbackComponent } from './learning-feedback/learning-feedback.component';
 import { FeedbackCollectionComponent } from './feedback-collection/feedback-collection.component';
+import { LessonCompleteComponent } from './lesson-complete/lesson-complete.component';
 import { TutorService } from './tutor.service';
 
 @Component({
@@ -26,6 +27,7 @@ import { TutorService } from './tutor.service';
     LearningReflectionComponent,
     LearningFeedbackComponent,
     FeedbackCollectionComponent,
+    LessonCompleteComponent,
   ],
   template: `
     <app-first-time-guide />
@@ -60,6 +62,8 @@ import { TutorService } from './tutor.service';
         <section class="chat-section">
           @if (onboarding.isActive()) {
             <app-onboarding />
+          } @else if (tutor.finished()) {
+            <app-lesson-complete />
           } @else {
             <app-learning-reflection />
             <app-chat />

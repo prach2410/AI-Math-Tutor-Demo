@@ -1,32 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
 
 @Component({
   selector: 'app-feedback-collection',
   standalone: true,
+  host: { '[class.collapsed]': 'collapsed()' },
   template: `
     <div class="card">
-      <div class="card-header">
+      <button class="card-header" (click)="toggle()" type="button">
         <span class="card-icon">🙏</span>
         <h2 class="card-title">ช่วยพัฒนา AI Tutor</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-desc">
-          โครงการนี้เริ่มต้นจากความตั้งใจของพ่อคนหนึ่ง<br>
-          ที่อยากช่วยให้ลูกเรียนคณิตศาสตร์ได้ดีขึ้น
-        </p>
-        <p class="card-sub">
-          ความคิดเห็นของคุณจะช่วยให้เราพัฒนาระบบ<br>
-          ให้ตอบโจทย์นักเรียนและผู้ปกครองได้ดียิ่งขึ้น
-        </p>
-        <a class="feedback-btn" [href]="formUrl" target="_blank" rel="noopener">
-          💬 ความคิดเห็น
-        </a>
-      </div>
+        <span class="toggle-icon">{{ collapsed() ? '▶' : '▼' }}</span>
+      </button>
+      @if (!collapsed()) {
+        <div class="card-body">
+          <p class="card-desc">
+            โครงการนี้เริ่มต้นจากความตั้งใจของพ่อคนหนึ่ง<br>
+            ที่อยากช่วยให้ลูกเรียนคณิตศาสตร์ได้ดีขึ้น
+          </p>
+          <p class="card-sub">
+            ความคิดเห็นของคุณจะช่วยให้เราพัฒนาระบบ<br>
+            ให้ตอบโจทย์นักเรียนและผู้ปกครองได้ดียิ่งขึ้น
+          </p>
+          <a class="feedback-btn" [href]="formUrl" target="_blank" rel="noopener">
+            💬 ความคิดเห็น
+          </a>
+        </div>
+      }
     </div>
   `,
   styles: [`
+    :host.collapsed { flex: 0 0 auto; }
+
     .card {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
@@ -40,9 +46,15 @@ const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
       align-items: center;
       gap: 8px;
       padding: 10px 16px;
-      border-bottom: 1px solid #bfdbfe;
       background: #dbeafe;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #bfdbfe;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
     }
+    .card-header:hover { background: #bfdbfe; }
 
     .card-icon { font-size: 18px; }
 
@@ -50,6 +62,13 @@ const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
       font-size: 14px;
       font-weight: 700;
       color: #1e3a8a;
+      flex: 1;
+    }
+
+    .toggle-icon {
+      font-size: 11px;
+      color: #1e3a8a;
+      opacity: 0.7;
     }
 
     .card-body {
@@ -91,4 +110,6 @@ const FORM_URL = 'https://forms.gle/q9eV47ktwTvXhT2NA';
 })
 export class FeedbackCollectionComponent {
   protected formUrl = FORM_URL;
+  protected collapsed = signal(true);
+  protected toggle() { this.collapsed.update(v => !v); }
 }

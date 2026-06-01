@@ -1,5 +1,5 @@
 import {
-  Component, inject, ElementRef, ViewChild, AfterViewChecked, AfterViewInit, effect
+  Component, inject, ElementRef, ViewChild, AfterViewChecked, AfterViewInit, effect, computed
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TutorService } from '../tutor.service';
@@ -31,6 +31,38 @@ import { TutorService } from '../tutor.service';
 
     <div class="chat-wrapper">
       <div class="chat-messages" #messagesContainer>
+
+        @if (!hasUserMsg() && tutor.messages().length > 0) {
+          <div class="empty-state-guide">
+            <p class="guide-title">🤖 AI Tutor จะช่วยหนูคิดทีละขั้น</p>
+            <p class="guide-sub">หนูสามารถ</p>
+            <div class="guide-items">
+              <div class="guide-item">
+                <span class="guide-icon">💡</span>
+                <div>
+                  <strong>ขอคำใบ้</strong>
+                  <p>เมื่อไม่แน่ใจ</p>
+                </div>
+              </div>
+              <div class="guide-item">
+                <span class="guide-icon">🆘</span>
+                <div>
+                  <strong>ช่วยเริ่มให้หน่อย</strong>
+                  <p>เมื่อไม่รู้จะเริ่มอย่างไร</p>
+                </div>
+              </div>
+              <div class="guide-item">
+                <span class="guide-icon">👀</span>
+                <div>
+                  <strong>ทำตัวอย่างให้ดู</strong>
+                  <p>เมื่ออยากดูตัวอย่างคล้ายกัน</p>
+                </div>
+              </div>
+            </div>
+            <p class="guide-goal">เป้าหมายของเรา ไม่ใช่แค่หาคำตอบ<br>แต่คือการเข้าใจวิธีคิด 😊</p>
+          </div>
+        }
+
         @for (msg of tutor.messages(); track $index) {
           <div class="bubble-row" [class.user-row]="msg.role === 'user'">
             @if (msg.role === 'assistant') {
@@ -325,6 +357,55 @@ import { TutorService } from '../tutor.service';
 
     .send-btn:hover:not(:disabled) { background: #1d4ed8; }
     .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Empty state guide */
+    .empty-state-guide {
+      margin: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      font-size: 13.5px;
+      color: #1e293b;
+    }
+    .guide-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 6px;
+    }
+    .guide-sub {
+      font-size: 12.5px;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+    .guide-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .guide-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .guide-icon { font-size: 18px; flex-shrink: 0; line-height: 1.3; }
+    .guide-item strong { display: block; font-size: 13px; color: #1e293b; }
+    .guide-item p { font-size: 12px; color: #64748b; margin: 2px 0 0; }
+    .guide-goal {
+      font-size: 13px;
+      color: #166534;
+      text-align: center;
+      line-height: 1.6;
+      padding: 8px;
+      background: #f0fdf4;
+      border-radius: 8px;
+    }
   `]
 })
 export class ChatComponent implements AfterViewInit, AfterViewChecked {
@@ -333,6 +414,9 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
 
   protected tutor = inject(TutorService);
   protected inputText = '';
+  protected readonly hasUserMsg = computed(() =>
+    this.tutor.messages().some(m => m.role === 'user')
+  );
 
   constructor() {
     effect(() => {
