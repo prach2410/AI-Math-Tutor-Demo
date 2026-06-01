@@ -2,6 +2,15 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 
+const FEEDBACK_FORM_URL = 'https://forms.gle/31keQMXNtNk6YKF7A';
+
+function cleanText(text: string): string {
+  return text
+    .replace(/ระดับ\s*:\s*กำลังพัฒนา/g, '🌱 กำลังเติบโต')
+    .replace(/Keep Going!\s*🚀/gi, 'หนูทำได้ดีมากแล้ว 🚀')
+    .replace(/Keep going!\s*🚀/gi, 'หนูทำได้ดีมากแล้ว 🚀');
+}
+
 @Component({
   selector: 'app-lesson-complete',
   standalone: true,
@@ -32,7 +41,7 @@ import { OnboardingService } from '../onboarding/onboarding.service';
         @if (tutor.studentNote()) {
           <section class="section">
             <h2 class="section-title">📒 บันทึกของหนู</h2>
-            <pre class="section-text">{{ tutor.studentNote() }}</pre>
+            <pre class="section-text">{{ cleanedNote() }}</pre>
           </section>
         }
 
@@ -64,7 +73,7 @@ import { OnboardingService } from '../onboarding/onboarding.service';
             }
 
             @if (goodPoints().length === 0 && nextPractice().length === 0) {
-              <pre class="section-text">{{ tutor.studentFeedback() }}</pre>
+              <pre class="section-text">{{ cleanedFeedback() }}</pre>
             }
           </section>
         }
@@ -89,16 +98,25 @@ import { OnboardingService } from '../onboarding/onboarding.service';
               <span class="toggle-icon">{{ parentExpanded() ? '▲' : '▼' }}</span>
             </button>
             @if (parentExpanded()) {
-              <pre class="section-text parent-text">{{ tutor.parentSummary() }}</pre>
+              <pre class="section-text parent-text">{{ cleanedParentSummary() }}</pre>
             }
           </section>
         }
 
-        <!-- CTA -->
+        <!-- CTA หลัก -->
         <div class="cta-row">
           <button class="cta-btn cta-next"   (click)="nextLesson()">📚 เรียนบทถัดไป</button>
           <button class="cta-btn cta-review" (click)="reviewAgain()">🔁 ทบทวนอีกครั้ง</button>
           <button class="cta-btn cta-home"   (click)="goHome()">🏠 กลับหน้าหลัก</button>
+        </div>
+
+        <!-- Feedback CTA -->
+        <div class="feedback-cta">
+          <p class="feedback-cta-title">💬 ช่วยพัฒนา AI Tutor</p>
+          <p class="feedback-cta-desc">ความคิดเห็นของหนูมีค่ามาก<br>และจะช่วยให้ AI Tutor ช่วยนักเรียนคนอื่นได้ดีขึ้น</p>
+          <a class="cta-btn cta-feedback" [href]="feedbackUrl" target="_blank" rel="noopener">
+            💬 ส่งความคิดเห็น
+          </a>
         </div>
 
       </div>
@@ -243,10 +261,11 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       color: #166534;
     }
 
+    /* Main CTAs */
     .cta-row {
       display: flex;
       gap: 10px;
-      padding: 18px 20px;
+      padding: 18px 20px 12px;
       flex-wrap: wrap;
       background: #f8fafc;
     }
@@ -264,12 +283,45 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       transition: opacity 0.15s;
       white-space: nowrap;
       text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
     .cta-btn:hover { opacity: 0.85; }
 
-    .cta-next   { background: #2563eb; color: white; }
-    .cta-review { background: #f59e0b; color: white; }
-    .cta-home   { background: #e2e8f0; color: #374151; }
+    .cta-next     { background: #2563eb; color: white; }
+    .cta-review   { background: #f59e0b; color: white; }
+    .cta-home     { background: #e2e8f0; color: #374151; }
+    .cta-feedback { background: #7c3aed; color: white; }
+
+    /* Feedback CTA section */
+    .feedback-cta {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 14px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .feedback-cta-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .feedback-cta-desc {
+      font-size: 12.5px;
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .feedback-cta .cta-feedback {
+      flex: none;
+      min-width: 160px;
+    }
   `]
 })
 export class LessonCompleteComponent {
@@ -277,21 +329,24 @@ export class LessonCompleteComponent {
   protected onboarding = inject(OnboardingService);
 
   protected parentExpanded = signal(false);
+  protected feedbackUrl = FEEDBACK_FORM_URL;
+
+  protected cleanedFeedback = computed(() => cleanText(this.tutor.studentFeedback()));
+  protected cleanedNote     = computed(() => cleanText(this.tutor.studentNote()));
+  protected cleanedParentSummary = computed(() => cleanText(this.tutor.parentSummary()));
 
   protected goodPoints = computed(() => {
-    const raw = this.tutor.studentFeedback();
+    const raw = cleanText(this.tutor.studentFeedback());
     if (!raw) return [];
     return raw
       .split('\n')
+      .filter(l => /^[✓✔]/.test(l.trim()))
       .map(l => l.replace(/^[✓✔]\s*/, '').trim())
-      .filter(l => {
-        const orig = raw.split('\n').find(r => r.replace(/^[✓✔]\s*/, '').trim() === l) ?? '';
-        return /^[✓✔]/.test(orig.trim()) && l.length > 0;
-      });
+      .filter(l => l.length > 0);
   });
 
   protected nextPractice = computed(() => {
-    const raw = this.tutor.studentFeedback();
+    const raw = cleanText(this.tutor.studentFeedback());
     if (!raw) return [];
     return raw
       .split('\n')
