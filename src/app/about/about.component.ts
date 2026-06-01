@@ -4,7 +4,7 @@ import { Component, signal } from '@angular/core';
   selector: 'app-about',
   standalone: true,
   template: `
-    <button class="about-btn" (click)="open()" title="เกี่ยวกับโครงการ">
+    <button class="about-btn" (click)="open()" title="เกี่ยวกับ">
       ℹ️ เกี่ยวกับ
     </button>
 
@@ -301,7 +301,7 @@ import { Component, signal } from '@angular/core';
 export class AboutComponent {
   protected visible = signal(false);
 
-  protected open(): void  { this.visible.set(true);  }
+  open(): void   { this.visible.set(true);  }
   protected close(): void { this.visible.set(false); }
 
   protected onOverlayClick(event: MouseEvent): void {

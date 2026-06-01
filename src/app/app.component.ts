@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
 import { OnboardingComponent } from './onboarding/onboarding.component';
@@ -50,7 +50,7 @@ import { TutorService } from './tutor.service';
                 </button>
               }
             </nav>
-            <app-about />
+            <app-about #aboutRef />
           </div>
         </div>
       </header>
@@ -85,6 +85,26 @@ import { TutorService } from './tutor.service';
           </div>
         </aside>
       </div>
+
+      <!-- Mobile bottom navigation -->
+      <nav class="mobile-bottom-nav">
+        <button class="nav-item" [class.active]="onboarding.isActive()" (click)="goHome()">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">หน้าแรก</span>
+        </button>
+        <button class="nav-item" [class.active]="!onboarding.isActive()" (click)="goLearn()">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">เรียน</span>
+        </button>
+        <button class="nav-item" (click)="openAbout()">
+          <span class="nav-icon">ℹ️</span>
+          <span class="nav-label">เกี่ยวกับ</span>
+        </button>
+        <a class="nav-item" href="https://forms.gle/q9eV47ktwTvXhT2NA" target="_blank" rel="noopener">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">ความคิดเห็น</span>
+        </a>
+      </nav>
     </div>
   `,
   styles: [`
@@ -213,6 +233,11 @@ import { TutorService } from './tutor.service';
       flex: 0 0 auto;
     }
 
+    /* ── Mobile bottom nav ── */
+    .mobile-bottom-nav {
+      display: none;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 640px) {
       .header {
@@ -283,6 +308,46 @@ import { TutorService } from './tutor.service';
         min-height: 120px;
         height: auto;
       }
+
+      /* Show bottom nav on mobile */
+      .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+        z-index: 100;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+
+      .nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        padding: 8px 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        color: #94a3b8;
+        transition: color 0.15s;
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .nav-item:active { background: #f1f5f9; }
+      .nav-item.active { color: var(--color-header-bg, #2563eb); }
+
+      .nav-icon  { font-size: 20px; line-height: 1; }
+      .nav-label { font-size: 10px; font-weight: 500; white-space: nowrap; }
+
+      /* Pad content above bottom nav */
+      .layout { padding-bottom: 56px; }
     }
   `]
 })
@@ -290,10 +355,16 @@ export class AppComponent implements OnInit {
   protected tutor       = inject(TutorService);
   protected onboarding  = inject(OnboardingService);
 
+  @ViewChild('aboutRef') private aboutRef!: AboutComponent;
+
   ngOnInit(): void {
     this.onboarding.init();
     if (!this.onboarding.isActive()) {
       this.tutor.init();
     }
   }
+
+  protected goHome(): void  { this.onboarding.restart(); }
+  protected goLearn(): void { this.onboarding.skip(); this.tutor.init(); }
+  protected openAbout(): void { this.aboutRef?.open(); }
 }

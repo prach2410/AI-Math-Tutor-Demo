@@ -42,6 +42,13 @@ export class OnboardingService {
     this._active.set(false);
   }
 
+  restart(): void {
+    localStorage.removeItem(STORAGE_KEY);
+    this._messages.set([]);
+    this._active.set(true);
+    this.startStep1();
+  }
+
   handleAnswer(text: string): void {
     if (this._waiting() !== 'answer' || this._loading()) return;
 
