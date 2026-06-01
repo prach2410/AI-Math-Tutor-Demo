@@ -35,31 +35,25 @@ import { TutorService } from '../tutor.service';
         @if (!hasUserMsg() && tutor.messages().length > 0) {
           <div class="empty-state-guide">
             <p class="guide-title">🤖 AI Tutor จะช่วยหนูคิดทีละขั้น</p>
-            <p class="guide-sub">หนูสามารถ</p>
+            <p class="guide-sub">หนูสามารถกดปุ่มด้านล่างได้เลย</p>
             <div class="guide-items">
               <div class="guide-item">
                 <span class="guide-icon">💡</span>
-                <div>
-                  <strong>ขอคำใบ้</strong>
-                  <p>เมื่อไม่แน่ใจ</p>
-                </div>
+                <strong>ขอคำใบ้</strong>
+                <p>— เมื่อไม่แน่ใจ</p>
               </div>
               <div class="guide-item">
                 <span class="guide-icon">🆘</span>
-                <div>
-                  <strong>ช่วยเริ่มให้หน่อย</strong>
-                  <p>เมื่อไม่รู้จะเริ่มอย่างไร</p>
-                </div>
+                <strong>ช่วยเริ่มให้หน่อย</strong>
+                <p>— เมื่อไม่รู้จะเริ่มอย่างไร</p>
               </div>
               <div class="guide-item">
                 <span class="guide-icon">👀</span>
-                <div>
-                  <strong>ทำตัวอย่างให้ดู</strong>
-                  <p>เมื่ออยากดูตัวอย่างคล้ายกัน</p>
-                </div>
+                <strong>ทำตัวอย่างให้ดู</strong>
+                <p>— เมื่ออยากดูตัวอย่างคล้ายกัน</p>
               </div>
             </div>
-            <p class="guide-goal">เป้าหมายของเรา ไม่ใช่แค่หาคำตอบ<br>แต่คือการเข้าใจวิธีคิด 😊</p>
+            <p class="guide-goal">😊 เป้าหมายคือการเข้าใจวิธีคิด ไม่ใช่แค่หาคำตอบ</p>
           </div>
         }
 
@@ -272,23 +266,32 @@ import { TutorService } from '../tutor.service';
     }
 
     .assist-btn {
-      padding: 5px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 13px;
       border-radius: 16px;
       font-family: inherit;
       font-size: 12.5px;
+      font-weight: 500;
       cursor: pointer;
-      border: 1px solid;
-      transition: background 0.15s;
+      border: 1.5px solid;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s, border-color 0.15s;
       white-space: nowrap;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
+    .assist-btn::after { content: ' →'; opacity: 0.5; font-size: 11px; }
+    .assist-btn:hover  { box-shadow: 0 2px 8px rgba(0,0,0,0.12); transform: translateY(-1px); }
+    .assist-btn:active { transform: translateY(0) scale(0.97); box-shadow: none; }
 
     .hint-btn   { background: #fffbeb; color: #92400e; border-color: #fcd34d; }
     .guided-btn { background: #f0f9ff; color: #0369a1; border-color: #7dd3fc; }
     .worked-btn { background: #faf5ff; color: #7e22ce; border-color: #c084fc; }
 
-    .hint-btn:hover   { background: #fef9c3; }
-    .guided-btn:hover { background: #e0f2fe; }
-    .worked-btn:hover { background: #f3e8ff; }
+    .hint-btn:hover   { background: #fef9c3; border-color: #f59e0b; }
+    .guided-btn:hover { background: #e0f2fe; border-color: #38bdf8; }
+    .worked-btn:hover { background: #f3e8ff; border-color: #a855f7; }
 
     .bubble-text {
       white-space: pre-wrap;
@@ -358,53 +361,53 @@ import { TutorService } from '../tutor.service';
     .send-btn:hover:not(:disabled) { background: #1d4ed8; }
     .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Empty state guide */
+    /* Empty state guide — compact (~35% shorter) */
     .empty-state-guide {
-      margin: 12px;
-      padding: 16px 18px;
+      margin: 8px 12px;
+      padding: 10px 14px;
       background: linear-gradient(135deg, #eff6ff, #f0fdf4);
       border: 1px solid #bfdbfe;
-      border-radius: 12px;
-      font-size: 13.5px;
+      border-radius: 10px;
+      font-size: 13px;
       color: #1e293b;
     }
     .guide-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: #1e40af;
       margin-bottom: 6px;
     }
     .guide-sub {
-      font-size: 12.5px;
+      font-size: 11.5px;
       color: #64748b;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
     .guide-items {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 4px;
+      margin-bottom: 8px;
     }
     .guide-item {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 8px 10px;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
       background: white;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #e2e8f0;
     }
-    .guide-icon { font-size: 18px; flex-shrink: 0; line-height: 1.3; }
-    .guide-item strong { display: block; font-size: 13px; color: #1e293b; }
-    .guide-item p { font-size: 12px; color: #64748b; margin: 2px 0 0; }
+    .guide-icon { font-size: 15px; flex-shrink: 0; line-height: 1; }
+    .guide-item strong { font-size: 12.5px; color: #1e293b; }
+    .guide-item p { font-size: 11.5px; color: #64748b; margin: 0 0 0 4px; }
     .guide-goal {
-      font-size: 13px;
+      font-size: 12px;
       color: #166534;
       text-align: center;
-      line-height: 1.6;
-      padding: 8px;
+      line-height: 1.5;
+      padding: 5px 8px;
       background: #f0fdf4;
-      border-radius: 8px;
+      border-radius: 6px;
     }
   `]
 })
