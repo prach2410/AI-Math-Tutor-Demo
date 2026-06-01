@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 
@@ -9,16 +9,17 @@ import { OnboardingService } from '../onboarding/onboarding.service';
     <div class="complete-wrap">
       <div class="complete-card">
 
+        <!-- Hero / Celebration -->
         <div class="complete-hero">
           <div class="hero-emoji">🎉</div>
-          <h1 class="hero-title">เรียนจบบทเรียนแล้ว!</h1>
-          <p class="hero-sub">{{ tutor.scenario().icon }} {{ tutor.scenario().title }}</p>
+          <h1 class="hero-title">เยี่ยมมาก!</h1>
+          <p class="hero-sub">หนูเรียนจบบทนี้แล้ว</p>
         </div>
 
-        <!-- Section 1: วันนี้ได้เรียนรู้อะไร -->
+        <!-- Section 1: วันนี้หนูได้เรียนรู้อะไร -->
         @if (tutor.reflection().length > 0) {
           <section class="section">
-            <h2 class="section-title">🎉 วันนี้หนูได้เรียนรู้อะไร</h2>
+            <h2 class="section-title">📚 วันนี้หนูได้เรียนรู้อะไร</h2>
             <ul class="check-list">
               @for (item of tutor.reflection(); track item) {
                 <li>✓ {{ item }}</li>
@@ -35,11 +36,36 @@ import { OnboardingService } from '../onboarding/onboarding.service';
           </section>
         }
 
-        <!-- Section 3: Feedback -->
+        <!-- Section 3: Feedback จาก AI Tutor -->
         @if (tutor.studentFeedback()) {
           <section class="section">
             <h2 class="section-title">⭐ Feedback จาก AI Tutor</h2>
-            <pre class="section-text">{{ tutor.studentFeedback() }}</pre>
+
+            @if (goodPoints().length > 0) {
+              <div class="feedback-block">
+                <p class="feedback-label good-label">จุดที่หนูทำได้ดี</p>
+                <ul class="check-list">
+                  @for (item of goodPoints(); track item) {
+                    <li>✓ {{ item }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (nextPractice().length > 0) {
+              <div class="feedback-block">
+                <p class="feedback-label next-label">ครั้งหน้าลองฝึกเพิ่ม</p>
+                <ul class="check-list growth">
+                  @for (item of nextPractice(); track item) {
+                    <li>🌱 {{ item }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (goodPoints().length === 0 && nextPractice().length === 0) {
+              <pre class="section-text">{{ tutor.studentFeedback() }}</pre>
+            }
           </section>
         }
 
@@ -49,25 +75,30 @@ import { OnboardingService } from '../onboarding/onboarding.service';
             <h2 class="section-title">💡 ใช้ในชีวิตจริง</h2>
             <ul class="check-list uses">
               @for (use of tutor.realWorldUses(); track use) {
-                <li>{{ use }}</li>
+                <li>• {{ use }}</li>
               }
             </ul>
           </section>
         }
 
-        <!-- Section 5: สรุปผู้ปกครอง -->
+        <!-- Section 5: สรุปสำหรับผู้ปกครอง (Collapsible, default collapsed) -->
         @if (tutor.parentSummary()) {
           <section class="section parent-section">
-            <h2 class="section-title">👨‍👩‍👧 สรุปสำหรับผู้ปกครอง</h2>
-            <pre class="section-text">{{ tutor.parentSummary() }}</pre>
+            <button class="parent-toggle" (click)="toggleParent()">
+              <span class="section-title parent-title">👨‍👩‍👧 สรุปสำหรับผู้ปกครอง</span>
+              <span class="toggle-icon">{{ parentExpanded() ? '▲' : '▼' }}</span>
+            </button>
+            @if (parentExpanded()) {
+              <pre class="section-text parent-text">{{ tutor.parentSummary() }}</pre>
+            }
           </section>
         }
 
         <!-- CTA -->
         <div class="cta-row">
-          <button class="cta-btn cta-next" (click)="nextLesson()">📚 เรียนบทถัดไป</button>
+          <button class="cta-btn cta-next"   (click)="nextLesson()">📚 เรียนบทถัดไป</button>
           <button class="cta-btn cta-review" (click)="reviewAgain()">🔁 ทบทวนอีกครั้ง</button>
-          <button class="cta-btn cta-home" (click)="goHome()">🏠 กลับหน้าหลัก</button>
+          <button class="cta-btn cta-home"   (click)="goHome()">🏠 กลับหน้าหลัก</button>
         </div>
 
       </div>
@@ -116,8 +147,8 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       color: white;
     }
     .hero-emoji { font-size: 40px; line-height: 1; margin-bottom: 8px; }
-    .hero-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .hero-sub { font-size: 14px; opacity: 0.85; }
+    .hero-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .hero-sub   { font-size: 14px; opacity: 0.85; }
 
     .section {
       padding: 16px 20px;
@@ -129,6 +160,7 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 10px;
+      display: block;
     }
 
     .check-list {
@@ -142,7 +174,32 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       color: #374151;
       line-height: 1.5;
     }
-    .check-list:not(.uses) li { padding-left: 4px; color: #166534; font-weight: 500; }
+    .check-list:not(.uses):not(.growth) li {
+      padding-left: 4px;
+      color: #166534;
+      font-weight: 500;
+    }
+    .check-list.growth li {
+      padding-left: 4px;
+      color: #92400e;
+    }
+    .check-list.uses li {
+      padding-left: 4px;
+      color: #374151;
+    }
+
+    .feedback-block {
+      margin-bottom: 12px;
+    }
+    .feedback-block:last-child { margin-bottom: 0; }
+
+    .feedback-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .good-label  { color: #15803d; }
+    .next-label  { color: #b45309; }
 
     .section-text {
       white-space: pre-wrap;
@@ -152,9 +209,39 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       color: #374151;
     }
 
-    .parent-section { background: #f0fdf4; }
-    .parent-section .section-title { color: #14532d; }
-    .parent-section .section-text { color: #166534; }
+    /* Parent section collapsible */
+    .parent-section {
+      background: #f0fdf4;
+      padding: 0;
+    }
+
+    .parent-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      gap: 8px;
+    }
+    .parent-toggle:hover { background: #dcfce7; }
+
+    .parent-title { color: #14532d; margin-bottom: 0; }
+
+    .toggle-icon {
+      font-size: 11px;
+      color: #14532d;
+      flex-shrink: 0;
+    }
+
+    .parent-text {
+      padding: 0 20px 16px;
+      color: #166534;
+    }
 
     .cta-row {
       display: flex;
@@ -186,8 +273,36 @@ import { OnboardingService } from '../onboarding/onboarding.service';
   `]
 })
 export class LessonCompleteComponent {
-  protected tutor       = inject(TutorService);
-  protected onboarding  = inject(OnboardingService);
+  protected tutor      = inject(TutorService);
+  protected onboarding = inject(OnboardingService);
+
+  protected parentExpanded = signal(false);
+
+  protected goodPoints = computed(() => {
+    const raw = this.tutor.studentFeedback();
+    if (!raw) return [];
+    return raw
+      .split('\n')
+      .map(l => l.replace(/^[✓✔]\s*/, '').trim())
+      .filter(l => {
+        const orig = raw.split('\n').find(r => r.replace(/^[✓✔]\s*/, '').trim() === l) ?? '';
+        return /^[✓✔]/.test(orig.trim()) && l.length > 0;
+      });
+  });
+
+  protected nextPractice = computed(() => {
+    const raw = this.tutor.studentFeedback();
+    if (!raw) return [];
+    return raw
+      .split('\n')
+      .filter(l => /^🌱/.test(l.trim()))
+      .map(l => l.replace(/^🌱\s*/, '').trim())
+      .filter(l => l.length > 0);
+  });
+
+  protected toggleParent(): void {
+    this.parentExpanded.update(v => !v);
+  }
 
   protected nextLesson(): void {
     const ids = SCENARIOS.map(s => s.id);
