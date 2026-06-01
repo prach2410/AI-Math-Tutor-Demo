@@ -79,7 +79,7 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       flex-direction: column;
       flex: 1;
       min-height: 0;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     .complete-wrap {
@@ -88,7 +88,13 @@ import { OnboardingService } from '../onboarding/onboarding.service';
       padding: 16px;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
     }
+
+    .complete-wrap::-webkit-scrollbar { width: 6px; }
+    .complete-wrap::-webkit-scrollbar-track { background: transparent; }
+    .complete-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .complete-wrap::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     .complete-card {
       background: white;
