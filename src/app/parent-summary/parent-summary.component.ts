@@ -1,9 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { TutorService } from '../tutor.service';
+import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
 
 @Component({
   selector: 'app-parent-summary',
   standalone: true,
+  imports: [ParentFeedbackComponent],
   host: { '[class.collapsed]': 'collapsed()' },
   template: `
     <div class="panel">
@@ -16,6 +18,7 @@ import { TutorService } from '../tutor.service';
         <div class="panel-body">
           @if (tutorService.parentSummary()) {
             <pre class="summary-content">{{ tutorService.parentSummary() }}</pre>
+            <app-parent-feedback />
           } @else {
             <p class="empty-hint">สรุปจะปรากฏหลังจากเรียนได้สักพัก...</p>
           }
@@ -98,5 +101,14 @@ import { TutorService } from '../tutor.service';
 export class ParentSummaryComponent {
   protected tutorService = inject(TutorService);
   protected collapsed = signal(true);
-  protected toggle() { this.collapsed.update(v => !v); }
+  private openEventLogged = false;
+
+  protected toggle(): void {
+    const wasCollapsed = this.collapsed();
+    this.collapsed.update(v => !v);
+    if (wasCollapsed && !this.openEventLogged) {
+      this.openEventLogged = true;
+      this.tutorService.logEvent('parent_summary_opened');
+    }
+  }
 }

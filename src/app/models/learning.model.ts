@@ -41,3 +41,44 @@ export interface NextStepDto {
   question: string;
   isLast: boolean;
 }
+
+// Session collection types
+export interface SessionMessage {
+  role: 'student' | 'ai' | 'system';
+  type: 'answer' | 'message' | 'hint' | 'guided' | 'worked_example' | 'error';
+  text: string;
+  timestamp: string;
+}
+
+export interface SessionEvent {
+  type: string;
+  timestamp: string;
+}
+
+export interface SessionSummary {
+  hintUsed: number;
+  helpMeStartUsed: number;
+  exampleUsed: number;
+  completed: boolean;
+  durationSeconds: number;
+}
+
+export interface CreateSessionRequest {
+  sessionId: string;
+  topic: string;
+  studentAlias: string;
+  startedAt: string;
+}
+
+export interface CompleteSessionRequest {
+  completedAt: string;
+  messages: SessionMessage[];
+  events: SessionEvent[];
+  summary: SessionSummary;
+}
+
+export interface ParentFeedbackRequest {
+  understandingLevel: string;
+  mostValuableSection?: string;
+  comment?: string;
+}

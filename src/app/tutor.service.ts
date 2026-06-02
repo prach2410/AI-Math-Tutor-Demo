@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
   AssistResponse, AssistType,
-  EvaluateRequest, EvaluateResponse, StartResponse
+  EvaluateRequest, EvaluateResponse, StartResponse,
+  SessionMessage, SessionEvent, CreateSessionRequest,
+  CompleteSessionRequest, ParentFeedbackRequest
 } from './models/learning.model';
 
 export interface Message {
@@ -28,6 +30,7 @@ export const SCENARIOS: ScenarioMeta[] = [
 ];
 
 const API = '/api/learning';
+const SESSION_API = '/api/learning-sessions';
 
 const TRIGGER_WORDS = ['ไม่รู้', 'งง', 'ไม่เข้าใจ', 'ขอเฉลย', 'ไม่ทราบ', 'ช่วยด้วย'];
 
@@ -51,6 +54,13 @@ export class TutorService {
   private _hintCount        = 0;
   private _guidedCount      = 0;
 
+  // Session tracking
+  private _sessionId            = signal('');
+  private _sessionStartedAt     = signal<Date | null>(null);
+  private _sessionEvents: SessionEvent[] = [];
+  private _sessionMessages: SessionMessage[] = [];
+  private _parentFeedbackSubmitted = signal(false);
+
   readonly scenario      = this._scenario.asReadonly();
   readonly messages      = this._messages.asReadonly();
   readonly studentNote   = this._studentNote.asReadonly();
@@ -64,6 +74,8 @@ export class TutorService {
   readonly studentFeedback = this._studentFeedback.asReadonly();
   readonly parentCoaching  = this._parentCoaching.asReadonly();
   readonly scenarios       = SCENARIOS;
+  readonly sessionId       = this._sessionId.asReadonly();
+  readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
     const meta = SCENARIOS.find(s => s.id === id);
@@ -83,6 +95,19 @@ export class TutorService {
     this._guidedCount = 0;
     this._loading.set(true);
 
+    // Reset session state
+    const newSessionId = crypto.randomUUID();
+    const now = new Date();
+    this._sessionId.set(newSessionId);
+    this._sessionStartedAt.set(now);
+    this._sessionEvents = [];
+    this._sessionMessages = [];
+    this._parentFeedbackSubmitted.set(false);
+    this.addEvent('lesson_started');
+
+    // Create session on server (fire-and-forget, don't block lesson)
+    this.createSession(newSessionId, meta.title, now).catch(() => {});
+
     try {
       const res = await firstValueFrom(
         this.http.get<StartResponse>(`${API}/start/${id}`)
@@ -90,12 +115,16 @@ export class TutorService {
       this._currentStep.set(res.stepNumber);
       this._totalSteps.set(res.totalSteps);
       this._realWorldUses.set(res.realWorldUses);
-      this._messages.set([{ role: 'assistant', content: res.question }]);
+      const q: Message = { role: 'assistant', content: res.question };
+      this._messages.set([q]);
+      this.addSessionMessage(q);
     } catch {
-      this._messages.set([{
+      const errMsg: Message = {
         role: 'assistant',
         content: 'ไม่สามารถเชื่อมต่อ server ได้ครับ กรุณาตรวจสอบ backend',
-      }]);
+      };
+      this._messages.set([errMsg]);
+      this.addSessionMessage(errMsg, 'error');
     } finally {
       this._loading.set(false);
     }
@@ -104,7 +133,10 @@ export class TutorService {
   async sendMessage(text: string): Promise<void> {
     if (this._finished()) return;
 
-    this._messages.update(msgs => [...msgs, { role: 'user', content: text }]);
+    const userMsg: Message = { role: 'user', content: text };
+    this._messages.update(msgs => [...msgs, userMsg]);
+    this.addSessionMessage(userMsg);
+    this.addEvent('student_answer_submitted');
     this._loading.set(true);
 
     const body: EvaluateRequest = {
@@ -120,12 +152,12 @@ export class TutorService {
       const res = await firstValueFrom(
         this.http.post<EvaluateResponse>(`${API}/evaluate`, body)
       );
+      this.addEvent('answer_evaluated');
       this.applyResponse(res);
     } catch {
-      this._messages.update(msgs => [
-        ...msgs,
-        { role: 'assistant', content: 'ไม่สามารถเชื่อมต่อ server ได้ครับ' },
-      ]);
+      const errMsg: Message = { role: 'assistant', content: 'ไม่สามารถเชื่อมต่อ server ได้ครับ' };
+      this._messages.update(msgs => [...msgs, errMsg]);
+      this.addSessionMessage(errMsg, 'error');
     } finally {
       this._loading.set(false);
     }
@@ -134,6 +166,13 @@ export class TutorService {
   async requestAssist(type: AssistType): Promise<void> {
     if (this._finished() || this._loading()) return;
     this._loading.set(true);
+
+    const eventMap: Record<AssistType, string> = {
+      'hint': 'hint_clicked',
+      'guided': 'help_me_start_clicked',
+      'worked-example': 'example_clicked',
+    };
+    this.addEvent(eventMap[type]);
 
     try {
       const res = await firstValueFrom(
@@ -146,45 +185,62 @@ export class TutorService {
         isGuided: type === 'guided',
         isWorkedExample: type === 'worked-example',
       };
-      this._messages.update(msgs => [
-        ...msgs,
-        { role: 'assistant', content: res.message, ...flags },
-      ]);
+      const assistMsg: Message = { role: 'assistant', content: res.message, ...flags };
+      this._messages.update(msgs => [...msgs, assistMsg]);
+      const msgType = type === 'hint' ? 'hint' : type === 'guided' ? 'guided' : 'worked_example';
+      this.addSessionMessage(assistMsg, msgType);
       if (type === 'hint')           this._hintCount++;
       if (type === 'guided')       { this._guidedCount++; this._wrongCount = 0; }
       if (type === 'worked-example') this._hintCount++;
     } catch {
-      this._messages.update(msgs => [
-        ...msgs,
-        { role: 'assistant', content: 'ไม่สามารถโหลดข้อมูลได้ครับ' },
-      ]);
+      const errMsg: Message = { role: 'assistant', content: 'ไม่สามารถโหลดข้อมูลได้ครับ' };
+      this._messages.update(msgs => [...msgs, errMsg]);
+      this.addSessionMessage(errMsg, 'error');
     } finally {
       this._loading.set(false);
+    }
+  }
+
+  logEvent(type: string): void {
+    this.addEvent(type);
+  }
+
+  async submitParentFeedback(req: ParentFeedbackRequest): Promise<void> {
+    if (this._parentFeedbackSubmitted()) return;
+    this.addEvent('parent_feedback_submitted');
+    this._parentFeedbackSubmitted.set(true);
+
+    const sessionId = this._sessionId();
+    if (!sessionId) return;
+
+    try {
+      await firstValueFrom(
+        this.http.post(`${SESSION_API}/${sessionId}/parent-feedback`, req)
+      );
+    } catch {
+      // silent fail — feedback data may be in event log
     }
   }
 
   private applyResponse(res: EvaluateResponse): void {
     if (res.isGuidedAssistance) {
       this._wrongCount = 0;
-      this._messages.update(msgs => [
-        ...msgs,
-        { role: 'assistant', content: res.message, isGuided: true },
-      ]);
+      const msg: Message = { role: 'assistant', content: res.message, isGuided: true };
+      this._messages.update(msgs => [...msgs, msg]);
+      this.addSessionMessage(msg, 'guided');
       return;
     }
 
-    this._messages.update(msgs => [
-      ...msgs,
-      { role: 'assistant', content: res.message },
-    ]);
+    const msg: Message = { role: 'assistant', content: res.message };
+    this._messages.update(msgs => [...msgs, msg]);
+    this.addSessionMessage(msg);
 
     if (!res.correct) {
       this._wrongCount++;
       if (res.hint) {
-        this._messages.update(msgs => [
-          ...msgs,
-          { role: 'assistant', content: `💡 ${res.hint}`, isHint: true },
-        ]);
+        const hintMsg: Message = { role: 'assistant', content: `💡 ${res.hint}`, isHint: true };
+        this._messages.update(msgs => [...msgs, hintMsg]);
+        this.addSessionMessage(hintMsg, 'hint');
       }
       return;
     }
@@ -193,10 +249,9 @@ export class TutorService {
 
     if (res.nextStep) {
       this._currentStep.set(res.nextStep.stepNumber);
-      this._messages.update(msgs => [
-        ...msgs,
-        { role: 'assistant', content: res.nextStep!.question },
-      ]);
+      const nextMsg: Message = { role: 'assistant', content: res.nextStep.question };
+      this._messages.update(msgs => [...msgs, nextMsg]);
+      this.addSessionMessage(nextMsg);
     }
 
     if (res.studentNote)        this._studentNote.set(res.studentNote);
@@ -204,10 +259,77 @@ export class TutorService {
     if (res.learningReflection) this._reflection.set(res.learningReflection);
     if (res.studentFeedback)    this._studentFeedback.set(res.studentFeedback);
     if (res.parentCoachingTips) this._parentCoaching.set(res.parentCoachingTips);
-    if (!res.nextStep)          this._finished.set(true);
+
+    if (!res.nextStep) {
+      this._finished.set(true);
+      this.addEvent('lesson_completed');
+      this.completeSession().catch(() => {});
+    }
   }
 
   init(): void {
     this.selectScenario(SCENARIOS[0].id);
+  }
+
+  private addEvent(type: string): void {
+    this._sessionEvents.push({ type, timestamp: new Date().toISOString() });
+  }
+
+  private addSessionMessage(
+    msg: Message,
+    typeOverride?: 'answer' | 'message' | 'hint' | 'guided' | 'worked_example' | 'error'
+  ): void {
+    const role: SessionMessage['role'] = msg.role === 'user' ? 'student' : 'ai';
+    let type: SessionMessage['type'];
+    if (typeOverride) {
+      type = typeOverride;
+    } else if (msg.isHint) {
+      type = 'hint';
+    } else if (msg.isGuided) {
+      type = 'guided';
+    } else if (msg.isWorkedExample) {
+      type = 'worked_example';
+    } else if (msg.role === 'user') {
+      type = 'answer';
+    } else {
+      type = 'message';
+    }
+    this._sessionMessages.push({ role, type, text: msg.content, timestamp: new Date().toISOString() });
+  }
+
+  private async createSession(sessionId: string, topic: string, startedAt: Date): Promise<void> {
+    const req: CreateSessionRequest = {
+      sessionId,
+      topic,
+      studentAlias: 'Student-001',
+      startedAt: startedAt.toISOString(),
+    };
+    await firstValueFrom(this.http.post(SESSION_API, req));
+  }
+
+  private async completeSession(): Promise<void> {
+    const sessionId = this._sessionId();
+    const startedAt = this._sessionStartedAt();
+    if (!sessionId || !startedAt) return;
+
+    const now = new Date();
+    const durationSeconds = Math.round((now.getTime() - startedAt.getTime()) / 1000);
+
+    const req: CompleteSessionRequest = {
+      completedAt: now.toISOString(),
+      messages: [...this._sessionMessages],
+      events: [...this._sessionEvents],
+      summary: {
+        hintUsed: this._hintCount,
+        helpMeStartUsed: this._guidedCount,
+        exampleUsed: 0,
+        completed: true,
+        durationSeconds,
+      },
+    };
+
+    await firstValueFrom(
+      this.http.post(`${SESSION_API}/${sessionId}/complete`, req)
+    );
   }
 }

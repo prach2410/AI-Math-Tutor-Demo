@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
+import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
 
 const FEEDBACK_FORM_URL = 'https://forms.gle/31keQMXNtNk6YKF7A';
 
@@ -14,6 +15,7 @@ function cleanText(text: string): string {
 @Component({
   selector: 'app-lesson-complete',
   standalone: true,
+  imports: [ParentFeedbackComponent],
   template: `
     <div class="complete-wrap">
       <div class="complete-card">
@@ -98,7 +100,10 @@ function cleanText(text: string): string {
               <span class="toggle-icon">{{ parentExpanded() ? '▲' : '▼' }}</span>
             </button>
             @if (parentExpanded()) {
-              <pre class="section-text parent-text">{{ cleanedParentSummary() }}</pre>
+              <div class="parent-body">
+                <pre class="section-text parent-text">{{ cleanedParentSummary() }}</pre>
+                <app-parent-feedback />
+              </div>
             }
           </section>
         }
@@ -256,9 +261,13 @@ function cleanText(text: string): string {
       flex-shrink: 0;
     }
 
-    .parent-text {
+    .parent-body {
       padding: 0 20px 16px;
+    }
+
+    .parent-text {
       color: #166534;
+      margin-bottom: 0;
     }
 
     /* Main CTAs */
@@ -355,8 +364,15 @@ export class LessonCompleteComponent {
       .filter(l => l.length > 0);
   });
 
+  private parentOpenEventLogged = false;
+
   protected toggleParent(): void {
+    const wasCollapsed = !this.parentExpanded();
     this.parentExpanded.update(v => !v);
+    if (wasCollapsed && !this.parentOpenEventLogged) {
+      this.parentOpenEventLogged = true;
+      this.tutor.logEvent('parent_summary_opened');
+    }
   }
 
   protected nextLesson(): void {
