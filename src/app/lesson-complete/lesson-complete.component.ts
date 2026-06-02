@@ -108,20 +108,20 @@ function cleanText(text: string): string {
           </section>
         }
 
+        <!-- Feedback CTA -->
+        <div class="feedback-cta">
+          <p class="feedback-cta-title">💬 ช่วยพัฒนา AI Tutor</p>
+          <p class="feedback-cta-desc">ความคิดเห็นของคุณมีค่า<br>และจะช่วยให้ AI Tutor ช่วยนักเรียนได้ดียิ่งขึ้น</p>
+          <a class="cta-btn cta-feedback" [href]="feedbackUrl" target="_blank" rel="noopener">
+            💬 ส่งความคิดเห็น
+          </a>
+        </div>
+
         <!-- CTA หลัก -->
         <div class="cta-row">
           <button class="cta-btn cta-next"   (click)="nextLesson()">📚 เรียนบทถัดไป</button>
           <button class="cta-btn cta-review" (click)="reviewAgain()">🔁 ทบทวนอีกครั้ง</button>
           <button class="cta-btn cta-home"   (click)="goHome()">🏠 กลับหน้าหลัก</button>
-        </div>
-
-        <!-- Feedback CTA -->
-        <div class="feedback-cta">
-          <p class="feedback-cta-title">💬 ช่วยพัฒนา AI Tutor</p>
-          <p class="feedback-cta-desc">ความคิดเห็นของหนูมีค่ามาก<br>และจะช่วยให้ AI Tutor ช่วยนักเรียนคนอื่นได้ดีขึ้น</p>
-          <a class="cta-btn cta-feedback" [href]="feedbackUrl" target="_blank" rel="noopener">
-            💬 ส่งความคิดเห็น
-          </a>
         </div>
 
       </div>

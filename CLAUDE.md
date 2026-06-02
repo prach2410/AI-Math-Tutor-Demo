@@ -13,6 +13,57 @@ ng lint          # ESLint
 
 The frontend expects a backend API running at `http://localhost:5000/api/learning`.
 
+## Backend API Project
+
+**Path:** `D:\_AI-Math-Tutor-Demo\AI-Math-Tutor-API-Demo`  
+**Tech:** ASP.NET Core 8, EF Core 8 + SQLite  
+**Production:** `https://ai-math-tutor-api-demo-production.up.railway.app`
+
+```bash
+# From D:\_AI-Math-Tutor-Demo\AI-Math-Tutor-API-Demo
+dotnet run       # Dev server at http://localhost:5000
+dotnet build     # Build check
+```
+
+### Backend Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `GET  /api/learning/start/{scenarioId}` | Start lesson |
+| `POST /api/learning/evaluate` | Evaluate student answer |
+| `GET  /api/learning/assist/{scenarioId}/{step}/{type}` | Get hint/guided/worked-example |
+| `POST /api/learning-sessions` | Create session (called on lesson start) |
+| `POST /api/learning-sessions/{id}/complete` | Save completed session |
+| `POST /api/learning-sessions/{id}/parent-feedback` | Save parent feedback |
+| `GET  /api/admin/learning-sessions/export` | Export all sessions as JSON |
+
+### Backend Structure
+
+```
+AI-Math-Tutor-API-Demo/
+├── Controllers/
+│   ├── LearningFlowController.cs      # /api/learning endpoints
+│   └── LearningSessionController.cs   # /api/learning-sessions endpoints
+├── Services/
+│   ├── LearningFlowService.cs         # Lesson logic, scenarios, answer evaluation
+│   └── LearningSessionService.cs      # Session CRUD, parent feedback, export
+├── Models/
+│   ├── Dtos.cs                        # Learning flow request/response DTOs
+│   ├── SessionDtos.cs                 # Session collection DTOs
+│   ├── LearningSessionEntity.cs       # EF Core entity (DB table)
+│   ├── LearningStep.cs
+│   └── ScenarioDefinition.cs
+├── Data/
+│   └── AppDbContext.cs                # SQLite DB context
+├── Program.cs
+└── backend.csproj
+```
+
+### Database
+
+SQLite file: `learning_sessions.db` (auto-created on first run, in project root)  
+Table: `LearningSessions` — columns: `SessionId`, `Topic`, `StudentAlias`, `CreatedAt`, `CompletedAt`, `Completed`, `SessionJson` (full JSON blob)
+
 ## Architecture
 
 Angular 20 single-page app using **standalone components** and **Angular signals** for state. No NgModules.
