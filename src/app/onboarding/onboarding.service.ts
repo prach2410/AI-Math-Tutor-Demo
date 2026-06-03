@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { StudentProfileService } from '../student-profile/student-profile.service';
 
 export interface OnboardingMessage {
   role: 'user' | 'assistant';
@@ -7,16 +8,18 @@ export interface OnboardingMessage {
   isGuided?: boolean;
 }
 
-type OnboardingStep = 1 | 2 | 3 | 4 | 5;
+type OnboardingStep = 0 | 1 | 2 | 3 | 4 | 5;
 
 const STORAGE_KEY = 'ai_tutor_onboarding_done';
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
+  private studentProfile = inject(StudentProfileService);
+
   private _active    = signal(false);
   private _messages  = signal<OnboardingMessage[]>([]);
-  private _step      = signal<OnboardingStep>(1);
-  private _waiting   = signal<'answer' | 'hint' | 'guided' | 'done' | 'complete'>('answer');
+  private _step      = signal<OnboardingStep>(0);
+  private _waiting   = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'complete'>('name');
   private _loading   = signal(false);
 
   readonly isActive = this._active.asReadonly();
@@ -29,7 +32,7 @@ export class OnboardingService {
     const done = localStorage.getItem(STORAGE_KEY);
     if (done) return;
     this._active.set(true);
-    this.startStep1();
+    this.startStep0();
   }
 
   skip(): void {
@@ -46,11 +49,30 @@ export class OnboardingService {
     localStorage.removeItem(STORAGE_KEY);
     this._messages.set([]);
     this._active.set(true);
-    this.startStep1();
+    this.startStep0();
   }
 
   handleAnswer(text: string): void {
-    if (this._waiting() !== 'answer' || this._loading()) return;
+    if (this._loading()) return;
+
+    // Step 0: collect name
+    if (this._waiting() === 'name') {
+      const name = text.trim();
+      if (name) this.studentProfile.setDisplayName(name);
+      this._messages.update(m => [...m, { role: 'user', content: name || 'ข้ามไปก่อนครับ' }]);
+      this._loading.set(true);
+      const greeting = name
+        ? `ยินดีที่ได้รู้จักนะครับ ${name} 😊\n\nก่อนเริ่มเรียนจริง เรามาลองใช้ AI Tutor กันก่อนนะครับ`
+        : 'ยินดีที่ได้รู้จักครับ 😊\n\nก่อนเริ่มเรียนจริง เรามาลองใช้ AI Tutor กันก่อนนะครับ';
+      setTimeout(() => {
+        this._messages.update(m => [...m, { role: 'assistant', content: greeting }]);
+        this._loading.set(false);
+        this.startStep1();
+      }, 600);
+      return;
+    }
+
+    if (this._waiting() !== 'answer') return;
 
     this._messages.update(m => [...m, { role: 'user', content: text }]);
     this._loading.set(true);
@@ -104,19 +126,29 @@ export class OnboardingService {
     }, 600);
   }
 
-  private startStep1(): void {
-    this._step.set(1);
-    this._waiting.set('answer');
+  private startStep0(): void {
+    this._step.set(0);
+    this._waiting.set('name');
     this._messages.set([
       {
         role: 'assistant',
-        content: 'สวัสดีครับ 😊\n\nก่อนเริ่มเรียนจริง เรามาลองใช้ AI Tutor กันก่อนนะ\n\nไม่ต้องกลัวตอบผิดครับ',
-      },
-      {
-        role: 'assistant',
-        content: '2 + 3 ได้เท่าไรครับ',
+        content: 'สวัสดีครับ 😊\n\nก่อนเริ่มเรียน ขอรู้จักหน่อยนะครับ\n\nชื่อเล่นของน้องคืออะไรครับ?\n(ไม่ต้องใส่ก็ได้ กด Enter เพื่อข้าม)',
       },
     ]);
+  }
+
+  private startStep1(): void {
+    this._step.set(1);
+    this._waiting.set('answer');
+    setTimeout(() => {
+      this._messages.update(m => [
+        ...m,
+        {
+          role: 'assistant',
+          content: 'ไม่ต้องกลัวตอบผิดนะครับ มาลองกันเลย\n\n2 + 3 ได้เท่าไรครับ?',
+        },
+      ]);
+    }, 400);
   }
 
   private startStep2(): void {

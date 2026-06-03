@@ -16,6 +16,7 @@ export interface EvaluateRequest {
   wrongCount: number;
   hintCount: number;
   guidedCount: number;
+  studentName?: string;
 }
 
 export interface EvaluateResponse {
@@ -68,6 +69,9 @@ export interface CreateSessionRequest {
   topic: string;
   studentAlias: string;
   startedAt: string;
+  studentId?: string;
+  deviceId?: string;
+  displayName?: string;
 }
 
 export interface CompleteSessionRequest {

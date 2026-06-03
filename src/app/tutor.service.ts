@@ -7,6 +7,8 @@ import {
   SessionMessage, SessionEvent, CreateSessionRequest,
   CompleteSessionRequest, ParentFeedbackRequest
 } from './models/learning.model';
+import { StudentProfileService } from './student-profile/student-profile.service';
+import { DeviceService } from './device/device.service';
 
 export interface Message {
   role: 'user' | 'assistant';
@@ -36,7 +38,9 @@ const TRIGGER_WORDS = ['ไม่รู้', 'งง', 'ไม่เข้าใ
 
 @Injectable({ providedIn: 'root' })
 export class TutorService {
-  private http = inject(HttpClient);
+  private http           = inject(HttpClient);
+  private studentProfile = inject(StudentProfileService);
+  private device         = inject(DeviceService);
 
   private _scenario      = signal<ScenarioMeta>(SCENARIOS[0]);
   private _messages      = signal<Message[]>([]);
@@ -61,6 +65,9 @@ export class TutorService {
   private _sessionEvents: SessionEvent[] = [];
   private _sessionMessages: SessionMessage[] = [];
   private _parentFeedbackSubmitted = signal(false);
+  private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+  private _abandonListener: (() => void) | null = null;
+  private static readonly INACTIVE_MS = 3 * 60 * 1000;
 
   readonly scenario      = this._scenario.asReadonly();
   readonly messages      = this._messages.asReadonly();
@@ -110,13 +117,20 @@ export class TutorService {
     // Create session on server (fire-and-forget, don't block lesson)
     this.createSession(newSessionId, meta.title, now).catch(() => {});
 
+    // Inactivity + abandon tracking
+    this.resetInactivityTimer();
+    this.registerAbandonListener();
+
     try {
+      const name = this.studentProfile.displayName();
+      const nameParam = name ? `?name=${encodeURIComponent(name)}` : '';
       const res = await firstValueFrom(
-        this.http.get<StartResponse>(`${API}/start/${id}`)
+        this.http.get<StartResponse>(`${API}/start/${id}${nameParam}`)
       );
       this._currentStep.set(res.stepNumber);
       this._totalSteps.set(res.totalSteps);
       this._realWorldUses.set(res.realWorldUses);
+      this.addEvent('step_started');
       const q: Message = { role: 'assistant', content: res.question };
       this._messages.set([q]);
       this.addSessionMessage(q);
@@ -139,6 +153,7 @@ export class TutorService {
     this._messages.update(msgs => [...msgs, userMsg]);
     this.addSessionMessage(userMsg);
     this.addEvent('student_answer_submitted');
+    this.resetInactivityTimer();
     this._loading.set(true);
 
     const body: EvaluateRequest = {
@@ -148,6 +163,7 @@ export class TutorService {
       wrongCount: this._wrongCount,
       hintCount: this._hintCount,
       guidedCount: this._guidedCount,
+      studentName: this.studentProfile.displayName() || undefined,
     };
 
     try {
@@ -175,11 +191,14 @@ export class TutorService {
       'worked-example': 'example_clicked',
     };
     this.addEvent(eventMap[type]);
+    this.resetInactivityTimer();
 
     try {
+      const name = this.studentProfile.displayName();
+      const nameParam = name ? `?name=${encodeURIComponent(name)}` : '';
       const res = await firstValueFrom(
         this.http.get<AssistResponse>(
-          `${API}/assist/${this._scenario().id}/${this._currentStep()}/${type}`
+          `${API}/assist/${this._scenario().id}/${this._currentStep()}/${type}${nameParam}`
         )
       );
       const flags = {
@@ -250,7 +269,9 @@ export class TutorService {
     this._wrongCount = 0;
 
     if (res.nextStep) {
+      this.addEvent('step_completed');
       this._currentStep.set(res.nextStep.stepNumber);
+      this.addEvent('step_started');
       const nextMsg: Message = { role: 'assistant', content: res.nextStep.question };
       this._messages.update(msgs => [...msgs, nextMsg]);
       this.addSessionMessage(nextMsg);
@@ -263,8 +284,10 @@ export class TutorService {
     if (res.parentCoachingTips) this._parentCoaching.set(res.parentCoachingTips);
 
     if (!res.nextStep) {
+      this.addEvent('step_completed');
       this._finished.set(true);
       this.addEvent('lesson_completed');
+      this.clearAbandonListener();
       this.completeSession().catch(() => {});
     }
   }
@@ -305,8 +328,55 @@ export class TutorService {
       topic,
       studentAlias: 'Student-001',
       startedAt: startedAt.toISOString(),
+      studentId:   this.studentProfile.studentId(),
+      deviceId:    this.device.deviceId(),
+      displayName: this.studentProfile.displayName() || undefined,
     };
     await firstValueFrom(this.http.post(SESSION_API, req));
+  }
+
+  private resetInactivityTimer(): void {
+    if (this._inactivityTimer) clearTimeout(this._inactivityTimer);
+    if (this._finished()) return;
+    this._inactivityTimer = setTimeout(() => {
+      this.addEvent('session_inactive');
+    }, TutorService.INACTIVE_MS);
+  }
+
+  private registerAbandonListener(): void {
+    this.clearAbandonListener();
+    this._abandonListener = () => {
+      if (this._finished()) return;
+      this.addEvent('session_abandoned');
+      const sessionId = this._sessionId();
+      if (!sessionId) return;
+      const startedAt = this._sessionStartedAt();
+      const now = new Date();
+      const durationSeconds = startedAt
+        ? Math.round((now.getTime() - startedAt.getTime()) / 1000)
+        : 0;
+      const payload = JSON.stringify({
+        completedAt: now.toISOString(),
+        messages: this._sessionMessages,
+        events: this._sessionEvents,
+        summary: {
+          hintUsed: this._hintCount,
+          helpMeStartUsed: this._guidedCount,
+          exampleUsed: this._exampleCount,
+          completed: false,
+          durationSeconds,
+        },
+      });
+      navigator.sendBeacon(`${SESSION_API}/${sessionId}/complete`, new Blob([payload], { type: 'application/json' }));
+    };
+    window.addEventListener('beforeunload', this._abandonListener);
+  }
+
+  private clearAbandonListener(): void {
+    if (this._abandonListener) {
+      window.removeEventListener('beforeunload', this._abandonListener);
+      this._abandonListener = null;
+    }
   }
 
   private async completeSession(): Promise<void> {
