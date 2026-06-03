@@ -69,10 +69,25 @@ export class VoiceService {
   speak(text: string): void {
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(this.cleanForSpeech(text));
     utterance.lang = 'th-TH';
     utterance.rate = 0.95;
     speechSynthesis.speak(utterance);
+  }
+
+  private cleanForSpeech(text: string): string {
+    return text
+      // strip emoji
+      .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')
+      .replace(/[☀-➿]/g, '')
+      // common English fragments → Thai
+      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')
+      .replace(/Feedback/gi, 'ผลการเรียนรู้')
+      .replace(/AI Tutor/gi, 'ครูเอไอ')
+      .replace(/Level:/gi, 'ระดับ')
+      // clean up extra whitespace
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   }
 
   cancelSpeech(): void {
