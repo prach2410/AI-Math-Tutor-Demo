@@ -31,8 +31,15 @@ const API = '/api/admin/discovery-batches';
       <div class="admin-container">
 
         <header class="admin-header">
-          <h1 class="admin-title">🔍 Discovery Batch Review</h1>
-          <p class="admin-sub">Internal tool — not visible to users</p>
+          <div class="admin-header-row">
+            <div>
+              <h1 class="admin-title">🔍 Discovery Batch Review</h1>
+              <p class="admin-sub">Internal tool — not visible to users</p>
+            </div>
+            <a class="btn btn-reset" href="/reset" title="ล้าง localStorage ทั้งหมด (student ID, ชื่อ, onboarding)">
+              🗑 Reset LocalStorage
+            </a>
+          </div>
         </header>
 
         <!-- Unreviewed count + Create -->
@@ -158,8 +165,11 @@ const API = '/api/admin/discovery-batches';
     }
 
     .admin-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; }
+    .admin-header-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .admin-title  { font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px; }
     .admin-sub    { font-size: 12px; color: #94a3b8; margin: 0; }
+    .btn-reset    { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; text-decoration: none; font-size: 12.5px; }
+    .btn-reset:hover { background: #fecaca; opacity: 1; }
 
     .top-bar {
       display: flex;

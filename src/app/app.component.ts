@@ -372,6 +372,19 @@ export class AppComponent implements OnInit {
   @ViewChild('aboutRef') private aboutRef!: AboutComponent;
 
   ngOnInit(): void {
+    if (window.location.pathname === '/reset') {
+      const keys = [
+        'ai_tutor_student_id',
+        'ai_tutor_display_name',
+        'ai_tutor_device_id',
+        'ai_tutor_onboarding_done',
+        'ai_tutor_guide_seen',
+      ];
+      keys.forEach(k => localStorage.removeItem(k));
+      window.location.replace('/');
+      return;
+    }
+
     this.onboarding.init();
     if (!this.onboarding.isActive()) {
       this.tutor.init();
