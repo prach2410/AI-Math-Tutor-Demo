@@ -621,3 +621,241 @@ to confirm that learning data exists.
 Evidence first.
 
 Discovery second.
+
+---
+# Discovery Notes Workflow
+
+Status
+
+Planned
+
+Version
+
+1.0
+
+---
+
+# Purpose
+
+Discovery Notes are used to preserve product learning  
+generated from learning session evidence.
+
+Discovery Notes are not temporary form inputs.
+
+They represent reviewed observations,  
+signals, discoveries, and product decisions.
+
+---
+
+# Review Workflow
+
+```text
+Import Batch
+↓
+Review Batch Summary
+↓
+Copy Prompt + Data
+↓
+Analyze With AI
+↓
+Generate Discovery Notes
+↓
+Save Discovery Notes
+↓
+Mark Reviewed
+```
+
+---
+
+# Batch Review Status
+
+A batch should support the following review states.
+
+---
+
+## Not Analyzed
+
+Status
+
+```text
+Not Analyzed
+```
+
+Meaning
+
+- Batch imported successfully.
+    
+- No discovery notes exist.
+    
+- AI analysis has not been performed.
+    
+
+---
+
+## Discovery Draft
+
+Status
+
+```text
+Discovery Draft
+```
+
+Meaning
+
+- Discovery notes have been added.
+    
+- Review is still in progress.
+    
+- Notes may continue to change.
+    
+
+---
+
+## Reviewed
+
+Status
+
+```text
+Reviewed
+```
+
+Meaning
+
+- Discovery review is complete.
+    
+- Product learning has been captured.
+    
+- No further review is required.
+    
+
+---
+
+# Save Discovery Notes
+
+Purpose
+
+Preserve discovery work before review is finalized.
+
+---
+
+## Save Action
+
+The system should save:
+
+```text
+Key Observations
+```
+
+```text
+Unconfirmed Signals
+```
+
+```text
+Validated Discoveries
+```
+
+```text
+Product Decisions
+```
+
+```text
+Next Questions
+```
+
+---
+
+## Save Result
+
+After saving:
+
+```text
+Status = Discovery Draft
+```
+
+The batch remains editable.
+
+Users may continue refining notes.
+
+---
+
+# Mark Reviewed
+
+Purpose
+
+Finalize discovery review.
+
+---
+
+## Review Action
+
+When a user selects:
+
+```text
+Mark Reviewed
+```
+
+the system should:
+
+- Mark the batch as reviewed.
+    
+- Preserve discovery notes.
+    
+- Remove the batch from active review queues.
+    
+- Keep the batch available for future reference.
+    
+
+---
+
+## Review Result
+
+After review:
+
+```text
+Status = Reviewed
+```
+
+---
+
+# Important Principle
+
+Saving notes does not mean review is complete.
+
+Examples
+
+```text
+Save Discovery Notes
+
+= Work in progress
+```
+
+```text
+Mark Reviewed
+
+= Review completed
+```
+
+These actions serve different purposes.
+
+They should not be treated as the same workflow step.
+
+---
+
+# Product Learning Principle
+
+Discovery work may require multiple review passes.
+
+Users should be able to:
+
+- Save partially completed reviews.
+    
+- Return later.
+    
+- Continue discovery work.
+    
+- Finalize only when confident.
+    
+
+Product learning should be iterative.
+
+Not all discoveries are validated immediately.

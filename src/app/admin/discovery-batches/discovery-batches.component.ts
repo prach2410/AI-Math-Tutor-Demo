@@ -39,6 +39,7 @@ interface BatchSummary {
   createdAt: string;
   reviewedAt: string | null;
   status: 'draft' | 'reviewed';
+  discoveryStatus: 'not_analyzed' | 'discovery_draft' | 'reviewed';
   batchType: 'Normal' | 'Imported';
   analysisStatus: 'not_analyzed' | 'analysis_generated' | 'reviewed';
   sessionCount: number;
@@ -129,6 +130,17 @@ const API = '/api/admin/discovery-batches';
               </ol>
             </div>
           }
+          @if (importResult() && importResult()!.duplicateStatus === 'PartiallyImported') {
+            <div class="import-guidance import-guidance-warn">
+              <p class="guidance-title">⚠️ Batch imported with some duplicate sessions.</p>
+              <p class="guidance-label">Next Step:</p>
+              <ol class="guidance-steps">
+                <li>Click <strong>"Copy Prompt + Data"</strong> on the batch below</li>
+                <li>Analyze with ChatGPT</li>
+                <li>Paste discovery notes back into the batch</li>
+              </ol>
+            </div>
+          }
         </div>
 
         <!-- Analysis Prompt -->
@@ -205,8 +217,8 @@ const API = '/api/admin/discovery-batches';
                 <div class="batch-header">
                   <div class="batch-meta">
                     <span class="batch-id">{{ batch.batchId }}</span>
-                    <span class="batch-status" [class.status-reviewed]="batch.status === 'reviewed'">
-                      {{ batch.status === 'reviewed' ? 'Reviewed' : 'Draft' }}
+                    <span class="batch-status" [class]="'ds-' + batch.discoveryStatus">
+                      {{ discoveryStatusLabel(batch.discoveryStatus) }}
                     </span>
                     @if (batch.batchType === 'Imported') {
                       <span class="batch-type-badge">📥 Imported</span>
@@ -231,7 +243,7 @@ const API = '/api/admin/discovery-batches';
                   <button class="btn btn-sm btn-prompt" (click)="copyPromptForBatch(batch.batchId)">
                     {{ copiedBatchId() === batch.batchId ? '✅ Copied!' : '🤖 Copy Prompt' }}
                   </button>
-                  @if (batch.status === 'draft') {
+                  @if (batch.discoveryStatus !== 'reviewed') {
                     <button class="btn btn-sm btn-outline" (click)="toggleNotes(batch.batchId)">
                       {{ editingBatchId() === batch.batchId ? '✕ Close Notes' : '✏ Edit Notes' }}
                     </button>
@@ -335,7 +347,7 @@ const API = '/api/admin/discovery-batches';
                       @for (field of noteFields; track field.key) {
                         <div class="notes-field">
                           <label class="notes-label">{{ field.label }}</label>
-                          @if (batch.status === 'draft') {
+                          @if (batch.discoveryStatus !== 'reviewed') {
                             <textarea
                               class="notes-input"
                               [(ngModel)]="noteDrafts[batch.batchId + '.' + field.key]"
@@ -350,7 +362,7 @@ const API = '/api/admin/discovery-batches';
                         </div>
                       }
                     </div>
-                    @if (batch.status === 'draft') {
+                    @if (batch.discoveryStatus !== 'reviewed') {
                       <button class="btn btn-primary" (click)="saveNotes(batch)">
                         💾 Save Notes
                       </button>
@@ -556,14 +568,11 @@ const API = '/api/admin/discovery-batches';
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 10px;
-      background: #fef9c3;
-      color: #854d0e;
       text-transform: uppercase;
     }
-    .batch-status.status-reviewed {
-      background: #dcfce7;
-      color: #15803d;
-    }
+    .ds-not_analyzed    { background: #f1f5f9; color: #64748b; }
+    .ds-discovery_draft { background: #fef9c3; color: #854d0e; }
+    .ds-reviewed        { background: #dcfce7; color: #15803d; }
 
     .batch-info {
       display: flex;
@@ -651,6 +660,11 @@ const API = '/api/admin/discovery-batches';
       padding: 12px 14px;
       font-size: 13px;
       color: #15803d;
+    }
+    .import-guidance-warn {
+      background: #fefce8;
+      border-color: #fde047;
+      color: #854d0e;
     }
     .guidance-title { font-weight: 700; margin: 0 0 6px; }
     .guidance-label { font-weight: 600; margin: 0 0 4px; }
@@ -789,6 +803,12 @@ export class DiscoveryBatchesComponent implements OnInit {
     } finally {
       this.importing.set(false);
     }
+  }
+
+  protected discoveryStatusLabel(status: string): string {
+    return status === 'reviewed'        ? 'Reviewed'
+         : status === 'discovery_draft' ? 'Discovery Draft'
+         : 'Not Analyzed';
   }
 
   protected analysisStatusLabel(status: string): string {
