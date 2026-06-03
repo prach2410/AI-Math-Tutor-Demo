@@ -11,14 +11,39 @@ interface DiscoveryNotes {
   nextQuestions: string;
 }
 
+interface BatchMetrics {
+  totalSessions: number;
+  completedSessions: number;
+  incompleteSessions: number;
+  completionRate: number;
+  hintCount: number;
+  hintRate: number;
+  helpMeStartCount: number;
+  helpMeStartRate: number;
+  workedExampleCount: number;
+  workedExampleRate: number;
+  abandonedCount: number;
+  abandonmentRate: number;
+  mostAbandonedLesson: string;
+  mostAbandonedStep: string;
+  uniqueStudents: number;
+  returningStudents: number;
+  avgSessionsPerStudent: number;
+  uniqueDevices: number;
+  returningDevices: number;
+  avgSessionsPerDevice: number;
+}
+
 interface BatchSummary {
   batchId: string;
   createdAt: string;
   reviewedAt: string | null;
   status: 'draft' | 'reviewed';
   batchType: 'Normal' | 'Imported';
+  analysisStatus: 'not_analyzed' | 'analysis_generated' | 'reviewed';
   sessionCount: number;
   notes: DiscoveryNotes;
+  summary: BatchMetrics | null;
 }
 
 interface ImportResult {
@@ -26,6 +51,7 @@ interface ImportResult {
   sessionCount: number;
   duplicateStatus: 'NewBatch' | 'PartiallyImported' | 'AlreadyReviewed';
   duplicateCount: number;
+  duplicateBatchRef?: string;
 }
 
 const API = '/api/admin/discovery-batches';
@@ -80,13 +106,28 @@ const API = '/api/admin/discovery-batches';
               <span class="import-result-badge">{{ importStatusLabel(importResult()!.duplicateStatus) }}</span>
               <span>สร้าง <strong>{{ importResult()!.batchId }}</strong> · {{ importResult()!.sessionCount }} sessions</span>
               @if (importResult()!.duplicateCount > 0) {
-                <span class="import-dup">{{ importResult()!.duplicateCount }} sessions ซ้ำกับ batch อื่น</span>
+                <span class="import-dup">
+                  {{ importResult()!.duplicateCount }} sessions already exist in
+                  <strong>{{ importResult()!.duplicateBatchRef || 'another batch' }}</strong>
+                </span>
               }
             </div>
           }
 
           @if (uploadError()) {
             <p class="upload-error">{{ uploadError() }}</p>
+          }
+
+          @if (importResult() && importResult()!.duplicateStatus === 'NewBatch') {
+            <div class="import-guidance">
+              <p class="guidance-title">✅ Batch imported successfully.</p>
+              <p class="guidance-label">Next Step:</p>
+              <ol class="guidance-steps">
+                <li>Click <strong>"Copy Prompt + Data"</strong> on the batch below</li>
+                <li>Analyze with ChatGPT</li>
+                <li>Paste discovery notes back into the batch</li>
+              </ol>
+            </div>
           }
         </div>
 
@@ -177,6 +218,9 @@ const API = '/api/admin/discovery-batches';
                     @if (batch.reviewedAt) {
                       <span>Reviewed: {{ formatDate(batch.reviewedAt) }}</span>
                     }
+                    <span class="analysis-status-badge" [class]="'as-' + batch.analysisStatus">
+                      {{ analysisStatusLabel(batch.analysisStatus) }}
+                    </span>
                   </div>
                 </div>
 
@@ -200,6 +244,88 @@ const API = '/api/admin/discovery-batches';
                     </button>
                   }
                 </div>
+
+                <!-- Batch Summary Metrics -->
+                @if (batch.summary) {
+                  <div class="summary-panel">
+                    <div class="summary-grid">
+                      <div class="summary-group">
+                        <p class="summary-group-title">Sessions</p>
+                        <div class="summary-row">
+                          <span>Total</span><strong>{{ batch.summary.totalSessions }}</strong>
+                        </div>
+                        <div class="summary-row">
+                          <span>Completed</span><strong>{{ batch.summary.completedSessions }}</strong>
+                        </div>
+                        <div class="summary-row">
+                          <span>Incomplete</span><strong>{{ batch.summary.incompleteSessions }}</strong>
+                        </div>
+                        <div class="summary-row">
+                          <span>Completion Rate</span><strong>{{ batch.summary.completionRate }}%</strong>
+                        </div>
+                      </div>
+
+                      <div class="summary-group">
+                        <p class="summary-group-title">Help Usage</p>
+                        <div class="summary-row">
+                          <span>Hints</span><strong>{{ batch.summary.hintCount }} ({{ batch.summary.hintRate }}%)</strong>
+                        </div>
+                        <div class="summary-row">
+                          <span>Help Me Start</span><strong>{{ batch.summary.helpMeStartCount }} ({{ batch.summary.helpMeStartRate }}%)</strong>
+                        </div>
+                        <div class="summary-row">
+                          <span>Worked Example</span><strong>{{ batch.summary.workedExampleCount }} ({{ batch.summary.workedExampleRate }}%)</strong>
+                        </div>
+                      </div>
+
+                      @if (batch.summary.abandonedCount > 0) {
+                        <div class="summary-group">
+                          <p class="summary-group-title">Learning Friction</p>
+                          <div class="summary-row">
+                            <span>Abandoned</span><strong>{{ batch.summary.abandonedCount }} ({{ batch.summary.abandonmentRate }}%)</strong>
+                          </div>
+                          @if (batch.summary.mostAbandonedLesson) {
+                            <div class="summary-row">
+                              <span>Most Abandoned Lesson</span><strong>{{ batch.summary.mostAbandonedLesson }}</strong>
+                            </div>
+                          }
+                          @if (batch.summary.mostAbandonedStep) {
+                            <div class="summary-row">
+                              <span>Most Abandoned Step</span><strong>{{ batch.summary.mostAbandonedStep }}</strong>
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      @if (batch.summary.uniqueStudents > 0) {
+                        <div class="summary-group">
+                          <p class="summary-group-title">Students</p>
+                          <div class="summary-row">
+                            <span>Unique</span><strong>{{ batch.summary.uniqueStudents }}</strong>
+                          </div>
+                          <div class="summary-row">
+                            <span>Returning</span><strong>{{ batch.summary.returningStudents }}</strong>
+                          </div>
+                          <div class="summary-row">
+                            <span>Avg Sessions</span><strong>{{ batch.summary.avgSessionsPerStudent }}</strong>
+                          </div>
+                        </div>
+                      }
+
+                      @if (batch.summary.uniqueDevices > 0) {
+                        <div class="summary-group">
+                          <p class="summary-group-title">Devices</p>
+                          <div class="summary-row">
+                            <span>Unique</span><strong>{{ batch.summary.uniqueDevices }}</strong>
+                          </div>
+                          <div class="summary-row">
+                            <span>Returning</span><strong>{{ batch.summary.returningDevices }}</strong>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
 
                 <!-- Notes form / view -->
                 @if (editingBatchId() === batch.batchId) {
@@ -507,6 +633,68 @@ const API = '/api/admin/discovery-batches';
       min-height: 40px;
       white-space: pre-wrap;
     }
+
+    .analysis-status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .as-not_analyzed       { background: #f1f5f9; color: #64748b; }
+    .as-analysis_generated { background: #eff6ff; color: #1d4ed8; }
+    .as-reviewed           { background: #dcfce7; color: #15803d; }
+
+    .import-guidance {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #15803d;
+    }
+    .guidance-title { font-weight: 700; margin: 0 0 6px; }
+    .guidance-label { font-weight: 600; margin: 0 0 4px; }
+    .guidance-steps { margin: 0; padding-left: 18px; }
+    .guidance-steps li { margin-bottom: 2px; }
+
+    .summary-panel {
+      border-top: 1px solid #e2e8f0;
+      padding: 12px 16px;
+      background: #fafafa;
+    }
+    .summary-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .summary-group {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      min-width: 140px;
+      flex: 1;
+    }
+    .summary-group-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin: 0 0 6px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: #475569;
+      padding: 2px 0;
+    }
+    .summary-row strong {
+      color: #1e293b;
+      font-weight: 700;
+    }
   `]
 })
 export class DiscoveryBatchesComponent implements OnInit {
@@ -601,6 +789,12 @@ export class DiscoveryBatchesComponent implements OnInit {
     } finally {
       this.importing.set(false);
     }
+  }
+
+  protected analysisStatusLabel(status: string): string {
+    return status === 'not_analyzed'      ? 'Not Analyzed'
+         : status === 'analysis_generated' ? 'Analysis Generated'
+         : 'Reviewed';
   }
 
   protected importStatusLabel(status: string): string {
