@@ -507,8 +507,10 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
   }
 
   protected startLesson(): void {
+    const mode = this.tutor.interactionMode();
     this.ob.complete();
     this.tutor.init();
+    if (mode) this.tutor.setInteractionMode(mode);
   }
 
   private scrollToBottom(): void {
