@@ -47,6 +47,45 @@ const API = '/api/admin/discovery-batches';
           </div>
         </header>
 
+        <!-- Upload JSON for Analysis -->
+        <div class="upload-section">
+          <p class="upload-label">📂 Upload Export JSON เพื่อใช้เป็น data</p>
+          <div class="upload-row">
+            <label class="upload-btn">
+              📁 เลือกไฟล์ JSON
+              <input type="file" accept=".json" (change)="onFileUpload($event)" hidden />
+            </label>
+            @if (uploadedFileName()) {
+              <span class="upload-filename">{{ uploadedFileName() }}</span>
+              <button class="btn btn-prompt btn-sm" (click)="copyPromptWithUpload()">
+                {{ copiedUpload() ? '✅ Copied!' : '🤖 Copy Prompt + Data' }}
+              </button>
+              <button class="btn btn-outline btn-sm" (click)="clearUpload()">✕</button>
+            }
+          </div>
+          @if (uploadError()) {
+            <p class="upload-error">{{ uploadError() }}</p>
+          }
+        </div>
+
+        <!-- Analysis Prompt -->
+        <div class="export-bar">
+          <button class="btn btn-prompt" (click)="togglePrompt()">
+            {{ showPrompt() ? '▲ ซ่อน Analysis Prompt' : '🤖 Analysis Prompt' }}
+          </button>
+          @if (showPrompt()) {
+            <button class="btn btn-outline btn-sm" (click)="copyPrompt()">
+              {{ copied() ? '✅ Copied!' : '📋 Copy Prompt' }}
+            </button>
+          }
+        </div>
+
+        @if (showPrompt()) {
+          <div class="export-panel">
+            <pre class="export-json prompt-text">{{ analysisPromptText() }}</pre>
+          </div>
+        }
+
         <!-- Export Sessions -->
         <div class="export-bar">
           <button class="btn btn-export" (click)="toggleExport()">
@@ -119,6 +158,9 @@ const API = '/api/admin/discovery-batches';
                 <div class="batch-actions">
                   <button class="btn btn-sm btn-outline" (click)="downloadBatch(batch.batchId)">
                     ⬇ Download JSON
+                  </button>
+                  <button class="btn btn-sm btn-prompt" (click)="copyPromptForBatch(batch.batchId)">
+                    {{ copiedBatchId() === batch.batchId ? '✅ Copied!' : '🤖 Copy Prompt' }}
                   </button>
                   @if (batch.status === 'draft') {
                     <button class="btn btn-sm btn-outline" (click)="toggleNotes(batch.batchId)">
@@ -196,6 +238,9 @@ const API = '/api/admin/discovery-batches';
     .export-bar   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .btn-export   { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; }
     .btn-export:hover { background: #dbeafe; opacity: 1; }
+    .btn-prompt   { background: #faf5ff; color: #6d28d9; border: 1.5px solid #c4b5fd; }
+    .btn-prompt:hover { background: #ede9fe; opacity: 1; }
+    .prompt-text  { color: #e2e8f0; }
 
     .export-panel {
       background: #0f172a;
@@ -214,6 +259,35 @@ const API = '/api/admin/discovery-batches';
       white-space: pre-wrap;
       word-break: break-all;
     }
+
+    .upload-section {
+      background: white;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .upload-label { font-size: 13px; font-weight: 600; color: #475569; margin: 0; }
+    .upload-row   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 14px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .upload-btn:hover { background: #f1f5f9; }
+    .upload-filename  { font-size: 12.5px; color: #16a34a; font-weight: 600; }
+    .upload-error     { font-size: 12px; color: #dc2626; margin: 0; }
 
     .reset-group  { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-reset    { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; text-decoration: none; font-size: 12.5px; }
@@ -395,9 +469,18 @@ export class DiscoveryBatchesComponent implements OnInit {
   protected creating = signal(false);
   protected createError = signal('');
   protected editingBatchId = signal('');
+  protected uploadedFileName = signal('');
+  protected uploadedData = signal<unknown>(null);
+  protected uploadError = signal('');
+  protected copiedUpload = signal(false);
+
   protected showExport = signal(false);
   protected exportLoading = signal(false);
   protected exportJson = signal('');
+  protected showPrompt = signal(false);
+  protected analysisPromptText = signal('');
+  protected copied = signal(false);
+  protected copiedBatchId = signal('');
 
   protected noteDrafts: Record<string, string> = {};
 
@@ -412,6 +495,94 @@ export class DiscoveryBatchesComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await Promise.all([this.loadUnreviewedCount(), this.loadBatches()]);
     this.loading.set(false);
+  }
+
+  protected onFileUpload(event: Event): void {
+    this.uploadError.set('');
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith('.json')) {
+      this.uploadError.set('กรุณาเลือกไฟล์ .json เท่านั้น');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string);
+        this.uploadedData.set(data);
+        this.uploadedFileName.set(file.name);
+      } catch {
+        this.uploadError.set('ไฟล์ไม่ใช่ JSON ที่ถูกต้อง');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  protected async copyPromptWithUpload(): Promise<void> {
+    let prompt = this.analysisPromptText();
+    if (!prompt) {
+      try {
+        const res = await firstValueFrom(
+          this.http.get<{ prompt: string }>('/api/admin/discovery-batches/analysis-prompt')
+        );
+        prompt = res.prompt;
+        this.analysisPromptText.set(prompt);
+      } catch { return; }
+    }
+    const full = `${prompt}\n\n---\n\nBatch Data:\n\n${JSON.stringify(this.uploadedData(), null, 2)}`;
+    await this.copyToClipboard(full);
+    this.copiedUpload.set(true);
+    setTimeout(() => this.copiedUpload.set(false), 2000);
+  }
+
+  protected clearUpload(): void {
+    this.uploadedFileName.set('');
+    this.uploadedData.set(null);
+    this.uploadError.set('');
+  }
+
+  protected async togglePrompt(): Promise<void> {
+    if (this.showPrompt()) { this.showPrompt.set(false); return; }
+    this.showPrompt.set(true);
+    if (this.analysisPromptText()) return;
+    try {
+      const res = await firstValueFrom(
+        this.http.get<{ prompt: string }>('/api/admin/discovery-batches/analysis-prompt')
+      );
+      this.analysisPromptText.set(res.prompt);
+    } catch {
+      this.analysisPromptText.set('Error: ไม่สามารถโหลด prompt ได้');
+    }
+  }
+
+  protected async copyPrompt(): Promise<void> {
+    await this.copyToClipboard(this.analysisPromptText());
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
+  }
+
+  protected async copyPromptForBatch(batchId: string): Promise<void> {
+    let prompt = this.analysisPromptText();
+    if (!prompt) {
+      try {
+        const res = await firstValueFrom(
+          this.http.get<{ prompt: string }>('/api/admin/discovery-batches/analysis-prompt')
+        );
+        prompt = res.prompt;
+        this.analysisPromptText.set(prompt);
+      } catch { return; }
+    }
+    const exportData = await firstValueFrom(
+      this.http.get(`/api/admin/discovery-batches/${batchId}/export`)
+    );
+    const full = `${prompt}\n\n---\n\nBatch Data:\n\n${JSON.stringify(exportData, null, 2)}`;
+    await this.copyToClipboard(full);
+    this.copiedBatchId.set(batchId);
+    setTimeout(() => this.copiedBatchId.set(''), 2000);
+  }
+
+  private async copyToClipboard(text: string): Promise<void> {
+    await navigator.clipboard.writeText(text);
   }
 
   protected async toggleExport(): Promise<void> {
