@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
@@ -104,6 +104,21 @@ function cleanText(text: string): string {
                 <app-parent-feedback />
               </div>
             }
+          </section>
+        }
+
+        <!-- Reason question -->
+        @if (tutor.interactionMode() && !reasonSubmitted()) {
+          <section class="section reason-section">
+            <h2 class="section-title">
+              💭 ทำไมถึงเลือก{{ tutor.interactionMode() === 'voice' ? 'พูดออกเสียง' : 'พิมพ์ข้อความ' }}?
+            </h2>
+            <div class="reason-chips">
+              @for (r of reasonOptions(); track r) {
+                <button class="reason-chip" (click)="submitReason(r)">{{ r }}</button>
+              }
+              <button class="reason-chip other-chip" (click)="submitReason('อื่นๆ')">อื่นๆ</button>
+            </div>
           </section>
         }
 
@@ -260,6 +275,27 @@ function cleanText(text: string): string {
       margin-bottom: 0;
     }
 
+    /* Reason question */
+    .reason-section { background: #fafafa; }
+    .reason-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .reason-chip {
+      padding: 6px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 20px;
+      background: white;
+      font-family: inherit;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .reason-chip:hover { background: #eff6ff; border-color: #93c5fd; }
+    .other-chip { color: #64748b; }
+
     /* Main CTAs */
     .cta-row {
       display: flex;
@@ -298,7 +334,22 @@ export class LessonCompleteComponent {
   protected onboarding     = inject(OnboardingService);
   protected studentProfile = inject(StudentProfileService);
 
-  protected parentExpanded = signal(false);
+  protected parentExpanded  = signal(false);
+  protected reasonSubmitted = signal(false);
+
+  private static readonly VOICE_REASONS = ['พูดง่ายกว่า', 'ไม่ชอบพิมพ์', 'รู้สึกธรรมชาติกว่า', 'อยากลองดู'];
+  private static readonly TEXT_REASONS  = ['ไม่อยากพูดออกเสียง', 'อยู่ในที่สาธารณะ', 'ชอบอ่านและเขียน', 'พิมพ์ง่ายกว่า'];
+
+  protected reasonOptions = computed(() =>
+    this.tutor.interactionMode() === 'voice'
+      ? LessonCompleteComponent.VOICE_REASONS
+      : LessonCompleteComponent.TEXT_REASONS
+  );
+
+  protected submitReason(reason: string): void {
+    this.tutor.logEvent(`interaction_mode_reason:${reason}`);
+    this.reasonSubmitted.set(true);
+  }
 
   protected cleanedFeedback = computed(() => cleanText(this.tutor.studentFeedback()));
   protected cleanedNote     = computed(() => cleanText(this.tutor.studentNote()));

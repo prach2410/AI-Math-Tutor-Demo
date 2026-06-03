@@ -5,6 +5,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { OnboardingService } from './onboarding.service';
 import { TutorService } from '../tutor.service';
+import { VoiceService } from '../voice.service';
 
 @Component({
   selector: 'app-onboarding',
@@ -103,10 +104,34 @@ import { TutorService } from '../tutor.service';
         </div>
       }
 
-      <!-- Complete button (step 5) -->
+      <!-- Mode selection (step 5 → after messages) -->
+      @if (ob.waiting() === 'mode' && !ob.loading()) {
+        <div class="mode-select-bar">
+          <p class="mode-prompt">วันนี้อยากเรียนแบบไหนครับ? 😊</p>
+          <div class="mode-btns">
+            <button class="mode-btn text-mode" (click)="ob.handleModeSelected('text')">
+              <span class="mode-icon">⌨️</span>
+              <span class="mode-label">พิมพ์ข้อความ</span>
+            </button>
+            <button class="mode-btn voice-mode"
+              (click)="ob.handleModeSelected('voice')"
+              [disabled]="!voiceSupported"
+              [title]="voiceSupported ? '' : 'ใช้ได้บน Chrome / Edge เท่านั้น'"
+            >
+              <span class="mode-icon">🎤</span>
+              <span class="mode-label">พูดออกเสียง</span>
+              @if (!voiceSupported) {
+                <small class="mode-note">Chrome เท่านั้น</small>
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Complete button (after mode selected) -->
       @if (ob.waiting() === 'complete' && !ob.loading()) {
         <div class="complete-bar">
-          <button class="start-btn" (click)="startLesson()">เริ่มเรียน</button>
+          <button class="start-btn" (click)="startLesson()">เริ่มเรียน 🚀</button>
         </div>
       }
 
@@ -341,6 +366,59 @@ import { TutorService } from '../tutor.service';
     .send-btn:hover:not(:disabled) { background: #1d4ed8; }
     .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* Mode selection bar */
+    .mode-select-bar {
+      padding: 14px 16px;
+      border-top: 1px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .mode-prompt {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .mode-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+      min-width: 120px;
+    }
+    .mode-btn:hover:not(:disabled) {
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+    .mode-btn:active:not(:disabled) { transform: translateY(0) scale(0.97); }
+    .mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .text-mode:hover:not(:disabled)  { border-color: #2563eb; }
+    .voice-mode:hover:not(:disabled) { border-color: #16a34a; }
+
+    .mode-icon  { font-size: 28px; line-height: 1; }
+    .mode-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .mode-note  { font-size: 10px; color: #94a3b8; }
+
     /* Complete bar */
     .complete-bar {
       padding: 12px 16px;
@@ -377,8 +455,10 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
   @ViewChild('msgContainer') private container!: ElementRef<HTMLDivElement>;
   @ViewChild('inputEl') private inputEl?: ElementRef<HTMLInputElement>;
 
-  protected ob     = inject(OnboardingService);
-  private tutor    = inject(TutorService);
+  protected ob            = inject(OnboardingService);
+  private tutor           = inject(TutorService);
+  private voice           = inject(VoiceService);
+  protected voiceSupported = this.voice.isSupported();
   protected inputText = '';
 
   constructor() {

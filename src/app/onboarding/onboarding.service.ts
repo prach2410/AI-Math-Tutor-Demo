@@ -1,5 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { StudentProfileService } from '../student-profile/student-profile.service';
+import { TutorService } from '../tutor.service';
+import { InteractionMode } from '../models/learning.model';
 
 export interface OnboardingMessage {
   role: 'user' | 'assistant';
@@ -15,11 +17,12 @@ const STORAGE_KEY = 'ai_tutor_onboarding_done';
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
   private studentProfile = inject(StudentProfileService);
+  private tutor          = inject(TutorService);
 
   private _active    = signal(false);
   private _messages  = signal<OnboardingMessage[]>([]);
   private _step      = signal<OnboardingStep>(0);
-  private _waiting   = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'complete'>('name');
+  private _waiting   = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'mode' | 'complete'>('name');
   private _loading   = signal(false);
 
   readonly isActive = this._active.asReadonly();
@@ -106,6 +109,11 @@ export class OnboardingService {
       this._loading.set(false);
       this.startStep3();
     }, 600);
+  }
+
+  handleModeSelected(mode: InteractionMode): void {
+    this.tutor.setInteractionMode(mode);
+    this._waiting.set('complete');
   }
 
   handleGuidedClick(): void {
@@ -223,5 +231,9 @@ export class OnboardingService {
         this._messages.update(m => [...m, { role: 'assistant', content }]);
       }, delay);
     }
+
+    setTimeout(() => {
+      this._waiting.set('mode');
+    }, 4200);
   }
 }

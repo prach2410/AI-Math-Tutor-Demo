@@ -4,6 +4,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TutorService } from '../tutor.service';
 import { VoiceService } from '../voice.service';
+import { InteractionMode } from '../models/learning.model';
 
 @Component({
   selector: 'app-chat',
@@ -107,6 +108,13 @@ import { VoiceService } from '../voice.service';
       }
 
       <div class="chat-input-bar">
+        <button class="mode-toggle-btn"
+          (click)="switchMode()"
+          [title]="tutor.interactionMode() === 'voice' ? 'เปลี่ยนเป็นพิมพ์' : 'เปลี่ยนเป็นพูด'"
+          [disabled]="tutor.loading() || tutor.finished()"
+        >
+          {{ tutor.interactionMode() === 'voice' ? '⌨️' : '🎤' }}
+        </button>
         @if (tutor.interactionMode() === 'voice') {
           <div class="voice-bar">
             <button
@@ -387,6 +395,19 @@ import { VoiceService } from '../voice.service';
     .send-btn:hover:not(:disabled) { background: #1d4ed8; }
     .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    .mode-toggle-btn {
+      padding: 8px 10px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .mode-toggle-btn:hover:not(:disabled) { background: #e2e8f0; }
+    .mode-toggle-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
     .voice-bar {
       flex: 1;
       display: flex;
@@ -533,6 +554,14 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
     if (!text || this.tutor.loading() || this.tutor.finished()) return;
     this.inputText = '';
     this.tutor.sendMessage(text);
+  }
+
+  protected switchMode(): void {
+    const from = this.tutor.interactionMode();
+    const to: InteractionMode = from === 'voice' ? 'text' : 'voice';
+    this.tutor.logEvent(`interaction_mode_changed_from_${from}_to_${to}`);
+    this.voice.cancelSpeech();
+    this.tutor.setInteractionMode(to);
   }
 
   protected toggleMic(): void {
