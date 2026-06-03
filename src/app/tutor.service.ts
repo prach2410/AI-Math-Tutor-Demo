@@ -53,6 +53,7 @@ export class TutorService {
   private _wrongCount       = 0;
   private _hintCount        = 0;
   private _guidedCount      = 0;
+  private _exampleCount     = 0;
 
   // Session tracking
   private _sessionId            = signal('');
@@ -90,9 +91,10 @@ export class TutorService {
     this._reflection.set([]);
     this._studentFeedback.set('');
     this._parentCoaching.set('');
-    this._wrongCount  = 0;
-    this._hintCount   = 0;
-    this._guidedCount = 0;
+    this._wrongCount   = 0;
+    this._hintCount    = 0;
+    this._guidedCount  = 0;
+    this._exampleCount = 0;
     this._loading.set(true);
 
     // Reset session state
@@ -191,7 +193,7 @@ export class TutorService {
       this.addSessionMessage(assistMsg, msgType);
       if (type === 'hint')           this._hintCount++;
       if (type === 'guided')       { this._guidedCount++; this._wrongCount = 0; }
-      if (type === 'worked-example') this._hintCount++;
+      if (type === 'worked-example') this._exampleCount++;
     } catch {
       const errMsg: Message = { role: 'assistant', content: 'ไม่สามารถโหลดข้อมูลได้ครับ' };
       this._messages.update(msgs => [...msgs, errMsg]);
@@ -322,7 +324,7 @@ export class TutorService {
       summary: {
         hintUsed: this._hintCount,
         helpMeStartUsed: this._guidedCount,
-        exampleUsed: 0,
+        exampleUsed: this._exampleCount,
         completed: true,
         durationSeconds,
       },
