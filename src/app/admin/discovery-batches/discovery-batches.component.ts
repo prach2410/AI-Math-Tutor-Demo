@@ -16,8 +16,16 @@ interface BatchSummary {
   createdAt: string;
   reviewedAt: string | null;
   status: 'draft' | 'reviewed';
+  batchType: 'Normal' | 'Imported';
   sessionCount: number;
   notes: DiscoveryNotes;
+}
+
+interface ImportResult {
+  batchId: string;
+  sessionCount: number;
+  duplicateStatus: 'NewBatch' | 'PartiallyImported' | 'AlreadyReviewed';
+  duplicateCount: number;
 }
 
 const API = '/api/admin/discovery-batches';
@@ -49,20 +57,34 @@ const API = '/api/admin/discovery-batches';
 
         <!-- Upload JSON for Analysis -->
         <div class="upload-section">
-          <p class="upload-label">📂 Upload Export JSON เพื่อใช้เป็น data</p>
+          <p class="upload-label">📂 Upload Export JSON</p>
           <div class="upload-row">
             <label class="upload-btn">
               📁 เลือกไฟล์ JSON
               <input type="file" accept=".json" (change)="onFileUpload($event)" hidden />
             </label>
             @if (uploadedFileName()) {
-              <span class="upload-filename">{{ uploadedFileName() }}</span>
+              <span class="upload-filename">✓ {{ uploadedFileName() }}</span>
+              <button class="btn btn-primary btn-sm" (click)="importBatch()" [disabled]="importing()">
+                {{ importing() ? 'Importing…' : '📥 Import as Batch' }}
+              </button>
               <button class="btn btn-prompt btn-sm" (click)="copyPromptWithUpload()">
                 {{ copiedUpload() ? '✅ Copied!' : '🤖 Copy Prompt + Data' }}
               </button>
               <button class="btn btn-outline btn-sm" (click)="clearUpload()">✕</button>
             }
           </div>
+
+          @if (importResult()) {
+            <div class="import-result" [class]="'import-' + importResult()!.duplicateStatus.toLowerCase()">
+              <span class="import-result-badge">{{ importStatusLabel(importResult()!.duplicateStatus) }}</span>
+              <span>สร้าง <strong>{{ importResult()!.batchId }}</strong> · {{ importResult()!.sessionCount }} sessions</span>
+              @if (importResult()!.duplicateCount > 0) {
+                <span class="import-dup">{{ importResult()!.duplicateCount }} sessions ซ้ำกับ batch อื่น</span>
+              }
+            </div>
+          }
+
           @if (uploadError()) {
             <p class="upload-error">{{ uploadError() }}</p>
           }
@@ -145,6 +167,9 @@ const API = '/api/admin/discovery-batches';
                     <span class="batch-status" [class.status-reviewed]="batch.status === 'reviewed'">
                       {{ batch.status === 'reviewed' ? 'Reviewed' : 'Draft' }}
                     </span>
+                    @if (batch.batchType === 'Imported') {
+                      <span class="batch-type-badge">📥 Imported</span>
+                    }
                   </div>
                   <div class="batch-info">
                     <span>Sessions: {{ batch.sessionCount }}</span>
@@ -288,6 +313,30 @@ const API = '/api/admin/discovery-batches';
     .upload-btn:hover { background: #f1f5f9; }
     .upload-filename  { font-size: 12.5px; color: #16a34a; font-weight: 600; }
     .upload-error     { font-size: 12px; color: #dc2626; margin: 0; }
+
+    .import-result {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      flex-wrap: wrap;
+    }
+    .import-newbatch         { background: #dcfce7; color: #15803d; }
+    .import-partiallyimported { background: #fef9c3; color: #854d0e; }
+    .import-alreadyreviewed  { background: #fee2e2; color: #991b1b; }
+    .import-result-badge { font-weight: 700; }
+    .import-dup { font-size: 12px; opacity: 0.8; }
+
+    .batch-type-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #ede9fe;
+      color: #6d28d9;
+      font-weight: 600;
+    }
 
     .reset-group  { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-reset    { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; text-decoration: none; font-size: 12.5px; }
@@ -473,6 +522,8 @@ export class DiscoveryBatchesComponent implements OnInit {
   protected uploadedData = signal<unknown>(null);
   protected uploadError = signal('');
   protected copiedUpload = signal(false);
+  protected importing = signal(false);
+  protected importResult = signal<ImportResult | null>(null);
 
   protected showExport = signal(false);
   protected exportLoading = signal(false);
@@ -535,10 +586,34 @@ export class DiscoveryBatchesComponent implements OnInit {
     setTimeout(() => this.copiedUpload.set(false), 2000);
   }
 
+  protected async importBatch(): Promise<void> {
+    this.importing.set(true);
+    this.importResult.set(null);
+    try {
+      const rawJson = JSON.stringify(this.uploadedData());
+      const result = await firstValueFrom(
+        this.http.post<ImportResult>(`${API}/import`, { json: rawJson })
+      );
+      this.importResult.set(result);
+      await Promise.all([this.loadUnreviewedCount(), this.loadBatches()]);
+    } catch {
+      this.uploadError.set('ไม่สามารถ Import ได้ กรุณาลองใหม่');
+    } finally {
+      this.importing.set(false);
+    }
+  }
+
+  protected importStatusLabel(status: string): string {
+    return status === 'NewBatch' ? '✅ New Batch'
+         : status === 'PartiallyImported' ? '⚠️ Partially Imported'
+         : '🔁 Already Reviewed';
+  }
+
   protected clearUpload(): void {
     this.uploadedFileName.set('');
     this.uploadedData.set(null);
     this.uploadError.set('');
+    this.importResult.set(null);
   }
 
   protected async togglePrompt(): Promise<void> {
