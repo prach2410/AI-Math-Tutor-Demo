@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
+import { StudentProfileService } from '../student-profile/student-profile.service';
 
 function cleanText(text: string): string {
   return text
@@ -21,8 +22,8 @@ function cleanText(text: string): string {
         <!-- Hero / Celebration -->
         <div class="complete-hero">
           <div class="hero-emoji">🎉</div>
-          <h1 class="hero-title">เยี่ยมมาก!</h1>
-          <p class="hero-sub">หนูเรียนจบบทนี้แล้ว</p>
+          <h1 class="hero-title">เยี่ยมมาก{{ studentProfile.displayName() ? ' ' + studentProfile.displayName() : '' }}!</h1>
+          <p class="hero-sub">เรียนจบบทนี้แล้ว</p>
         </div>
 
         <!-- Section 1: วันนี้หนูได้เรียนรู้อะไร -->
@@ -293,8 +294,9 @@ function cleanText(text: string): string {
   `]
 })
 export class LessonCompleteComponent {
-  protected tutor      = inject(TutorService);
-  protected onboarding = inject(OnboardingService);
+  protected tutor          = inject(TutorService);
+  protected onboarding     = inject(OnboardingService);
+  protected studentProfile = inject(StudentProfileService);
 
   protected parentExpanded = signal(false);
 
