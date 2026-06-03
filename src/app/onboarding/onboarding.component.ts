@@ -448,6 +448,20 @@ import { VoiceService } from '../voice.service';
     @media (max-width: 640px) {
       .badge { font-size: 11px; }
       .bubble { max-width: 85%; font-size: 14px; }
+
+      .mode-select-bar { padding: 12px; gap: 8px; }
+      .mode-prompt { font-size: 13.5px; }
+      .mode-btns { width: 100%; gap: 8px; }
+      .mode-btn {
+        flex: 1;
+        flex-direction: row;
+        justify-content: center;
+        padding: 14px 12px;
+        min-width: 0;
+        gap: 8px;
+      }
+      .mode-icon { font-size: 22px; }
+      .mode-label { font-size: 13.5px; }
     }
   `]
 })

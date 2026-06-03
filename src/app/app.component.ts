@@ -397,6 +397,27 @@ import { VoiceService } from './voice.service';
 
       .side-realworld { max-height: none; }
 
+      /* Mode selection on mobile */
+      .mode-select-card {
+        padding: 24px 16px;
+        gap: 14px;
+        justify-content: flex-start;
+        padding-top: 40px;
+      }
+      .mode-select-title { font-size: 17px; }
+      .mode-select-sub   { font-size: 13px; }
+      .mode-select-btns  { width: 100%; flex-direction: column; gap: 10px; }
+      .mode-btn {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        padding: 16px 20px;
+        min-width: 0;
+        gap: 12px;
+      }
+      .mode-icon  { font-size: 28px; }
+      .mode-label { font-size: 15px; }
+
       .side-note,
       .side-summary,
       .side-feedback {

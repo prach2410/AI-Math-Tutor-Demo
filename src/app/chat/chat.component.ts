@@ -499,6 +499,26 @@ import { InteractionMode } from '../models/learning.model';
     .guide-item-text { display: flex; flex-direction: column; gap: 1px; }
     .guide-item strong { font-size: 12.5px; color: #1e293b; }
     .guide-item p { font-size: 11.5px; color: #64748b; margin: 0; line-height: 1.4; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .chat-input-bar { padding: 8px 10px; gap: 6px; }
+
+      .mode-toggle-btn { padding: 10px 11px; font-size: 18px; }
+
+      .mic-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 10px;
+        font-size: 14px;
+      }
+
+      .transcript-preview { font-size: 12.5px; }
+
+      .assist-bar { padding: 4px 10px 5px; gap: 5px; }
+      .assist-btn { font-size: 12px; padding: 6px 10px; }
+      .assist-btn::after { display: none; }
+    }
   `]
 })
 export class ChatComponent implements AfterViewInit, AfterViewChecked {

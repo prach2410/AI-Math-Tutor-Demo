@@ -327,6 +327,20 @@ function cleanText(text: string): string {
     .cta-review   { background: #f59e0b; color: white; }
     .cta-home     { background: #e2e8f0; color: #374151; }
     .cta-feedback { background: #7c3aed; color: white; }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .reason-chips { gap: 6px; }
+      .reason-chip {
+        flex: 1 0 calc(50% - 3px);
+        text-align: center;
+        font-size: 12.5px;
+        padding: 8px 10px;
+      }
+
+      .cta-row { padding: 14px 14px 10px; gap: 8px; }
+      .cta-btn { font-size: 12.5px; padding: 10px 10px; min-width: 0; }
+    }
   `]
 })
 export class LessonCompleteComponent {
