@@ -179,3 +179,158 @@ when a batch was created.
 
 Discovery should depend on  
 evidence quality.
+
+---
+# Immediate Batch Summary
+
+## Purpose
+
+Provide immediate visibility into batch evidence  
+before AI analysis.
+
+Users should be able to understand  
+the overall learning patterns of a batch  
+without opening the JSON file.
+
+---
+
+## When To Calculate
+
+Calculate automatically after:
+
+```text
+Import As Batch
+```
+
+and before:
+
+```text
+AI Analysis
+```
+
+---
+
+## Summary Metrics
+
+Display:
+
+```text
+Total Sessions
+```
+
+```text
+Completed Sessions
+```
+
+```text
+Incomplete Sessions
+```
+
+```text
+Completion Rate (%)
+```
+
+---
+
+## Help Metrics
+
+Display:
+
+```text
+Hint Usage Count
+```
+
+```text
+Help Me Start Usage Count
+```
+
+```text
+Worked Example Usage Count
+```
+
+---
+
+## Learning Friction Metrics
+
+If available:
+
+```text
+Session Abandoned Count
+```
+
+```text
+Abandonment Rate (%)
+```
+
+```text
+Most Abandoned Lesson
+```
+
+```text
+Most Abandoned Step
+```
+
+---
+
+## Student Metrics
+
+If available:
+
+```text
+Unique Students
+```
+
+```text
+Returning Students
+```
+
+```text
+Average Sessions Per Student
+```
+
+---
+
+## Device Metrics
+
+If available:
+
+```text
+Unique Devices
+```
+
+```text
+Returning Devices
+```
+
+---
+
+## UI Example
+
+```text
+Batch Summary
+
+Sessions: 10
+
+Completed: 8
+Incomplete: 2
+
+Completion Rate: 80%
+
+Help Me Start: 7
+Worked Example: 4
+Hints: 5
+
+Returning Students: 3
+Unique Devices: 6
+```
+
+---
+
+## Important Principle
+
+Summary metrics are evidence.
+
+Summary metrics are not discoveries.
+
+The purpose is to help users review evidence  
+before generating discoveries.
