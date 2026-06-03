@@ -82,14 +82,14 @@ import { TutorService } from '../tutor.service';
         </div>
       }
 
-      <!-- Input (step 1) -->
-      @if (ob.waiting() === 'answer') {
+      <!-- Input (step 0 = name, step 1 = answer) -->
+      @if (ob.waiting() === 'name' || ob.waiting() === 'answer') {
         <div class="input-bar">
           <input
             #inputEl
             class="chat-input"
             type="text"
-            placeholder="พิมพ์คำตอบของหนู..."
+            [placeholder]="ob.waiting() === 'name' ? 'พิมพ์ชื่อเล่น หรือ Enter เพื่อข้าม...' : 'พิมพ์คำตอบของหนู...'"
             [(ngModel)]="inputText"
             (keydown.enter)="send()"
             [disabled]="ob.loading()"
@@ -97,7 +97,7 @@ import { TutorService } from '../tutor.service';
           <button
             class="send-btn"
             (click)="send()"
-            [disabled]="ob.loading() || !inputText.trim()">
+            [disabled]="ob.loading() || (ob.waiting() === 'answer' && !inputText.trim())">
             ส่ง ➤
           </button>
         </div>
@@ -385,7 +385,7 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
     effect(() => {
       this.ob.messages();
       this.scrollToBottom();
-      if (!this.ob.loading() && this.ob.waiting() === 'answer') {
+      if (!this.ob.loading() && (this.ob.waiting() === 'answer' || this.ob.waiting() === 'name')) {
         setTimeout(() => this.inputEl?.nativeElement.focus());
       }
     });
@@ -400,8 +400,9 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
   }
 
   protected send(): void {
+    // name step allows empty (skip)
+    if (this.ob.waiting() === 'answer' && !this.inputText.trim()) return;
     const text = this.inputText.trim();
-    if (!text) return;
     this.inputText = '';
     this.ob.handleAnswer(text);
   }
