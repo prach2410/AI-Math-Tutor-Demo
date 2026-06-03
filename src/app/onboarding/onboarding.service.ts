@@ -127,6 +127,19 @@ export class OnboardingService {
   }
 
   private startStep0(): void {
+    const existingName = this.studentProfile.displayName();
+    if (existingName) {
+      // ชื่อมีอยู่แล้ว ข้าม step 0 ไปเลย
+      this._messages.set([
+        {
+          role: 'assistant',
+          content: `ยินดีต้อนรับกลับนะครับ ${existingName} 😊\n\nมาเรียนต่อกันเลยครับ`,
+        },
+      ]);
+      this.startStep1();
+      return;
+    }
+
     this._step.set(0);
     this._waiting.set('name');
     this._messages.set([
