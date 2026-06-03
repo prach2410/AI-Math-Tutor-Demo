@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, signal } from '@angular/core';
+import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
 import { OnboardingComponent } from './onboarding/onboarding.component';
@@ -28,8 +29,12 @@ import { TutorService } from './tutor.service';
     LearningFeedbackComponent,
     FeedbackCollectionComponent,
     LessonCompleteComponent,
+    DiscoveryBatchesComponent,
   ],
   template: `
+    @if (isAdminPage()) {
+      <app-discovery-batches />
+    } @else {
     <app-first-time-guide />
     <div class="layout">
       <header class="header">
@@ -110,6 +115,7 @@ import { TutorService } from './tutor.service';
         </a>
       </nav>
     </div>
+    }
   `,
   styles: [`
     .layout {
@@ -358,6 +364,10 @@ import { TutorService } from './tutor.service';
 export class AppComponent implements OnInit {
   protected tutor       = inject(TutorService);
   protected onboarding  = inject(OnboardingService);
+
+  protected isAdminPage = signal(
+    window.location.pathname.startsWith('/admin/discovery-batches')
+  );
 
   @ViewChild('aboutRef') private aboutRef!: AboutComponent;
 
