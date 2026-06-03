@@ -859,3 +859,317 @@ Users should be able to:
 Product learning should be iterative.
 
 Not all discoveries are validated immediately.
+
+---
+# Discovery Review State Machine
+
+Status
+
+Planned
+
+Version
+
+1.0
+
+---
+
+# Purpose
+
+Ensure discovery reviews follow a structured workflow.
+
+Users should move through:
+
+```text
+Evidence
+↓
+Observation
+↓
+Discovery Draft
+↓
+Reviewed
+```
+
+and should not skip directly from import to reviewed.
+
+---
+
+# Review States
+
+## Not Analyzed
+
+Status
+
+```text
+NOT ANALYZED
+```
+
+Meaning
+
+- Batch imported successfully.
+    
+- No discovery notes have been saved.
+    
+- Review work has not started.
+    
+
+---
+
+## Discovery Draft
+
+Status
+
+```text
+DISCOVERY DRAFT
+```
+
+Meaning
+
+- Discovery notes have been saved.
+    
+- Review is still in progress.
+    
+- Notes may continue to evolve.
+    
+
+---
+
+## Reviewed
+
+Status
+
+```text
+REVIEWED
+```
+
+Meaning
+
+- Discovery review is complete.
+    
+- Product learning has been captured.
+    
+- No additional review is required.
+    
+
+---
+
+# State Transitions
+
+Supported transitions:
+
+```text
+NOT ANALYZED
+↓ Save Discovery Notes
+DISCOVERY DRAFT
+```
+
+```text
+DISCOVERY DRAFT
+↓ Save Discovery Notes
+DISCOVERY DRAFT
+```
+
+```text
+DISCOVERY DRAFT
+↓ Mark Reviewed
+REVIEWED
+```
+
+---
+
+# Invalid Transitions
+
+The following transition should not be allowed:
+
+```text
+NOT ANALYZED
+↓ Mark Reviewed
+```
+
+Reason
+
+No discovery work exists.
+
+No review has occurred.
+
+---
+
+# Save Discovery Notes
+
+Purpose
+
+Create or update discovery work.
+
+---
+
+## Save Action
+
+The system should save:
+
+- Key Observations
+    
+- Unconfirmed Signals
+    
+- Validated Discoveries
+    
+- Product Decisions
+    
+- Next Questions
+    
+
+---
+
+## First Save
+
+If the batch status is:
+
+```text
+NOT ANALYZED
+```
+
+After saving:
+
+```text
+DISCOVERY DRAFT
+```
+
+---
+
+## Subsequent Saves
+
+If the batch status is:
+
+```text
+DISCOVERY DRAFT
+```
+
+Status remains unchanged.
+
+---
+
+# Mark Reviewed
+
+Purpose
+
+Finalize discovery review.
+
+---
+
+## Review Requirements
+
+A batch should only be reviewable when:
+
+At least one of the following contains content:
+
+- Key Observations
+    
+- Unconfirmed Signals
+    
+- Validated Discoveries
+    
+- Product Decisions
+    
+- Next Questions
+    
+
+---
+
+## Review Result
+
+After review:
+
+```text
+REVIEWED
+```
+
+---
+
+# UI Behavior
+
+## Not Analyzed
+
+Display:
+
+```text
+NOT ANALYZED
+```
+
+Show:
+
+```text
+Edit Notes
+```
+
+Hide or disable:
+
+```text
+Mark Reviewed
+```
+
+---
+
+## Discovery Draft
+
+Display:
+
+```text
+DISCOVERY DRAFT
+```
+
+Show:
+
+```text
+Save Discovery Notes
+```
+
+```text
+Mark Reviewed
+```
+
+---
+
+## Reviewed
+
+Display:
+
+```text
+REVIEWED
+```
+
+Show:
+
+```text
+View Notes
+```
+
+Optional:
+
+```text
+Reopen Review
+```
+
+---
+
+# Review Guidance
+
+Display above Discovery Notes:
+
+```text
+Start with the evidence above.
+
+Record observations before conclusions.
+
+Only add discoveries supported by multiple sessions.
+```
+
+---
+
+# Product Learning Principle
+
+Discovery is a process.
+
+Evidence should come before conclusions.
+
+Review should come after discovery work.
+
+Users should not be able to mark a batch as reviewed  
+without recording product learning.

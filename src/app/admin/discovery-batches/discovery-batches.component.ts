@@ -333,6 +333,9 @@ const API = '/api/admin/discovery-batches';
                           <div class="summary-row">
                             <span>Returning</span><strong>{{ batch.summary.returningDevices }}</strong>
                           </div>
+                          <div class="summary-row">
+                            <span>Avg Sessions</span><strong>{{ batch.summary.avgSessionsPerDevice }}</strong>
+                          </div>
                         </div>
                       }
                     </div>
