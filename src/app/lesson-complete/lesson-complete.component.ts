@@ -3,8 +3,6 @@ import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
 
-const FEEDBACK_FORM_URL = 'https://forms.gle/31keQMXNtNk6YKF7A';
-
 function cleanText(text: string): string {
   return text
     .replace(/ระดับ\s*:\s*กำลังพัฒนา/g, '🌱 กำลังเติบโต')
@@ -107,15 +105,6 @@ function cleanText(text: string): string {
             }
           </section>
         }
-
-        <!-- Feedback CTA -->
-        <div class="feedback-cta">
-          <p class="feedback-cta-title">💬 ช่วยพัฒนา AI Tutor</p>
-          <p class="feedback-cta-desc">ความคิดเห็นของคุณมีค่า<br>และจะช่วยให้ AI Tutor ช่วยนักเรียนได้ดียิ่งขึ้น</p>
-          <a class="cta-btn cta-feedback" [href]="feedbackUrl" target="_blank" rel="noopener">
-            💬 ส่งความคิดเห็น
-          </a>
-        </div>
 
         <!-- CTA หลัก -->
         <div class="cta-row">
@@ -301,36 +290,6 @@ function cleanText(text: string): string {
     .cta-review   { background: #f59e0b; color: white; }
     .cta-home     { background: #e2e8f0; color: #374151; }
     .cta-feedback { background: #7c3aed; color: white; }
-
-    /* Feedback CTA section */
-    .feedback-cta {
-      background: #f8fafc;
-      border-top: 1px solid #e2e8f0;
-      padding: 14px 20px 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      text-align: center;
-    }
-
-    .feedback-cta-title {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    .feedback-cta-desc {
-      font-size: 12.5px;
-      color: #64748b;
-      line-height: 1.6;
-      margin-bottom: 4px;
-    }
-
-    .feedback-cta .cta-feedback {
-      flex: none;
-      min-width: 160px;
-    }
   `]
 })
 export class LessonCompleteComponent {
@@ -338,7 +297,6 @@ export class LessonCompleteComponent {
   protected onboarding = inject(OnboardingService);
 
   protected parentExpanded = signal(false);
-  protected feedbackUrl = FEEDBACK_FORM_URL;
 
   protected cleanedFeedback = computed(() => cleanText(this.tutor.studentFeedback()));
   protected cleanedNote     = computed(() => cleanText(this.tutor.studentNote()));

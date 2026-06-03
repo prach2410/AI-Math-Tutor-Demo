@@ -13,7 +13,13 @@ interface FeedbackForm {
   standalone: true,
   imports: [FormsModule],
   template: `
-    @if (!submitted()) {
+    @if (submitted()) {
+      <div class="thank-you">
+        <span class="thank-icon">✅</span>
+        <p class="thank-text">ขอบคุณสำหรับความคิดเห็นครับ</p>
+        <p class="thank-sub">ข้อมูลของคุณจะช่วยพัฒนา AI Tutor<br>ให้ช่วยนักเรียนได้ดียิ่งขึ้น</p>
+      </div>
+    } @else {
       <div class="feedback-form">
         <p class="form-title">💬 แบ่งปันความคิดเห็นสั้นๆ</p>
 
@@ -82,6 +88,21 @@ interface FeedbackForm {
     }
   `,
   styles: [`
+    .thank-you {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 16px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .thank-icon { font-size: 22px; }
+    .thank-text { font-size: 14px; font-weight: 600; color: #15803d; margin: 0; }
+    .thank-sub  { font-size: 12px; color: #166534; margin: 0; line-height: 1.6; }
+
     .feedback-form {
       margin-top: 12px;
       padding: 14px;
