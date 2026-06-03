@@ -54,10 +54,12 @@ export class TutorService {
   private _reflection       = signal<string[]>([]);
   private _studentFeedback  = signal('');
   private _parentCoaching   = signal('');
-  private _wrongCount       = 0;
-  private _hintCount        = 0;
-  private _guidedCount      = 0;
-  private _exampleCount     = 0;
+  private _wrongCount        = 0;
+  private _hintCount         = 0;
+  private _guidedCount       = 0;
+  private _exampleCount      = 0;
+  private _voiceMessageCount = 0;
+  private _textMessageCount  = 0;
 
   // Session tracking
   private _sessionId            = signal('');
@@ -102,10 +104,12 @@ export class TutorService {
     this._reflection.set([]);
     this._studentFeedback.set('');
     this._parentCoaching.set('');
-    this._wrongCount   = 0;
-    this._hintCount    = 0;
-    this._guidedCount  = 0;
-    this._exampleCount = 0;
+    this._wrongCount        = 0;
+    this._hintCount         = 0;
+    this._guidedCount       = 0;
+    this._exampleCount      = 0;
+    this._voiceMessageCount = 0;
+    this._textMessageCount  = 0;
     this._loading.set(true);
 
     // Reset session state
@@ -155,9 +159,16 @@ export class TutorService {
   async sendMessage(text: string): Promise<void> {
     if (this._finished()) return;
 
+    const inputMode = this._interactionMode() ?? 'text';
+    if (inputMode === 'voice') {
+      this._voiceMessageCount++;
+      this.addEvent('voice_used');
+    } else {
+      this._textMessageCount++;
+    }
     const userMsg: Message = { role: 'user', content: text };
     this._messages.update(msgs => [...msgs, userMsg]);
-    this.addSessionMessage(userMsg);
+    this.addSessionMessage(userMsg, undefined, inputMode);
     this.addEvent('student_answer_submitted');
     this.resetInactivityTimer();
     this._loading.set(true);
@@ -314,7 +325,8 @@ export class TutorService {
 
   private addSessionMessage(
     msg: Message,
-    typeOverride?: 'answer' | 'message' | 'hint' | 'guided' | 'worked_example' | 'error'
+    typeOverride?: 'answer' | 'message' | 'hint' | 'guided' | 'worked_example' | 'error',
+    inputMode?: 'voice' | 'text'
   ): void {
     const role: SessionMessage['role'] = msg.role === 'user' ? 'student' : 'ai';
     let type: SessionMessage['type'];
@@ -331,7 +343,9 @@ export class TutorService {
     } else {
       type = 'message';
     }
-    this._sessionMessages.push({ role, type, text: msg.content, timestamp: new Date().toISOString() });
+    const entry: SessionMessage = { role, type, text: msg.content, timestamp: new Date().toISOString() };
+    if (inputMode) entry.inputMode = inputMode;
+    this._sessionMessages.push(entry);
   }
 
   private async createSession(sessionId: string, topic: string, startedAt: Date): Promise<void> {
@@ -377,6 +391,8 @@ export class TutorService {
           exampleUsed: this._exampleCount,
           completed: false,
           durationSeconds,
+          voiceMessages: this._voiceMessageCount,
+          textMessages: this._textMessageCount,
         },
         interactionMode: this._interactionMode() ?? undefined,
         reasonForChoice: this._reasonForChoice() || undefined,
@@ -411,6 +427,8 @@ export class TutorService {
         exampleUsed: this._exampleCount,
         completed: true,
         durationSeconds,
+        voiceMessages: this._voiceMessageCount,
+        textMessages: this._textMessageCount,
       },
       interactionMode: this._interactionMode() ?? undefined,
       reasonForChoice: this._reasonForChoice() || undefined,

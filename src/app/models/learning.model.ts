@@ -50,6 +50,7 @@ export interface SessionMessage {
   type: 'answer' | 'message' | 'hint' | 'guided' | 'worked_example' | 'error';
   text: string;
   timestamp: string;
+  inputMode?: 'voice' | 'text';
 }
 
 export interface SessionEvent {
@@ -63,6 +64,8 @@ export interface SessionSummary {
   exampleUsed: number;
   completed: boolean;
   durationSeconds: number;
+  voiceMessages?: number;
+  textMessages?: number;
 }
 
 export interface CreateSessionRequest {
