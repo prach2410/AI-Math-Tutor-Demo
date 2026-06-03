@@ -13,6 +13,7 @@ import { LearningFeedbackComponent } from './learning-feedback/learning-feedback
 import { FeedbackCollectionComponent } from './feedback-collection/feedback-collection.component';
 import { LessonCompleteComponent } from './lesson-complete/lesson-complete.component';
 import { TutorService } from './tutor.service';
+import { VoiceService } from './voice.service';
 
 @Component({
   selector: 'app-root',
@@ -69,6 +70,28 @@ import { TutorService } from './tutor.service';
             <app-onboarding />
           } @else if (tutor.finished()) {
             <app-lesson-complete />
+          } @else if (tutor.interactionMode() === null) {
+            <div class="mode-select-card">
+              <p class="mode-select-title">คุณอยากเรียนแบบไหนคะ? 😊</p>
+              <p class="mode-select-sub">เลือกวิธีที่สะดวกสำหรับตอนนี้</p>
+              <div class="mode-select-btns">
+                <button class="mode-btn text-btn" (click)="chooseMode('text')">
+                  <span class="mode-icon">⌨️</span>
+                  <span class="mode-label">พิมพ์ข้อความ</span>
+                </button>
+                <button class="mode-btn voice-btn"
+                  (click)="chooseMode('voice')"
+                  [disabled]="!voice.isSupported()"
+                  [title]="voice.isSupported() ? '' : 'ใช้ได้บน Chrome / Edge เท่านั้น'"
+                >
+                  <span class="mode-icon">🎙️</span>
+                  <span class="mode-label">พูดออกเสียง</span>
+                  @if (!voice.isSupported()) {
+                    <span class="mode-note">Chrome เท่านั้น</span>
+                  }
+                </button>
+              </div>
+            </div>
           } @else {
             <app-learning-reflection />
             <app-chat />
@@ -243,6 +266,69 @@ import { TutorService } from './tutor.service';
       flex: 0 0 auto;
     }
 
+    /* ── Mode selection ── */
+    .mode-select-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 32px 24px;
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .mode-select-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      text-align: center;
+    }
+
+    .mode-select-sub {
+      font-size: 14px;
+      color: #64748b;
+      text-align: center;
+      margin-top: -8px;
+    }
+
+    .mode-select-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 24px 32px;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+      min-width: 140px;
+    }
+    .mode-btn:hover:not(:disabled) {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    .mode-btn:active:not(:disabled) { transform: translateY(0) scale(0.97); }
+    .mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .text-btn:hover:not(:disabled)  { border-color: var(--color-primary); }
+    .voice-btn:hover:not(:disabled) { border-color: #16a34a; }
+
+    .mode-icon  { font-size: 36px; line-height: 1; }
+    .mode-label { font-size: 15px; font-weight: 600; color: #1e293b; }
+    .mode-note  { font-size: 11px; color: #94a3b8; }
+
     /* ── Mobile bottom nav ── */
     .mobile-bottom-nav {
       display: none;
@@ -364,6 +450,7 @@ import { TutorService } from './tutor.service';
 export class AppComponent implements OnInit {
   protected tutor       = inject(TutorService);
   protected onboarding  = inject(OnboardingService);
+  protected voice       = inject(VoiceService);
 
   protected isAdminPage = signal(
     window.location.pathname.startsWith('/admin/discovery-batches')
@@ -391,6 +478,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+  protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected goHome(): void  { this.onboarding.restart(); }
   protected goLearn(): void { this.onboarding.skip(); this.tutor.init(); }
   protected openAbout(): void { this.aboutRef?.open(); }

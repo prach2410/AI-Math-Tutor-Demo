@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
-  AssistResponse, AssistType,
+  AssistResponse, AssistType, InteractionMode,
   EvaluateRequest, EvaluateResponse, StartResponse,
   SessionMessage, SessionEvent, CreateSessionRequest,
   CompleteSessionRequest, ParentFeedbackRequest
@@ -65,6 +65,8 @@ export class TutorService {
   private _sessionEvents: SessionEvent[] = [];
   private _sessionMessages: SessionMessage[] = [];
   private _parentFeedbackSubmitted = signal(false);
+  private _interactionMode  = signal<InteractionMode | null>(null);
+  private _reasonForChoice  = signal('');
   private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private _abandonListener: (() => void) | null = null;
   private static readonly INACTIVE_MS = 3 * 60 * 1000;
@@ -84,6 +86,8 @@ export class TutorService {
   readonly scenarios       = SCENARIOS;
   readonly sessionId       = this._sessionId.asReadonly();
   readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
+  readonly interactionMode  = this._interactionMode.asReadonly();
+  readonly reasonForChoice  = this._reasonForChoice.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
     const meta = SCENARIOS.find(s => s.id === id);
@@ -112,6 +116,8 @@ export class TutorService {
     this._sessionEvents = [];
     this._sessionMessages = [];
     this._parentFeedbackSubmitted.set(false);
+    this._interactionMode.set(null);
+    this._reasonForChoice.set('');
     this.addEvent('lesson_started');
 
     // Create session on server (fire-and-forget, don't block lesson)
@@ -220,6 +226,12 @@ export class TutorService {
     } finally {
       this._loading.set(false);
     }
+  }
+
+  setInteractionMode(mode: InteractionMode, reason = ''): void {
+    this._interactionMode.set(mode);
+    this._reasonForChoice.set(reason);
+    this.addEvent(`mode_selected_${mode}`);
   }
 
   logEvent(type: string): void {
@@ -366,6 +378,8 @@ export class TutorService {
           completed: false,
           durationSeconds,
         },
+        interactionMode: this._interactionMode() ?? undefined,
+        reasonForChoice: this._reasonForChoice() || undefined,
       });
       navigator.sendBeacon(`${SESSION_API}/${sessionId}/complete`, new Blob([payload], { type: 'application/json' }));
     };
@@ -398,6 +412,8 @@ export class TutorService {
         completed: true,
         durationSeconds,
       },
+      interactionMode: this._interactionMode() ?? undefined,
+      reasonForChoice: this._reasonForChoice() || undefined,
     };
 
     await firstValueFrom(

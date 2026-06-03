@@ -1,4 +1,5 @@
 export type AssistType = 'hint' | 'guided' | 'worked-example';
+export type InteractionMode = 'text' | 'voice';
 
 export interface StartResponse {
   scenarioId: string;
@@ -79,6 +80,8 @@ export interface CompleteSessionRequest {
   messages: SessionMessage[];
   events: SessionEvent[];
   summary: SessionSummary;
+  interactionMode?: InteractionMode;
+  reasonForChoice?: string;
 }
 
 export interface ParentFeedbackRequest {

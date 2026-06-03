@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TutorService } from '../tutor.service';
+import { VoiceService } from '../voice.service';
 
 @Component({
   selector: 'app-chat',
@@ -106,22 +107,42 @@ import { TutorService } from '../tutor.service';
       }
 
       <div class="chat-input-bar">
-        <input
-          #inputEl
-          class="chat-input"
-          type="text"
-          [placeholder]="tutor.finished() ? 'เรียนจบแล้วครับ 🎉' : 'พิมพ์คำตอบของหนู...'"
-          [(ngModel)]="inputText"
-          (keydown.enter)="send()"
-          [disabled]="tutor.loading() || tutor.finished()"
-        />
-        <button
-          class="send-btn"
-          (click)="send()"
-          [disabled]="tutor.loading() || tutor.finished() || !inputText.trim()"
-        >
-          ส่ง ➤
-        </button>
+        @if (tutor.interactionMode() === 'voice') {
+          <div class="voice-bar">
+            <button
+              class="mic-btn"
+              [class.listening]="voice.isListening()"
+              (click)="toggleMic()"
+              [disabled]="tutor.loading() || tutor.finished()"
+            >
+              {{ voice.isListening() ? '🔴' : '🎙️' }}
+              {{ voice.isListening() ? 'กำลังฟัง...' : 'กดเพื่อพูด' }}
+            </button>
+            @if (voice.transcript()) {
+              <span class="transcript-preview">{{ voice.transcript() }}</span>
+            }
+            @if (voice.error()) {
+              <span class="voice-error">{{ voice.error() }}</span>
+            }
+          </div>
+        } @else {
+          <input
+            #inputEl
+            class="chat-input"
+            type="text"
+            [placeholder]="tutor.finished() ? 'เรียนจบแล้วครับ 🎉' : 'พิมพ์คำตอบของหนู...'"
+            [(ngModel)]="inputText"
+            (keydown.enter)="send()"
+            [disabled]="tutor.loading() || tutor.finished()"
+          />
+          <button
+            class="send-btn"
+            (click)="send()"
+            [disabled]="tutor.loading() || tutor.finished() || !inputText.trim()"
+          >
+            ส่ง ➤
+          </button>
+        }
       </div>
     </div>
   `,
@@ -366,6 +387,56 @@ import { TutorService } from '../tutor.service';
     .send-btn:hover:not(:disabled) { background: #1d4ed8; }
     .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    .voice-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mic-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #f0fdf4;
+      color: #15803d;
+      border: 2px solid #86efac;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .mic-btn:hover:not(:disabled) { background: #dcfce7; border-color: #4ade80; }
+    .mic-btn.listening {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fca5a5;
+      animation: mic-pulse 1.4s infinite;
+    }
+    .mic-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.3); }
+      50%       { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+    }
+
+    .transcript-preview {
+      flex: 1;
+      font-size: 13.5px;
+      color: #475569;
+      font-style: italic;
+    }
+
+    .voice-error {
+      flex: 1;
+      font-size: 13px;
+      color: #dc2626;
+    }
+
     /* Empty state guide — compact (~35% shorter) */
     .empty-state-guide {
       margin: 8px 12px;
@@ -413,7 +484,8 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
   @ViewChild('messagesContainer') private container!: ElementRef<HTMLDivElement>;
   @ViewChild('inputEl') private inputEl!: ElementRef<HTMLInputElement>;
 
-  protected tutor = inject(TutorService);
+  protected tutor  = inject(TutorService);
+  protected voice  = inject(VoiceService);
   protected inputText = '';
   protected readonly hasUserMsg = computed(() =>
     this.tutor.messages().some(m => m.role === 'user')
@@ -423,9 +495,27 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
     effect(() => {
       this.tutor.messages();
       this.scrollToBottom();
-      // refocus after each message (loading becomes false)
       if (!this.tutor.loading()) {
         setTimeout(() => this.focusInput());
+      }
+    });
+
+    // Auto-send when STT transcript arrives
+    effect(() => {
+      const t = this.voice.transcript();
+      if (t && !this.tutor.loading() && !this.tutor.finished()) {
+        this.tutor.sendMessage(t);
+        this.voice.transcript.set('');
+      }
+    });
+
+    // TTS: read AI response aloud in voice mode
+    effect(() => {
+      const msgs = this.tutor.messages();
+      if (this.tutor.interactionMode() !== 'voice') return;
+      const last = msgs[msgs.length - 1];
+      if (last && last.role === 'assistant' && !this.tutor.loading()) {
+        this.voice.speak(last.content);
       }
     });
   }
@@ -445,8 +535,18 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
     this.tutor.sendMessage(text);
   }
 
+  protected toggleMic(): void {
+    if (this.voice.isListening()) {
+      this.voice.stopListening();
+    } else {
+      this.voice.transcript.set('');
+      this.voice.error.set('');
+      this.voice.startListening();
+    }
+  }
+
   private focusInput(): void {
-    this.inputEl?.nativeElement.focus();
+    this.inputEl?.nativeElement?.focus?.();
   }
 
   ngAfterViewChecked(): void {
