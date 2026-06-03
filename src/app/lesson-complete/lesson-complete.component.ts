@@ -3,6 +3,7 @@ import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
 import { StudentProfileService } from '../student-profile/student-profile.service';
+import { VoiceService } from '../voice.service';
 
 function cleanText(text: string): string {
   return text
@@ -91,7 +92,22 @@ function cleanText(text: string): string {
           </section>
         }
 
-        <!-- Section 5: สรุปสำหรับผู้ปกครอง (Collapsible, default collapsed) -->
+        <!-- Reason question (ก่อน parent summary) -->
+        @if (tutor.interactionMode() && !reasonSubmitted()) {
+          <section class="section reason-section">
+            <h2 class="section-title">
+              💭 ทำไมถึงเลือก{{ tutor.interactionMode() === 'voice' ? 'พูดออกเสียง' : 'พิมพ์ข้อความ' }}?
+            </h2>
+            <div class="reason-chips">
+              @for (r of reasonOptions(); track r) {
+                <button class="reason-chip" (click)="submitReason(r)">{{ r }}</button>
+              }
+              <button class="reason-chip other-chip" (click)="submitReason('อื่นๆ')">อื่นๆ</button>
+            </div>
+          </section>
+        }
+
+        <!-- สรุปสำหรับผู้ปกครอง (Collapsible, default collapsed) -->
         @if (tutor.parentSummary()) {
           <section class="section parent-section">
             <button class="parent-toggle" (click)="toggleParent()">
@@ -104,21 +120,6 @@ function cleanText(text: string): string {
                 <app-parent-feedback />
               </div>
             }
-          </section>
-        }
-
-        <!-- Reason question -->
-        @if (tutor.interactionMode() && !reasonSubmitted()) {
-          <section class="section reason-section">
-            <h2 class="section-title">
-              💭 ทำไมถึงเลือก{{ tutor.interactionMode() === 'voice' ? 'พูดออกเสียง' : 'พิมพ์ข้อความ' }}?
-            </h2>
-            <div class="reason-chips">
-              @for (r of reasonOptions(); track r) {
-                <button class="reason-chip" (click)="submitReason(r)">{{ r }}</button>
-              }
-              <button class="reason-chip other-chip" (click)="submitReason('อื่นๆ')">อื่นๆ</button>
-            </div>
           </section>
         }
 
@@ -343,10 +344,21 @@ function cleanText(text: string): string {
     }
   `]
 })
-export class LessonCompleteComponent {
+export class LessonCompleteComponent implements OnInit {
   protected tutor          = inject(TutorService);
   protected onboarding     = inject(OnboardingService);
   protected studentProfile = inject(StudentProfileService);
+  private   voice          = inject(VoiceService);
+
+  ngOnInit(): void {
+    if (this.tutor.interactionMode() === 'voice') {
+      const name = this.studentProfile.displayName();
+      const msg = name
+        ? `ยอดเยี่ยมมากเลย ${name}! เรียนจบบทนี้แล้วครับ`
+        : 'ยอดเยี่ยมมากเลย! เรียนจบบทนี้แล้วครับ';
+      setTimeout(() => this.voice.speak(msg), 300);
+    }
+  }
 
   protected parentExpanded  = signal(false);
   protected reasonSubmitted = signal(false);
