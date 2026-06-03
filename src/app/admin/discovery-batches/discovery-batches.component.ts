@@ -36,11 +36,36 @@ const API = '/api/admin/discovery-batches';
               <h1 class="admin-title">🔍 Discovery Batch Review</h1>
               <p class="admin-sub">Internal tool — not visible to users</p>
             </div>
-            <a class="btn btn-reset" href="/reset" title="ล้าง localStorage ทั้งหมด (student ID, ชื่อ, onboarding)">
-              🗑 Reset LocalStorage
-            </a>
+            <div class="reset-group">
+              <a class="btn btn-reset" href="/reset" title="ล้าง localStorage (student ID, ชื่อ, onboarding)">
+                🗑 Reset LocalStorage
+              </a>
+              <button class="btn btn-reset" (click)="deleteAllSessions()" title="ลบ session ทั้งหมดในฐานข้อมูล">
+                🗑 Reset Server Sessions
+              </button>
+            </div>
           </div>
         </header>
+
+        <!-- Export Sessions -->
+        <div class="export-bar">
+          <button class="btn btn-export" (click)="toggleExport()">
+            {{ showExport() ? '▲ ซ่อน Export' : '📋 Export Sessions JSON' }}
+          </button>
+          @if (showExport()) {
+            <button class="btn btn-outline btn-sm" (click)="downloadExport()">⬇ Download JSON</button>
+          }
+        </div>
+
+        @if (showExport()) {
+          <div class="export-panel">
+            @if (exportLoading()) {
+              <p class="loading-text">Loading…</p>
+            } @else {
+              <pre class="export-json">{{ exportJson() }}</pre>
+            }
+          </div>
+        }
 
         <!-- Unreviewed count + Create -->
         <div class="top-bar">
@@ -168,6 +193,29 @@ const API = '/api/admin/discovery-batches';
     .admin-header-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .admin-title  { font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px; }
     .admin-sub    { font-size: 12px; color: #94a3b8; margin: 0; }
+    .export-bar   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn-export   { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; }
+    .btn-export:hover { background: #dbeafe; opacity: 1; }
+
+    .export-panel {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .export-json {
+      color: #94d2bd;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .reset-group  { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-reset    { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; text-decoration: none; font-size: 12.5px; }
     .btn-reset:hover { background: #fecaca; opacity: 1; }
 
@@ -347,6 +395,9 @@ export class DiscoveryBatchesComponent implements OnInit {
   protected creating = signal(false);
   protected createError = signal('');
   protected editingBatchId = signal('');
+  protected showExport = signal(false);
+  protected exportLoading = signal(false);
+  protected exportJson = signal('');
 
   protected noteDrafts: Record<string, string> = {};
 
@@ -361,6 +412,46 @@ export class DiscoveryBatchesComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await Promise.all([this.loadUnreviewedCount(), this.loadBatches()]);
     this.loading.set(false);
+  }
+
+  protected async toggleExport(): Promise<void> {
+    if (this.showExport()) {
+      this.showExport.set(false);
+      return;
+    }
+    this.showExport.set(true);
+    this.exportLoading.set(true);
+    try {
+      const data = await firstValueFrom(this.http.get('/api/admin/learning-sessions/export'));
+      this.exportJson.set(JSON.stringify(data, null, 2));
+    } catch {
+      this.exportJson.set('Error: ไม่สามารถโหลดข้อมูลได้');
+    } finally {
+      this.exportLoading.set(false);
+    }
+  }
+
+  protected downloadExport(): void {
+    const blob = new Blob([this.exportJson()], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sessions-export-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  protected async deleteAllSessions(): Promise<void> {
+    if (!confirm('ลบ Learning Sessions ทั้งหมดในฐานข้อมูล?\n\nการกระทำนี้ไม่สามารถย้อนกลับได้')) return;
+    try {
+      const res = await firstValueFrom(
+        this.http.delete<{ deleted: number }>('/api/admin/learning-sessions')
+      );
+      await Promise.all([this.loadUnreviewedCount(), this.loadBatches()]);
+      alert(`ลบสำเร็จ ${res.deleted} sessions`);
+    } catch {
+      alert('ไม่สามารถลบได้ กรุณาลองใหม่');
+    }
   }
 
   protected async createBatch(): Promise<void> {
