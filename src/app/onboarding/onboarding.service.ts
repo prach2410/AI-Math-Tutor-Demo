@@ -59,9 +59,20 @@ export class OnboardingService {
   }
 
   handleLearnOrTalkSelected(choice: 'learn' | 'free-talk'): void {
-    this._goFreeTalk.set(choice === 'free-talk');
     if (choice === 'free-talk') {
-      this._waiting.set('mode');
+      this._messages.update(m => [...m, { role: 'user', content: '💬 คุยกับพี่ก่อน' }]);
+      this._loading.set(true);
+      setTimeout(() => {
+        this._messages.update(m => [
+          ...m,
+          {
+            role: 'assistant',
+            content: 'ได้เลยครับ 😊\n\nตอนเรียน ถ้าหนูรู้สึกเครียด เหนื่อย หรืออยากพักสักครู่\nกดปุ่ม 💬 "คุยกับพี่ก่อน" ได้เลยครับ\n\nพี่จะคุยด้วยก่อน แล้วค่อยกลับมาเรียนต่อนะครับ',
+          },
+        ]);
+        this._loading.set(false);
+        this._waiting.set('learn-or-talk');
+      }, 600);
     } else {
       this.startStep1();
     }
@@ -125,7 +136,19 @@ export class OnboardingService {
 
   handleModeSelected(mode: InteractionMode): void {
     this.tutor.setInteractionMode(mode);
-    this._waiting.set('complete');
+    this._messages.update(m => [
+      ...m,
+      { role: 'user', content: mode === 'text' ? '⌨️ พิมพ์ข้อความ' : '🎤 พูดออกเสียง' },
+    ]);
+    this._loading.set(true);
+    const intro = mode === 'text'
+      ? 'เข้าใจแล้วครับ ⌨️\n\nตอนตอบโจทย์ พิมพ์คำตอบในช่องด้านล่าง\nแล้วกด Enter หรือปุ่ม "ส่ง" ได้เลยครับ'
+      : 'เข้าใจแล้วครับ 🎤\n\nตอนตอบโจทย์ กดปุ่มไมค์แล้วพูดคำตอบออกเสียง\nพี่จะฟังและแปลงเสียงให้เองเลยครับ';
+    setTimeout(() => {
+      this._messages.update(m => [...m, { role: 'assistant', content: intro }]);
+      this._loading.set(false);
+      this._waiting.set('complete');
+    }, 600);
   }
 
   handleGuidedClick(): void {
@@ -142,7 +165,7 @@ export class OnboardingService {
         },
       ]);
       this._loading.set(false);
-      this.startStep4();
+      this.startModeIntro();
     }, 600);
   }
 
@@ -209,6 +232,19 @@ export class OnboardingService {
           content: 'ต่อไปลองกด\n\n🆘 ช่วยเริ่มให้หน่อย\n\nดูนะครับ',
         },
       ]);
+    }, 400);
+  }
+
+  private startModeIntro(): void {
+    setTimeout(() => {
+      this._messages.update(m => [
+        ...m,
+        {
+          role: 'assistant',
+          content: 'ก่อนเริ่มเรียน เลือกวิธีที่หนูสะดวกคุยกับพี่นะครับ 😊',
+        },
+      ]);
+      this._waiting.set('mode');
     }, 400);
   }
 
