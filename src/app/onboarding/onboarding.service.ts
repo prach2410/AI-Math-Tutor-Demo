@@ -22,7 +22,7 @@ export class OnboardingService {
   private _active       = signal(false);
   private _messages     = signal<OnboardingMessage[]>([]);
   private _step         = signal<OnboardingStep>(0);
-  private _waiting      = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'learn-or-talk' | 'mode' | 'complete'>('name');
+  private _waiting      = signal<'name' | 'answer' | 'hint' | 'guided' | 'free-talk-demo' | 'mode' | 'done' | 'learn-or-talk' | 'complete'>('name');
   private _loading      = signal(false);
   private _goFreeTalk   = signal(false);
 
@@ -165,6 +165,23 @@ export class OnboardingService {
         },
       ]);
       this._loading.set(false);
+      this.startFreeTalkDemo();
+    }, 600);
+  }
+
+  handleFreeTalkDemoClick(): void {
+    if (this._waiting() !== 'free-talk-demo') return;
+    this._loading.set(true);
+
+    setTimeout(() => {
+      this._messages.update(m => [
+        ...m,
+        {
+          role: 'assistant',
+          content: 'นี่คือโหมดคุยกับพี่ 💬\n\nเวลาเรียนแล้วรู้สึกเครียด เหนื่อย หรืออยากพักสักครู่\nกดปุ่มนี้แล้วคุยกับพี่ได้เลยครับ\n\nพี่จะรับฟัง แล้วค่อยกลับมาเรียนต่อด้วยกันนะครับ',
+        },
+      ]);
+      this._loading.set(false);
       this.startModeIntro();
     }, 600);
   }
@@ -235,14 +252,21 @@ export class OnboardingService {
     }, 400);
   }
 
+  private startFreeTalkDemo(): void {
+    setTimeout(() => {
+      this._messages.update(m => [
+        ...m,
+        { role: 'assistant', content: 'ลองกดปุ่ม\n\n💬 คุยกับพี่ก่อน\n\nดูนะครับ' },
+      ]);
+      this._waiting.set('free-talk-demo');
+    }, 400);
+  }
+
   private startModeIntro(): void {
     setTimeout(() => {
       this._messages.update(m => [
         ...m,
-        {
-          role: 'assistant',
-          content: 'ก่อนเริ่มเรียน เลือกวิธีที่หนูสะดวกคุยกับพี่นะครับ 😊',
-        },
+        { role: 'assistant', content: 'ต่อไปเลือกวิธีที่หนูสะดวกคุยกับพี่นะครับ 😊' },
       ]);
       this._waiting.set('mode');
     }, 400);

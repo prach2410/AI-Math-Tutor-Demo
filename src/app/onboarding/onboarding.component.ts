@@ -21,7 +21,7 @@ import { VoiceService } from '../voice.service';
       </div>
 
       <!-- Step indicators (แสดงเฉพาะ learn path) -->
-      @if (ob.waiting() !== 'learn-or-talk' && ob.waiting() !== 'mode' && ob.waiting() !== 'complete' && !ob.goFreeTalk()) {
+      @if (ob.waiting() !== 'learn-or-talk' && ob.waiting() !== 'mode' && ob.waiting() !== 'free-talk-demo' && ob.waiting() !== 'complete' && !ob.goFreeTalk()) {
         <div class="steps-bar">
           @for (n of [1,2,3,4,5]; track n) {
             <div class="step-dot"
@@ -64,8 +64,8 @@ import { VoiceService } from '../voice.service';
         }
       </div>
 
-      <!-- Assist buttons (steps 2 & 3) -->
-      @if (ob.waiting() === 'hint' || ob.waiting() === 'guided') {
+      <!-- Assist buttons (steps 2, 3 & 4) -->
+      @if (ob.waiting() === 'hint' || ob.waiting() === 'guided' || ob.waiting() === 'free-talk-demo') {
         <div class="assist-bar">
           <button class="assist-btn hint-btn"
             [class.pulse]="ob.waiting() === 'hint'"
@@ -81,6 +81,43 @@ import { VoiceService } from '../voice.service';
           </button>
           <button class="assist-btn worked-btn" disabled>
             👀 ทำตัวอย่างให้ดู
+          </button>
+        </div>
+        <div class="freetalk-bar-ob">
+          <button class="freetalk-demo-btn"
+            [class.pulse]="ob.waiting() === 'free-talk-demo'"
+            [disabled]="ob.waiting() !== 'free-talk-demo' || ob.loading()"
+            (click)="ob.handleFreeTalkDemoClick()">
+            <span class="ft-icon">💬</span>
+            <span class="ft-text">
+              <span class="ft-label">คุยกับพี่ก่อน</span>
+              <span class="ft-sub">เครียด เหนื่อย หรืออยากพัก</span>
+            </span>
+          </button>
+        </div>
+      }
+
+      <!-- Mode select (step 5: เลือกพิมพ์/พูด) -->
+      @if (ob.waiting() === 'mode' && !ob.loading()) {
+        <div class="mode-demo-bar">
+          <button class="mode-demo-btn text-demo-btn"
+            [class.pulse]="true"
+            (click)="ob.handleModeSelected('text')">
+            <span class="mode-demo-icon">⌨️</span>
+            <span class="mode-demo-text">
+              <span class="mode-demo-label">พิมพ์ข้อความ</span>
+              <span class="mode-demo-sub">ตอบโจทย์ด้วยการพิมพ์</span>
+            </span>
+          </button>
+          <button class="mode-demo-btn voice-demo-btn"
+            [disabled]="!voiceSupported"
+            [title]="voiceSupported ? '' : 'ใช้ได้บน Chrome / Edge เท่านั้น'"
+            (click)="ob.handleModeSelected('voice')">
+            <span class="mode-demo-icon">🎤</span>
+            <span class="mode-demo-text">
+              <span class="mode-demo-label">พูดออกเสียง</span>
+              <span class="mode-demo-sub">{{ voiceSupported ? 'ตอบโจทย์ด้วยเสียง ไม่ต้องพิมพ์' : 'Chrome / Edge เท่านั้น' }}</span>
+            </span>
           </button>
         </div>
       }
@@ -126,38 +163,6 @@ import { VoiceService } from '../voice.service';
             <button class="mode-btn talk-mode" (click)="ob.handleLearnOrTalkSelected('free-talk')">
               <span class="mode-icon">💬</span>
               <span class="mode-label">คุยกับพี่ก่อน</span>
-            </button>
-          </div>
-        </div>
-      }
-
-      <!-- Step 5b: เลือกวิธีพิมพ์/พูด -->
-      @if (ob.waiting() === 'mode' && !ob.loading()) {
-        <div class="mode-select-bar">
-          <p class="mode-prompt">อยากคุยกับพี่แบบไหนครับ? 😊</p>
-          <div class="mode-descs">
-            <div class="mode-desc-item">
-              <span>⌨️</span><span>พิมพ์ข้อความตามสะดวก</span>
-            </div>
-            <div class="mode-desc-item">
-              <span>🎤</span><span>พูดออกเสียงได้เลย ไม่ต้องพิมพ์</span>
-            </div>
-          </div>
-          <div class="mode-btns">
-            <button class="mode-btn text-mode" (click)="ob.handleModeSelected('text')">
-              <span class="mode-icon">⌨️</span>
-              <span class="mode-label">พิมพ์ข้อความ</span>
-            </button>
-            <button class="mode-btn voice-mode"
-              (click)="ob.handleModeSelected('voice')"
-              [disabled]="!voiceSupported"
-              [title]="voiceSupported ? '' : 'ใช้ได้บน Chrome / Edge เท่านั้น'"
-            >
-              <span class="mode-icon">🎤</span>
-              <span class="mode-label">พูดออกเสียง</span>
-              @if (!voiceSupported) {
-                <small class="mode-note">Chrome เท่านั้น</small>
-              }
             </button>
           </div>
         </div>
@@ -362,6 +367,72 @@ import { VoiceService } from '../voice.service';
       0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.5); }
       50%       { box-shadow: 0 0 0 7px rgba(14,165,233,0); }
     }
+
+    /* Free talk demo button */
+    .freetalk-bar-ob {
+      padding: 0 16px 8px;
+      flex-shrink: 0;
+    }
+    .freetalk-demo-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+      border: 1.5px solid #c4b5fd;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .freetalk-demo-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .freetalk-demo-btn:not(:disabled):hover { background: linear-gradient(135deg, #ede9fe, #ddd6fe); border-color: #7c3aed; transform: translateY(-1px); }
+    .freetalk-demo-btn.pulse { animation: pulseFreeTalk 1.4s ease-in-out infinite; }
+    @keyframes pulseFreeTalk {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.4); }
+      50%       { box-shadow: 0 0 0 7px rgba(124,58,237,0); }
+    }
+    .ft-icon { font-size: 20px; flex-shrink: 0; }
+    .ft-text { display: flex; flex-direction: column; gap: 1px; }
+    .ft-label { font-size: 13px; font-weight: 700; color: #5b21b6; }
+    .ft-sub   { font-size: 11px; color: #7c3aed; opacity: 0.8; }
+
+    /* Mode demo buttons (step 5) */
+    .mode-demo-bar {
+      padding: 8px 16px 12px;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .mode-demo-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1.5px solid;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .mode-demo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .text-demo-btn  { background: #f0f9ff; border-color: #7dd3fc; }
+    .voice-demo-btn { background: #f0fdf4; border-color: #86efac; }
+    .text-demo-btn:not(:disabled):hover  { background: #e0f2fe; border-color: #38bdf8; transform: translateY(-1px); }
+    .voice-demo-btn:not(:disabled):hover { background: #dcfce7; border-color: #4ade80; transform: translateY(-1px); }
+    .mode-demo-btn.pulse { animation: pulseModeDemo 1.4s ease-in-out infinite; }
+    @keyframes pulseModeDemo {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(14,165,233,0.4); }
+      50%       { box-shadow: 0 0 0 7px rgba(14,165,233,0); }
+    }
+    .mode-demo-icon { font-size: 20px; flex-shrink: 0; }
+    .mode-demo-text { display: flex; flex-direction: column; gap: 1px; }
+    .mode-demo-label { font-size: 13px; font-weight: 700; color: #1e293b; }
+    .mode-demo-sub   { font-size: 11px; color: #64748b; }
 
     /* Input bar */
     .input-bar {
