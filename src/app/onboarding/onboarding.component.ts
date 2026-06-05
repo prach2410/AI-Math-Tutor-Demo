@@ -24,12 +24,12 @@ import { VoiceService } from '../voice.service';
       <div class="steps-bar">
         @for (n of [1,2,3,4,5]; track n) {
           <div class="step-dot"
-            [class.done]="ob.step() > n"
-            [class.active]="ob.step() === n">
+            [class.done]="ob.step() + 1 > n"
+            [class.active]="ob.step() + 1 === n">
             {{ n }}
           </div>
         }
-        <span class="step-label">ขั้นที่ {{ ob.step() }} / 5</span>
+        <span class="step-label">ขั้นที่ {{ ob.step() + 1 }} / 5</span>
       </div>
 
       <!-- Messages -->

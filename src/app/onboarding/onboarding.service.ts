@@ -59,13 +59,8 @@ export class OnboardingService {
   }
 
   handleLearnOrTalkSelected(choice: 'learn' | 'free-talk'): void {
-    if (choice === 'free-talk') {
-      this._goFreeTalk.set(true);
-      this._waiting.set('complete');
-    } else {
-      this._goFreeTalk.set(false);
-      this._waiting.set('mode');
-    }
+    this._goFreeTalk.set(choice === 'free-talk');
+    this._waiting.set('mode');
   }
 
   handleAnswer(text: string): void {

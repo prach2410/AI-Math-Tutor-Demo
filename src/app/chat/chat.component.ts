@@ -104,8 +104,14 @@ import { InteractionMode } from '../models/learning.model';
           <button class="assist-btn worked-btn" (click)="tutor.requestAssist('worked-example')">
             👀 ทำตัวอย่างให้ดู
           </button>
-          <button class="assist-btn freetalk-btn" (click)="tutor.enterFreeTalk()">
-            💬 คุยกับพี่ก่อน
+        </div>
+        <div class="freetalk-bar">
+          <button class="freetalk-feature-btn" (click)="tutor.enterFreeTalk()">
+            <span class="ft-btn-icon">💬</span>
+            <span class="ft-btn-text">
+              <span class="ft-btn-label">คุยกับพี่ก่อน</span>
+              <span class="ft-btn-sub">เครียด เหนื่อย หรืออยากพัก — คุยได้เลย</span>
+            </span>
           </button>
         </div>
       }
@@ -324,13 +330,58 @@ import { InteractionMode } from '../models/learning.model';
 
     .hint-btn   { background: #fffbeb; color: #92400e; border-color: #fcd34d; }
     .guided-btn { background: #f0f9ff; color: #0369a1; border-color: #7dd3fc; }
-    .worked-btn    { background: #faf5ff; color: #7e22ce; border-color: #c084fc; }
-    .freetalk-btn  { background: #f5f3ff; color: #5b21b6; border-color: #a78bfa; }
+    .worked-btn { background: #faf5ff; color: #7e22ce; border-color: #c084fc; }
 
     .hint-btn:hover   { background: #fef9c3; border-color: #f59e0b; }
     .guided-btn:hover { background: #e0f2fe; border-color: #38bdf8; }
-    .worked-btn:hover    { background: #f3e8ff; border-color: #a855f7; }
-    .freetalk-btn:hover  { background: #ede9fe; border-color: #7c3aed; }
+    .worked-btn:hover { background: #f3e8ff; border-color: #a855f7; }
+
+    .freetalk-bar {
+      padding: 0 16px 8px;
+      flex-shrink: 0;
+    }
+
+    .freetalk-feature-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+      border: 1.5px solid #c4b5fd;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .freetalk-feature-btn:hover {
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      border-color: #7c3aed;
+      box-shadow: 0 2px 10px rgba(124,58,237,0.15);
+      transform: translateY(-1px);
+    }
+    .freetalk-feature-btn:active { transform: translateY(0); }
+
+    .ft-btn-icon { font-size: 22px; flex-shrink: 0; }
+
+    .ft-btn-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .ft-btn-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #5b21b6;
+    }
+
+    .ft-btn-sub {
+      font-size: 11.5px;
+      color: #7c3aed;
+      opacity: 0.8;
+    }
 
     .bubble-text {
       white-space: pre-wrap;
