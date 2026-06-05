@@ -1,5 +1,5 @@
 import {
-  Component, inject, Input, OnInit, OnChanges,
+  Component, inject, Input, OnInit,
   ElementRef, ViewChild, AfterViewChecked, effect
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -301,6 +301,9 @@ export class FreeTalkComponent implements OnInit, AfterViewChecked {
     effect(() => {
       this.ft.messages();
       this.scrollToBottom();
+      if (!this.ft.loading()) {
+        setTimeout(() => this.inputEl?.nativeElement.focus());
+      }
     });
   }
 
@@ -309,6 +312,7 @@ export class FreeTalkComponent implements OnInit, AfterViewChecked {
     if (this.duringLesson) {
       this.tutor.trackFreeTalkDuringLesson();
     }
+    setTimeout(() => this.inputEl?.nativeElement.focus());
   }
 
   ngAfterViewChecked(): void {

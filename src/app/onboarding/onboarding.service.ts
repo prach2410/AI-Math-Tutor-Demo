@@ -230,7 +230,7 @@ export class OnboardingService {
 
   private startStep5(): void {
     this._step.set(5);
-    this._waiting.set('complete');
+    this._waiting.set('done');
 
     const msgs: Array<{ content: string; delay: number }> = [
       { content: 'เยี่ยมมากครับ 🎉\n\nตอนนี้หนูรู้จัก AI Tutor แล้ว', delay: 600 },
