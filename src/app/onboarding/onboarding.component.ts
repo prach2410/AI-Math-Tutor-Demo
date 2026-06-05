@@ -1,6 +1,6 @@
 import {
-  Component, inject, ElementRef, ViewChild,
-  AfterViewChecked, AfterViewInit, effect
+  Component, inject, Injector, ElementRef, ViewChild,
+  AfterViewChecked, AfterViewInit, effect, afterNextRender
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OnboardingService } from './onboarding.service';
@@ -20,17 +20,19 @@ import { VoiceService } from '../voice.service';
         <button class="skip-btn" (click)="skip()">ข้ามไปเรียนเลย →</button>
       </div>
 
-      <!-- Step indicators -->
-      <div class="steps-bar">
-        @for (n of [1,2,3,4,5]; track n) {
-          <div class="step-dot"
-            [class.done]="ob.step() + 1 > n"
-            [class.active]="ob.step() + 1 === n">
-            {{ n }}
-          </div>
-        }
-        <span class="step-label">ขั้นที่ {{ ob.step() + 1 }} / 5</span>
-      </div>
+      <!-- Step indicators (แสดงเฉพาะ learn path) -->
+      @if (ob.waiting() !== 'learn-or-talk' && ob.waiting() !== 'mode' && ob.waiting() !== 'complete' && !ob.goFreeTalk()) {
+        <div class="steps-bar">
+          @for (n of [1,2,3,4,5]; track n) {
+            <div class="step-dot"
+              [class.done]="ob.step() + 1 > n"
+              [class.active]="ob.step() + 1 === n">
+              {{ n }}
+            </div>
+          }
+          <span class="step-label">ขั้นที่ {{ ob.step() + 1 }} / 5</span>
+        </div>
+      }
 
       <!-- Messages -->
       <div class="messages" #msgContainer>
@@ -108,6 +110,14 @@ import { VoiceService } from '../voice.service';
       @if (ob.waiting() === 'learn-or-talk' && !ob.loading()) {
         <div class="mode-select-bar">
           <p class="mode-prompt">วันนี้อยากทำอะไรก่อนดีครับ? 😊</p>
+          <div class="mode-descs">
+            <div class="mode-desc-item">
+              <span>📚</span><span>เรียนคณิตศาสตร์ทีละขั้น พี่จะคอยช่วย</span>
+            </div>
+            <div class="mode-desc-item">
+              <span>💬</span><span>คุยกับพี่ก่อนได้เลย ถ้าเหนื่อยหรืออยากพัก</span>
+            </div>
+          </div>
           <div class="mode-btns">
             <button class="mode-btn learn-mode" (click)="ob.handleLearnOrTalkSelected('learn')">
               <span class="mode-icon">📚</span>
@@ -121,10 +131,18 @@ import { VoiceService } from '../voice.service';
         </div>
       }
 
-      <!-- Step 5b: เลือกวิธีพิมพ์/พูด (เฉพาะเมื่อเลือกเรียน) -->
+      <!-- Step 5b: เลือกวิธีพิมพ์/พูด -->
       @if (ob.waiting() === 'mode' && !ob.loading()) {
         <div class="mode-select-bar">
-          <p class="mode-prompt">อยากเรียนแบบไหนครับ? 😊</p>
+          <p class="mode-prompt">อยากคุยกับพี่แบบไหนครับ? 😊</p>
+          <div class="mode-descs">
+            <div class="mode-desc-item">
+              <span>⌨️</span><span>พิมพ์ข้อความตามสะดวก</span>
+            </div>
+            <div class="mode-desc-item">
+              <span>🎤</span><span>พูดออกเสียงได้เลย ไม่ต้องพิมพ์</span>
+            </div>
+          </div>
           <div class="mode-btns">
             <button class="mode-btn text-mode" (click)="ob.handleModeSelected('text')">
               <span class="mode-icon">⌨️</span>
@@ -401,6 +419,25 @@ import { VoiceService } from '../voice.service';
       color: #1e293b;
     }
 
+    .mode-descs {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+      max-width: 320px;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    .mode-desc-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #475569;
+    }
+
     .mode-btns {
       display: flex;
       gap: 10px;
@@ -491,6 +528,7 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
   protected ob            = inject(OnboardingService);
   private tutor           = inject(TutorService);
   private voice           = inject(VoiceService);
+  private injector        = inject(Injector);
   protected voiceSupported = this.voice.isSupported();
   protected inputText = '';
 
@@ -499,13 +537,13 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
       this.ob.messages();
       this.scrollToBottom();
       if (!this.ob.loading() && (this.ob.waiting() === 'answer' || this.ob.waiting() === 'name')) {
-        setTimeout(() => this.inputEl?.nativeElement.focus());
+        afterNextRender(() => this.inputEl?.nativeElement.focus(), { injector: this.injector });
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.inputEl?.nativeElement.focus();
+    setTimeout(() => this.inputEl?.nativeElement.focus());
   }
 
   ngAfterViewChecked(): void {

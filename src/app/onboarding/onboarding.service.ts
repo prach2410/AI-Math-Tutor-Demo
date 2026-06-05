@@ -60,7 +60,11 @@ export class OnboardingService {
 
   handleLearnOrTalkSelected(choice: 'learn' | 'free-talk'): void {
     this._goFreeTalk.set(choice === 'free-talk');
-    this._waiting.set('mode');
+    if (choice === 'free-talk') {
+      this._waiting.set('mode');
+    } else {
+      this.startStep1();
+    }
   }
 
   handleAnswer(text: string): void {
@@ -73,12 +77,12 @@ export class OnboardingService {
       this._messages.update(m => [...m, { role: 'user', content: name || 'ข้ามไปก่อนครับ' }]);
       this._loading.set(true);
       const greeting = name
-        ? `ยินดีที่ได้รู้จักนะครับ ${name} 😊\n\nก่อนเริ่มเรียนจริง เรามาลองใช้ AI Tutor กันก่อนนะครับ`
-        : 'ยินดีที่ได้รู้จักครับ 😊\n\nก่อนเริ่มเรียนจริง เรามาลองใช้ AI Tutor กันก่อนนะครับ';
+        ? `ยินดีที่ได้รู้จักนะครับ ${name} 😊\n\nวันนี้อยากทำอะไรก่อนดีครับ?`
+        : `ยินดีที่ได้รู้จักครับ 😊\n\nวันนี้อยากทำอะไรก่อนดีครับ?`;
       setTimeout(() => {
         this._messages.update(m => [...m, { role: 'assistant', content: greeting }]);
         this._loading.set(false);
-        this.startStep1();
+        this._waiting.set('learn-or-talk');
       }, 600);
       return;
     }
