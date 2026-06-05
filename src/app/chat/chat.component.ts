@@ -104,6 +104,9 @@ import { InteractionMode } from '../models/learning.model';
           <button class="assist-btn worked-btn" (click)="tutor.requestAssist('worked-example')">
             👀 ทำตัวอย่างให้ดู
           </button>
+          <button class="assist-btn freetalk-btn" (click)="tutor.enterFreeTalk()">
+            💬 คุยกับพี่ก่อน
+          </button>
         </div>
       }
 
@@ -321,11 +324,13 @@ import { InteractionMode } from '../models/learning.model';
 
     .hint-btn   { background: #fffbeb; color: #92400e; border-color: #fcd34d; }
     .guided-btn { background: #f0f9ff; color: #0369a1; border-color: #7dd3fc; }
-    .worked-btn { background: #faf5ff; color: #7e22ce; border-color: #c084fc; }
+    .worked-btn    { background: #faf5ff; color: #7e22ce; border-color: #c084fc; }
+    .freetalk-btn  { background: #f5f3ff; color: #5b21b6; border-color: #a78bfa; }
 
     .hint-btn:hover   { background: #fef9c3; border-color: #f59e0b; }
     .guided-btn:hover { background: #e0f2fe; border-color: #38bdf8; }
-    .worked-btn:hover { background: #f3e8ff; border-color: #a855f7; }
+    .worked-btn:hover    { background: #f3e8ff; border-color: #a855f7; }
+    .freetalk-btn:hover  { background: #ede9fe; border-color: #7c3aed; }
 
     .bubble-text {
       white-space: pre-wrap;

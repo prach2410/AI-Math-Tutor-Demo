@@ -19,17 +19,19 @@ export class OnboardingService {
   private studentProfile = inject(StudentProfileService);
   private tutor          = inject(TutorService);
 
-  private _active    = signal(false);
-  private _messages  = signal<OnboardingMessage[]>([]);
-  private _step      = signal<OnboardingStep>(0);
-  private _waiting   = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'mode' | 'complete'>('name');
-  private _loading   = signal(false);
+  private _active       = signal(false);
+  private _messages     = signal<OnboardingMessage[]>([]);
+  private _step         = signal<OnboardingStep>(0);
+  private _waiting      = signal<'name' | 'answer' | 'hint' | 'guided' | 'done' | 'learn-or-talk' | 'mode' | 'complete'>('name');
+  private _loading      = signal(false);
+  private _goFreeTalk   = signal(false);
 
-  readonly isActive = this._active.asReadonly();
-  readonly messages = this._messages.asReadonly();
-  readonly step     = this._step.asReadonly();
-  readonly waiting  = this._waiting.asReadonly();
-  readonly loading  = this._loading.asReadonly();
+  readonly isActive    = this._active.asReadonly();
+  readonly messages    = this._messages.asReadonly();
+  readonly step        = this._step.asReadonly();
+  readonly waiting     = this._waiting.asReadonly();
+  readonly loading     = this._loading.asReadonly();
+  readonly goFreeTalk  = this._goFreeTalk.asReadonly();
 
   init(): void {
     const done = localStorage.getItem(STORAGE_KEY);
@@ -51,8 +53,19 @@ export class OnboardingService {
   restart(): void {
     localStorage.removeItem(STORAGE_KEY);
     this._messages.set([]);
+    this._goFreeTalk.set(false);
     this._active.set(true);
     this.startStep0();
+  }
+
+  handleLearnOrTalkSelected(choice: 'learn' | 'free-talk'): void {
+    if (choice === 'free-talk') {
+      this._goFreeTalk.set(true);
+      this._waiting.set('complete');
+    } else {
+      this._goFreeTalk.set(false);
+      this._waiting.set('mode');
+    }
   }
 
   handleAnswer(text: string): void {
@@ -233,7 +246,7 @@ export class OnboardingService {
     }
 
     setTimeout(() => {
-      this._waiting.set('mode');
+      this._waiting.set('learn-or-talk');
     }, 4200);
   }
 }

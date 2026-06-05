@@ -69,6 +69,7 @@ export class TutorService {
   private _parentFeedbackSubmitted = signal(false);
   private _interactionMode  = signal<InteractionMode | null>(null);
   private _reasonForChoice  = signal('');
+  private _inFreeTalk       = signal(false);
   private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private _abandonListener: (() => void) | null = null;
   private static readonly INACTIVE_MS = 3 * 60 * 1000;
@@ -90,6 +91,7 @@ export class TutorService {
   readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
   readonly interactionMode  = this._interactionMode.asReadonly();
   readonly reasonForChoice  = this._reasonForChoice.asReadonly();
+  readonly inFreeTalk       = this._inFreeTalk.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
     const meta = SCENARIOS.find(s => s.id === id);
@@ -316,7 +318,26 @@ export class TutorService {
   }
 
   init(): void {
+    this._inFreeTalk.set(false);
     this.selectScenario(SCENARIOS[0].id);
+  }
+
+  enterFreeTalk(): void {
+    this._inFreeTalk.set(true);
+    this.addEvent('FreeTalkStarted');
+  }
+
+  trackFreeTalkDuringLesson(): void {
+    this.addEvent('FreeTalkEnteredDuringLesson');
+  }
+
+  exitFreeTalk(): void {
+    const wasInLesson = this._messages().length > 0;
+    this._inFreeTalk.set(false);
+    this.addEvent(wasInLesson ? 'FreeTalkReturnedToLesson' : 'FreeTalkEnded');
+    if (!wasInLesson) {
+      this.selectScenario(SCENARIOS[0].id);
+    }
   }
 
   private addEvent(type: string): void {

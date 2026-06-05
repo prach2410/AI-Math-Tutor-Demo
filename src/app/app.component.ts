@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, ViewChild, signal } from '@angular/core';
+import { FreeTalkComponent } from './free-talk/free-talk.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
@@ -19,6 +20,7 @@ import { VoiceService } from './voice.service';
   selector: 'app-root',
   standalone: true,
   imports: [
+    FreeTalkComponent,
     FirstTimeGuideComponent,
     AboutComponent,
     OnboardingComponent,
@@ -68,6 +70,8 @@ import { VoiceService } from './voice.service';
         <section class="chat-section">
           @if (onboarding.isActive()) {
             <app-onboarding />
+          } @else if (tutor.inFreeTalk()) {
+            <app-free-talk [duringLesson]="tutor.messages().length > 0" />
           } @else if (tutor.finished()) {
             <app-lesson-complete />
           } @else if (tutor.interactionMode() === null) {
@@ -279,6 +283,7 @@ import { VoiceService } from './voice.service';
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
+
 
     .mode-select-title {
       font-size: 20px;

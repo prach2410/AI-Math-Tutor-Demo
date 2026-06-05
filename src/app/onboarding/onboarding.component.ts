@@ -104,10 +104,27 @@ import { VoiceService } from '../voice.service';
         </div>
       }
 
-      <!-- Mode selection (step 5 → after messages) -->
+      <!-- Step 5a: เลือกเรียนหรือคุยก่อน -->
+      @if (ob.waiting() === 'learn-or-talk' && !ob.loading()) {
+        <div class="mode-select-bar">
+          <p class="mode-prompt">วันนี้อยากทำอะไรก่อนดีครับ? 😊</p>
+          <div class="mode-btns">
+            <button class="mode-btn learn-mode" (click)="ob.handleLearnOrTalkSelected('learn')">
+              <span class="mode-icon">📚</span>
+              <span class="mode-label">เรียนคณิตศาสตร์</span>
+            </button>
+            <button class="mode-btn talk-mode" (click)="ob.handleLearnOrTalkSelected('free-talk')">
+              <span class="mode-icon">💬</span>
+              <span class="mode-label">คุยกับพี่ก่อน</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Step 5b: เลือกวิธีพิมพ์/พูด (เฉพาะเมื่อเลือกเรียน) -->
       @if (ob.waiting() === 'mode' && !ob.loading()) {
         <div class="mode-select-bar">
-          <p class="mode-prompt">วันนี้อยากเรียนแบบไหนครับ? 😊</p>
+          <p class="mode-prompt">อยากเรียนแบบไหนครับ? 😊</p>
           <div class="mode-btns">
             <button class="mode-btn text-mode" (click)="ob.handleModeSelected('text')">
               <span class="mode-icon">⌨️</span>
@@ -412,6 +429,8 @@ import { VoiceService } from '../voice.service';
     .mode-btn:active:not(:disabled) { transform: translateY(0) scale(0.97); }
     .mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+    .learn-mode:hover:not(:disabled) { border-color: #2563eb; }
+    .talk-mode:hover:not(:disabled)  { border-color: #7c3aed; }
     .text-mode:hover:not(:disabled)  { border-color: #2563eb; }
     .voice-mode:hover:not(:disabled) { border-color: #16a34a; }
 
@@ -507,10 +526,15 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
   }
 
   protected startLesson(): void {
-    const mode = this.tutor.interactionMode();
+    const mode        = this.tutor.interactionMode();
+    const goFreeTalk  = this.ob.goFreeTalk();
     this.ob.complete();
-    this.tutor.init();
-    if (mode) this.tutor.setInteractionMode(mode);
+    if (goFreeTalk) {
+      this.tutor.enterFreeTalk();
+    } else {
+      this.tutor.init();
+      if (mode) this.tutor.setInteractionMode(mode);
+    }
   }
 
   private scrollToBottom(): void {
