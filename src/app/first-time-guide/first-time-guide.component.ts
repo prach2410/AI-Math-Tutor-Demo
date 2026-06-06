@@ -327,6 +327,9 @@ export class FirstTimeGuideComponent implements OnInit {
     }
     this.visible.set(false);
     this.dismissed.emit();
+    setTimeout(() => {
+      (document.querySelector('.chat-input') as HTMLInputElement | null)?.focus();
+    }, 100);
   }
 
   protected onOverlayClick(event: MouseEvent): void {
