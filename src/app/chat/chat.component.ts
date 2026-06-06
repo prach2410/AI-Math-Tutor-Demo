@@ -675,6 +675,15 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
       }
     });
 
+    // Auto-fallback to text mode on voice network error
+    effect(() => {
+      if (this.voice.networkError()) {
+        this.tutor.setInteractionMode('text');
+        this.voice.networkError.set(false);
+        this.tutor.logEvent('voice_network_error_fallback_to_text');
+      }
+    });
+
     // TTS: read AI response aloud in voice mode
     effect(() => {
       const msgs = this.tutor.messages();

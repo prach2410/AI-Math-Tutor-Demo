@@ -20,9 +20,10 @@ interface SpeechRecognitionErrorEvent extends Event {
 
 @Injectable({ providedIn: 'root' })
 export class VoiceService {
-  readonly isListening = signal(false);
-  readonly transcript  = signal('');
-  readonly error       = signal('');
+  readonly isListening  = signal(false);
+  readonly transcript   = signal('');
+  readonly error        = signal('');
+  readonly networkError = signal(false);
 
   private recognition: SpeechRecognition | null = null;
 
@@ -45,10 +46,15 @@ export class VoiceService {
       this.transcript.set(e.results[0][0].transcript);
     };
     this.recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
-      if (e.error !== 'no-speech') {
-        this.error.set(e.error === 'not-allowed'
-          ? 'ไม่ได้รับอนุญาตใช้ไมค์ — กรุณาอนุญาตในเบราว์เซอร์'
-          : `เกิดข้อผิดพลาด: ${e.error}`);
+      if (e.error === 'no-speech') {
+        // ปกติ — ไม่ต้องทำอะไร
+      } else if (e.error === 'not-allowed') {
+        this.error.set('ไม่ได้รับอนุญาตใช้ไมค์ — กรุณาอนุญาตในเบราว์เซอร์');
+      } else if (e.error === 'network') {
+        this.error.set('ไม่สามารถใช้เสียงได้ตอนนี้ — ลองพิมพ์แทนได้เลยนะครับ');
+        this.networkError.set(true);
+      } else {
+        this.error.set(`เกิดข้อผิดพลาด: ${e.error}`);
       }
       this.isListening.set(false);
     };
