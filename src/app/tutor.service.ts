@@ -312,6 +312,7 @@ export class TutorService {
       this.addEvent('step_completed');
       this._finished.set(true);
       this.addEvent('lesson_completed');
+      this.addEvent(`student_follow_up_question_count:${this._voiceMessageCount + this._textMessageCount}`);
       this.clearAbandonListener();
       this.completeSession().catch(() => {});
     }

@@ -714,6 +714,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
     const from = this.tutor.interactionMode();
     const to: InteractionMode = from === 'voice' ? 'text' : 'voice';
     this.tutor.logEvent(`interaction_mode_changed_from_${from}_to_${to}`);
+    this.tutor.logEvent(to === 'voice' ? 'voice_selected' : 'chat_selected');
     this.voice.cancelSpeech();
     this.tutor.setInteractionMode(to);
   }

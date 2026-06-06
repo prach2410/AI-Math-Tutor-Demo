@@ -24,7 +24,7 @@ function cleanText(text: string): string {
         <div class="complete-hero">
           <div class="hero-emoji">🎉</div>
           <h1 class="hero-title">เยี่ยมมาก{{ studentProfile.displayName() ? ' ' + studentProfile.displayName() : '' }}!</h1>
-          <p class="hero-sub">เรียนจบบทนี้แล้ว</p>
+          <p class="hero-sub">เราคิดด้วยกันครบแล้วครับ</p>
         </div>
 
         <!-- Section 1: วันนี้หนูได้เรียนรู้อะไร -->
@@ -50,7 +50,7 @@ function cleanText(text: string): string {
         <!-- Section 3: Feedback จาก AI Tutor -->
         @if (tutor.studentFeedback()) {
           <section class="section">
-            <h2 class="section-title">⭐ Feedback จาก AI Tutor</h2>
+            <h2 class="section-title">⭐ เราเรียนรู้ด้วยกันเป็นยังไงบ้าง</h2>
 
             @if (goodPoints().length > 0) {
               <div class="feedback-block">
@@ -89,6 +89,18 @@ function cleanText(text: string): string {
                 <li>• {{ use }}</li>
               }
             </ul>
+          </section>
+        }
+
+        <!-- AI Role reflection question (H-10 evidence) -->
+        @if (!aiRoleSubmitted()) {
+          <section class="section reason-section">
+            <h2 class="section-title">💭 วันนี้พี่ AI ช่วยน้องยังไงบ้างครับ?</h2>
+            <div class="reason-chips">
+              @for (r of aiRoleOptions; track r) {
+                <button class="reason-chip" (click)="submitAiRole(r)">{{ r }}</button>
+              }
+            </div>
           </section>
         }
 
@@ -362,6 +374,9 @@ export class LessonCompleteComponent implements OnInit {
 
   protected parentExpanded  = signal(false);
   protected reasonSubmitted = signal(false);
+  protected aiRoleSubmitted = signal(false);
+
+  protected readonly aiRoleOptions = ['อธิบายให้เข้าใจ', 'ช่วยให้คิดเอง', 'ให้กำลังใจ', 'ดูตัวอย่างคำตอบ'];
 
   private static readonly VOICE_REASONS = ['พูดง่ายกว่า', 'ไม่ชอบพิมพ์', 'รู้สึกธรรมชาติกว่า', 'อยากลองดู'];
   private static readonly TEXT_REASONS  = ['ไม่อยากพูดออกเสียง', 'อยู่ในที่สาธารณะ', 'ชอบอ่านและเขียน', 'พิมพ์ง่ายกว่า'];
@@ -375,6 +390,12 @@ export class LessonCompleteComponent implements OnInit {
   protected submitReason(reason: string): void {
     this.tutor.logEvent(`interaction_mode_reason:${reason}`);
     this.reasonSubmitted.set(true);
+  }
+
+  protected submitAiRole(answer: string): void {
+    this.tutor.logEvent(`reflection_ai_role:${answer}`);
+    this.tutor.logEvent('reflection_completed');
+    this.aiRoleSubmitted.set(true);
   }
 
   protected cleanedFeedback = computed(() => cleanText(this.tutor.studentFeedback()));
