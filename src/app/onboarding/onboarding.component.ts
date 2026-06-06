@@ -607,15 +607,17 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
     effect(() => {
       this.ob.messages();
       this.scrollToBottom();
-      if (!this.ob.loading() && (this.ob.waiting() === 'answer' || this.ob.waiting() === 'name')) {
-        afterNextRender(() => this.inputEl?.nativeElement.focus(), { injector: this.injector });
+    });
+    effect(() => {
+      const waiting = this.ob.waiting();
+      const loading = this.ob.loading();
+      if (!loading && waiting === 'answer') {
+        setTimeout(() => this.inputEl?.nativeElement.focus(), 50);
       }
     });
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => this.inputEl?.nativeElement.focus());
-  }
+  ngAfterViewInit(): void { }
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();

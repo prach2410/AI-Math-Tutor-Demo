@@ -108,7 +108,7 @@ export class OnboardingService {
         ...m,
         {
           role: 'assistant',
-          content: 'ยอดเยี่ยม 🎉\n\nนี่คือตัวอย่างการตอบคำถาม\n\nต่อไปเราจะลองใช้เครื่องมือช่วยเรียนกันครับ',
+          content: 'ยอดเยี่ยม 🎉\n\nนี่คือตัวอย่างการตอบคำถาม\n\nต่อไปเราจะลองใช้เครื่องมือช่วยเรียนกันครับ 🛠️',
         },
       ]);
       this._loading.set(false);
@@ -192,7 +192,7 @@ export class OnboardingService {
     this._messages.set([
       {
         role: 'assistant',
-        content: 'สวัสดีครับ 😊\n\nต่อไปเราจะลองใช้เครื่องมือช่วยเรียนกันครับ',
+        content: 'สวัสดีครับ 😊\n\nเรามาลองทำโจทย์กันก่อนเลยนะครับ',
       },
     ]);
     setTimeout(() => this.startStep1(), 800);
