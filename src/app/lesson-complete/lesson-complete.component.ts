@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TutorService, SCENARIOS } from '../tutor.service';
 import { OnboardingService } from '../onboarding/onboarding.service';
 import { ParentFeedbackComponent } from '../parent-feedback/parent-feedback.component';
@@ -15,7 +16,7 @@ function cleanText(text: string): string {
 @Component({
   selector: 'app-lesson-complete',
   standalone: true,
-  imports: [ParentFeedbackComponent],
+  imports: [ParentFeedbackComponent, FormsModule],
   template: `
     <div class="complete-wrap">
       <div class="complete-card">
@@ -132,6 +133,31 @@ function cleanText(text: string): string {
                 <app-parent-feedback />
               </div>
             }
+          </section>
+        }
+
+        <!-- ความเข้าใจของหนู -->
+        @if (!reflectionSubmitted() && !reflectionSkipped()) {
+          <section class="section reflection-section">
+            <h2 class="section-title">✍️ ความเข้าใจของหนู</h2>
+            <p class="reflection-desc">ไม่มีถูกหรือผิด — เขียนตามที่หนูคิดได้เลยครับ</p>
+            <div class="reflection-fields">
+              <label class="reflection-label">วันนี้หนูได้เรียนรู้อะไร?</label>
+              <textarea class="reflection-input" rows="2" placeholder="เช่น ฉันเข้าใจสูตรปริมาตรแล้ว..." [(ngModel)]="reflectionLearned"></textarea>
+              <label class="reflection-label">ตรงไหนที่หนูคิดว่ายากที่สุด?</label>
+              <textarea class="reflection-input" rows="2" placeholder="เช่น การคูณเลขหลายหลัก..." [(ngModel)]="reflectionDifficult"></textarea>
+              <label class="reflection-label">หนูอยากจำอะไรไว้?</label>
+              <textarea class="reflection-input" rows="2" placeholder="เช่น สูตร กว้าง × ยาว × สูง" [(ngModel)]="reflectionRemember"></textarea>
+            </div>
+            <div class="reflection-actions">
+              <button class="reflection-submit-btn" (click)="submitReflection()">บันทึก ✓</button>
+              <button class="reflection-skip-btn" (click)="skipReflection()">ข้าม</button>
+            </div>
+          </section>
+        }
+        @if (reflectionSubmitted()) {
+          <section class="section reflection-done-section">
+            <p class="reflection-done-text">✅ บันทึกความเข้าใจแล้วครับ ขอบคุณที่แบ่งปันนะครับ 😊</p>
           </section>
         }
 
@@ -341,6 +367,75 @@ function cleanText(text: string): string {
     .cta-home     { background: #e2e8f0; color: #374151; }
     .cta-feedback { background: #7c3aed; color: white; }
 
+    /* Reflection section */
+    .reflection-section { background: #fefce8; }
+    .reflection-desc {
+      font-size: 12.5px;
+      color: #78716c;
+      margin-bottom: 12px;
+    }
+    .reflection-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .reflection-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #44403c;
+    }
+    .reflection-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d6d3d1;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13.5px;
+      line-height: 1.5;
+      resize: vertical;
+      background: white;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .reflection-input:focus { border-color: #f59e0b; }
+    .reflection-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .reflection-submit-btn {
+      padding: 8px 20px;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .reflection-submit-btn:hover { opacity: 0.85; }
+    .reflection-skip-btn {
+      padding: 8px 16px;
+      background: none;
+      border: 1px solid #d6d3d1;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #78716c;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .reflection-skip-btn:hover { background: #f5f5f4; }
+    .reflection-done-section { background: #f0fdf4; text-align: center; }
+    .reflection-done-text {
+      font-size: 13.5px;
+      color: #166534;
+      font-weight: 500;
+      margin: 0;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 640px) {
       .reason-chips { gap: 6px; }
@@ -372,9 +467,14 @@ export class LessonCompleteComponent implements OnInit {
     }
   }
 
-  protected parentExpanded  = signal(false);
-  protected reasonSubmitted = signal(false);
-  protected aiRoleSubmitted = signal(false);
+  protected parentExpanded      = signal(false);
+  protected reasonSubmitted     = signal(false);
+  protected aiRoleSubmitted     = signal(false);
+  protected reflectionSubmitted = signal(false);
+  protected reflectionSkipped   = signal(false);
+  protected reflectionLearned   = '';
+  protected reflectionDifficult = '';
+  protected reflectionRemember  = '';
 
   protected readonly aiRoleOptions = ['อธิบายให้เข้าใจ', 'ช่วยให้คิดเอง', 'ให้กำลังใจ', 'ดูตัวอย่างคำตอบ'];
 
@@ -396,6 +496,22 @@ export class LessonCompleteComponent implements OnInit {
     this.tutor.logEvent(`reflection_ai_role:${answer}`);
     this.tutor.logEvent('reflection_completed');
     this.aiRoleSubmitted.set(true);
+  }
+
+  protected submitReflection(): void {
+    this.tutor.logEvent('reflection_submitted');
+    this.reflectionSubmitted.set(true);
+    this.tutor.submitReflection({
+      whatILearned: this.reflectionLearned.trim() || undefined,
+      mostDifficultPart: this.reflectionDifficult.trim() || undefined,
+      whatIWantToRemember: this.reflectionRemember.trim() || undefined,
+      submittedAt: new Date().toISOString(),
+    });
+  }
+
+  protected skipReflection(): void {
+    this.tutor.logEvent('reflection_skipped');
+    this.reflectionSkipped.set(true);
   }
 
   protected cleanedFeedback = computed(() => cleanText(this.tutor.studentFeedback()));

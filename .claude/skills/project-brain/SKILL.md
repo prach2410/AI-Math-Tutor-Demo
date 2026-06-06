@@ -339,3 +339,124 @@ Output:
 
 Critical assessment with actionable recommendations.
 
+---
+
+### Evidence Summary Rule
+
+Do not copy observations directly into Evidence_Summary.md.
+
+Evidence_Summary.md should contain only:
+
+* Patterns
+* Insights
+* Emerging evidence
+* Hypothesis status updates
+* Risk status updates
+
+Evidence_Log.md remains the source of raw observations.
+
+Evidence_Summary.md should answer:
+
+"What are we learning?"
+
+not
+
+"What happened?"
+
+---
+
+## Command: update-summary
+
+Purpose:
+
+Update project state at the end of a work session.
+
+---
+
+Review:
+
+* New Evidence
+* New Decisions
+* New Risks
+* New Assumptions
+* New Hypotheses
+* Updated Project Brain documents
+
+---
+
+Update:
+
+### Required
+
+* SESSION_SUMMARY.md
+
+### Optional
+
+* Evidence_Summary.md
+* CHANGELOG.md
+
+Only when meaningful changes exist.
+
+---
+
+Evidence Summary Rule
+
+Do NOT copy raw observations directly into Evidence_Summary.md.
+
+Evidence_Log.md remains the source of truth for raw observations.
+
+Evidence_Summary.md should contain:
+
+* Patterns
+* Insights
+* Emerging evidence
+* Hypothesis status updates
+* Risk status updates
+
+Evidence_Summary.md should answer:
+
+"What are we learning?"
+
+NOT
+
+"What happened?"
+
+---
+
+SESSION_SUMMARY Rule
+
+SESSION_SUMMARY.md should contain:
+
+* Current Product Status
+* Current Priority
+* Top Risks
+* Top Assumptions
+* Current Experiments
+* Recommended Next Step
+
+Focus on current project state.
+
+Avoid historical details.
+
+---
+
+CHANGELOG Rule
+
+Update CHANGELOG.md only when:
+
+* Significant decisions are made
+* New features are introduced
+* Major project direction changes occur
+
+Do not log routine work.
+
+---
+
+Output
+
+Provide a concise summary of:
+
+* What changed
+* What was learned
+* What remains uncertain
+* What should happen next

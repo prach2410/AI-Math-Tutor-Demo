@@ -5,7 +5,7 @@ import {
   AssistResponse, AssistType, InteractionMode,
   EvaluateRequest, EvaluateResponse, StartResponse,
   SessionMessage, SessionEvent, CreateSessionRequest,
-  CompleteSessionRequest, ParentFeedbackRequest
+  CompleteSessionRequest, ParentFeedbackRequest, ReflectionRequest
 } from './models/learning.model';
 import { StudentProfileService } from './student-profile/student-profile.service';
 import { DeviceService } from './device/device.service';
@@ -172,6 +172,9 @@ export class TutorService {
     this._messages.update(msgs => [...msgs, userMsg]);
     this.addSessionMessage(userMsg, undefined, inputMode);
     this.addEvent('student_answer_submitted');
+    if (this.isFollowUpQuestion(text)) {
+      this.addEvent(`student_follow_up_question:${text.trim()}`);
+    }
     this.resetInactivityTimer();
     this._loading.set(true);
 
@@ -268,6 +271,18 @@ export class TutorService {
     }
   }
 
+  async submitReflection(req: ReflectionRequest): Promise<void> {
+    const sessionId = this._sessionId();
+    if (!sessionId) return;
+    try {
+      await firstValueFrom(
+        this.http.post(`${SESSION_API}/${sessionId}/reflection`, req)
+      );
+    } catch {
+      // silent fail — reflection data is in event log
+    }
+  }
+
   private applyResponse(res: EvaluateResponse): void {
     if (res.isGuidedAssistance) {
       this._wrongCount = 0;
@@ -312,7 +327,6 @@ export class TutorService {
       this.addEvent('step_completed');
       this._finished.set(true);
       this.addEvent('lesson_completed');
-      this.addEvent(`student_follow_up_question_count:${this._voiceMessageCount + this._textMessageCount}`);
       this.clearAbandonListener();
       this.completeSession().catch(() => {});
     }
@@ -339,6 +353,13 @@ export class TutorService {
     if (!wasInLesson) {
       this.selectScenario(SCENARIOS[0].id);
     }
+  }
+
+  private isFollowUpQuestion(text: string): boolean {
+    const t = text.trim();
+    if (t.endsWith('?') || t.endsWith('？')) return true;
+    const patterns = ['ทำไม', 'อธิบาย', 'หมายความ', 'แบบอื่น', 'อีกวิธี', 'ยังไง', 'แบบไหน', 'ได้ไหม', 'ใช่ไหม', 'เพราะ', 'คืออะไร', 'what if', 'why', 'how'];
+    return patterns.some(p => t.toLowerCase().includes(p));
   }
 
   private addEvent(type: string): void {

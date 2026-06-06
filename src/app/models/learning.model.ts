@@ -92,3 +92,10 @@ export interface ParentFeedbackRequest {
   mostValuableSection?: string;
   comment?: string;
 }
+
+export interface ReflectionRequest {
+  whatILearned?: string;
+  mostDifficultPart?: string;
+  whatIWantToRemember?: string;
+  submittedAt: string;
+}
