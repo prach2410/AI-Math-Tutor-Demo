@@ -76,8 +76,22 @@ export class OnboardingService {
         this._waiting.set('complete');
       }, 600);
     } else {
-      this.complete();
-      this.tutor.init();
+      this._messages.update(m => [...m, { role: 'user', content: '📚 เรียนคณิตศาสตร์' }]);
+      this._loading.set(true);
+      setTimeout(() => {
+        this._messages.update(m => [
+          ...m,
+          {
+            role: 'assistant',
+            content: 'เยี่ยมเลยครับ! 🎉\n\nพี่รอหนูอยู่นะครับ ไปเริ่มเรียนกันเลย 🚀',
+          },
+        ]);
+        this._loading.set(false);
+        setTimeout(() => {
+          this.complete();
+          this.tutor.init();
+        }, 1000);
+      }, 600);
     }
   }
 
@@ -150,7 +164,7 @@ export class OnboardingService {
     setTimeout(() => {
       this._messages.update(m => [...m, { role: 'assistant', content: intro, isTip: true }]);
       this._loading.set(false);
-      this._waiting.set('learn-or-talk');
+      this.startStep4();
     }, 600);
   }
 
