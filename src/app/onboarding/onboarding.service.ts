@@ -72,10 +72,12 @@ export class OnboardingService {
           },
         ]);
         this._loading.set(false);
-        this._waiting.set('learn-or-talk');
+        this._goFreeTalk.set(true);
+        this._waiting.set('complete');
       }, 600);
     } else {
-      this.startStep1();
+      this.complete();
+      this.tutor.init();
     }
   }
 
