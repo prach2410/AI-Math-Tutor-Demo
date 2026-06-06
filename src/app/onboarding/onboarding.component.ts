@@ -42,9 +42,10 @@ import { VoiceService } from '../voice.service';
               <div class="avatar">🤖</div>
             }
             <div class="bubble"
-              [class.ai-bubble]="msg.role === 'assistant' && !msg.isHint && !msg.isGuided"
+              [class.ai-bubble]="msg.role === 'assistant' && !msg.isHint && !msg.isGuided && !msg.isTip"
               [class.hint-bubble]="msg.isHint"
               [class.guided-bubble]="msg.isGuided"
+              [class.tip-bubble]="msg.isTip"
               [class.user-bubble]="msg.role === 'user'">
               <pre class="bubble-text">{{ msg.content }}</pre>
             </div>
@@ -294,7 +295,8 @@ import { VoiceService } from '../voice.service';
       line-height: 1.65;
     }
 
-    .ai-bubble     { background: #fffbeb; border: 1px solid #fcd34d; border-bottom-left-radius: 4px; color: #78350f; }
+    .ai-bubble     { background: var(--color-ai-bubble); border: 1px solid var(--color-ai-border); border-bottom-left-radius: 4px; }
+    .tip-bubble    { background: #fffbeb; border: 1px solid #fcd34d; border-bottom-left-radius: 4px; color: #78350f; font-weight: 500; }
     .user-bubble   { background: var(--color-user-bubble); border: 1px solid var(--color-user-border); border-bottom-right-radius: 4px; }
     .hint-bubble   { background: #fffbeb; border: 1px solid #fcd34d; border-bottom-left-radius: 4px; font-style: italic; }
     .guided-bubble { background: #f0f9ff; border: 1.5px solid #38bdf8; border-bottom-left-radius: 4px; }

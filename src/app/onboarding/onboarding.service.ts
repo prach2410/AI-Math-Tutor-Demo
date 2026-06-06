@@ -8,6 +8,7 @@ export interface OnboardingMessage {
   content: string;
   isHint?: boolean;
   isGuided?: boolean;
+  isTip?: boolean;
 }
 
 type OnboardingStep = 0 | 1 | 2 | 3 | 4 | 5;
@@ -126,7 +127,7 @@ export class OnboardingService {
         {
           role: 'assistant',
           content: 'นี่คือตัวอย่างคำใบ้\n\nเวลาหนูติดโจทย์ ครูจะไม่เฉลยทันที\nแต่จะช่วยให้หนูคิดต่อได้ครับ',
-          isHint: true,
+          isTip: true,
         },
       ]);
       this._loading.set(false);
@@ -145,7 +146,7 @@ export class OnboardingService {
       ? 'เข้าใจแล้วครับ ⌨️\n\nตอนตอบโจทย์ พิมพ์คำตอบในช่องด้านล่าง\nแล้วกด Enter หรือปุ่ม "ส่ง" ได้เลยครับ'
       : 'เข้าใจแล้วครับ 🎤\n\nตอนตอบโจทย์ กดปุ่มไมค์ค้างไว้แล้วพูดคำตอบ\nพี่จะฟังและแปลงเสียงให้เองเลยครับ\n\nและพี่จะพูดตอบกลับให้ได้ยินด้วยนะครับ 🔊';
     setTimeout(() => {
-      this._messages.update(m => [...m, { role: 'assistant', content: intro }]);
+      this._messages.update(m => [...m, { role: 'assistant', content: intro, isTip: true }]);
       this._loading.set(false);
       this._waiting.set('complete');
     }, 600);
@@ -161,7 +162,7 @@ export class OnboardingService {
         {
           role: 'assistant',
           content: 'นี่คือการช่วยเริ่ม\n\nเวลาหนูไม่รู้จะเริ่มตรงไหน\nครูจะช่วยทำให้ดู 1 ขั้น\nแล้วให้หนูลองทำต่อเองครับ',
-          isGuided: true,
+          isTip: true,
         },
       ]);
       this._loading.set(false);
@@ -179,6 +180,7 @@ export class OnboardingService {
         {
           role: 'assistant',
           content: 'นี่คือโหมดคุยกับพี่ 💬\n\nเวลาเรียนแล้วรู้สึกเครียด เหนื่อย หรืออยากพักสักครู่\nกดปุ่มนี้แล้วคุยกับพี่ได้เลยครับ\n\nพี่จะรับฟัง แล้วค่อยกลับมาเรียนต่อด้วยกันนะครับ',
+          isTip: true,
         },
       ]);
       this._loading.set(false);
