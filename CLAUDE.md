@@ -87,3 +87,13 @@ Request/response interfaces for the API. Three learning scenarios: `fish-tank`, 
 3-column responsive grid defined in `app.component.css`:
 - Left + center: chat area (`flex: 3`)
 - Right sidebar: notes, summary, real-world panel (`flex: 2`)
+
+## Skills
+
+Use Project Brain skill for:
+
+- Product discussions
+- Architecture discussions
+- Roadmap planning
+- Evidence reviews
+- Strategic decisions
