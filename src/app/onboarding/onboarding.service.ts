@@ -143,7 +143,7 @@ export class OnboardingService {
     this._loading.set(true);
     const intro = mode === 'text'
       ? 'เข้าใจแล้วครับ ⌨️\n\nตอนตอบโจทย์ พิมพ์คำตอบในช่องด้านล่าง\nแล้วกด Enter หรือปุ่ม "ส่ง" ได้เลยครับ'
-      : 'เข้าใจแล้วครับ 🎤\n\nตอนตอบโจทย์ กดปุ่มไมค์แล้วพูดคำตอบออกเสียง\nพี่จะฟังและแปลงเสียงให้เองเลยครับ';
+      : 'เข้าใจแล้วครับ 🎤\n\nตอนตอบโจทย์ กดปุ่มไมค์ค้างไว้แล้วพูดคำตอบ\nพี่จะฟังและแปลงเสียงให้เองเลยครับ\n\nและพี่จะพูดตอบกลับให้ได้ยินด้วยนะครับ 🔊';
     setTimeout(() => {
       this._messages.update(m => [...m, { role: 'assistant', content: intro }]);
       this._loading.set(false);
@@ -187,27 +187,15 @@ export class OnboardingService {
   }
 
   private startStep0(): void {
-    const existingName = this.studentProfile.displayName();
-    if (existingName) {
-      // ชื่อมีอยู่แล้ว ข้าม step 0 ไปเลย
-      this._messages.set([
-        {
-          role: 'assistant',
-          content: `ยินดีต้อนรับกลับนะครับ ${existingName} 😊\n\nมาเรียนต่อกันเลยครับ`,
-        },
-      ]);
-      this.startStep1();
-      return;
-    }
-
     this._step.set(0);
-    this._waiting.set('name');
+    this._waiting.set('done');
     this._messages.set([
       {
         role: 'assistant',
-        content: 'สวัสดีครับ 😊\n\nก่อนเริ่มเรียน ขอรู้จักหน่อยนะครับ\n\nชื่อเล่นของน้องคืออะไรครับ?\n(ไม่ต้องใส่ก็ได้ กด Enter เพื่อข้าม)',
+        content: 'สวัสดีครับ 😊\n\nต่อไปเราจะลองใช้เครื่องมือช่วยเรียนกันครับ',
       },
     ]);
+    setTimeout(() => this.startStep1(), 800);
   }
 
   private startStep1(): void {
