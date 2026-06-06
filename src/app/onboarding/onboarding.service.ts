@@ -94,7 +94,7 @@ export class OnboardingService {
       setTimeout(() => {
         this._messages.update(m => [...m, { role: 'assistant', content: reply }]);
         this._loading.set(false);
-        this._waiting.set('complete');
+        this.startStep1();
       }, 600);
       return;
     }
@@ -148,16 +148,7 @@ export class OnboardingService {
     setTimeout(() => {
       this._messages.update(m => [...m, { role: 'assistant', content: intro, isTip: true }]);
       this._loading.set(false);
-      setTimeout(() => {
-        this._messages.update(m => [
-          ...m,
-          {
-            role: 'assistant',
-            content: 'ก่อนเริ่มเรียน ขอรู้จักหน่อยนะครับ 😊\n\nชื่อเล่นของน้องคืออะไรครับ?\n(ไม่ต้องใส่ก็ได้ กด Enter เพื่อข้าม)',
-          },
-        ]);
-        this._waiting.set('name');
-      }, 400);
+      this._waiting.set('learn-or-talk');
     }, 600);
   }
 
