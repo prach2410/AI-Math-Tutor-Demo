@@ -103,7 +103,14 @@ import { VoiceService } from './voice.service';
         </section>
 
         <!-- Right panels: Real-world + Student Note + Parent Summary -->
-        <aside class="side-section">
+        @if (showNotesSheet()) {
+          <div class="notes-backdrop" (click)="showNotesSheet.set(false)"></div>
+        }
+        <aside class="side-section" [class.sheet-open]="showNotesSheet()">
+          <div class="sheet-header">
+            <span class="sheet-title">📋 บันทึกและสรุป</span>
+            <button class="sheet-close-btn" (click)="showNotesSheet.set(false)">✕</button>
+          </div>
           <div class="side-realworld">
             <app-real-world />
           </div>
@@ -128,13 +135,13 @@ import { VoiceService } from './voice.service';
           <span class="nav-icon">🏠</span>
           <span class="nav-label">หน้าแรก</span>
         </button>
-        <button class="nav-item" [class.active]="!onboarding.isActive()" (click)="goLearn()">
+        <button class="nav-item" [class.active]="!onboarding.isActive() && !showNotesSheet()" (click)="goLearn()">
           <span class="nav-icon">📚</span>
           <span class="nav-label">เรียน</span>
         </button>
-        <button class="nav-item" (click)="openAbout()">
-          <span class="nav-icon">ℹ️</span>
-          <span class="nav-label">เกี่ยวกับ</span>
+        <button class="nav-item" [class.active]="showNotesSheet()" (click)="toggleNotesSheet()">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">บันทึก</span>
         </button>
         <a class="nav-item" href="https://forms.gle/q9eV47ktwTvXhT2NA" target="_blank" rel="noopener">
           <span class="nav-icon">💬</span>
@@ -243,6 +250,9 @@ import { VoiceService } from './voice.service';
       gap: 10px;
       overflow: hidden;
     }
+
+    .sheet-header { display: none; }
+    .notes-backdrop { display: none; }
 
     .side-realworld {
       flex: 0 0 auto;
@@ -389,16 +399,45 @@ import { VoiceService } from './voice.service';
 
       .chat-section {
         flex: none;
-        height: 70vh;
+        height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px) - 60px);
         min-height: 360px;
       }
 
+      /* Hide side panels — accessible via 📋 บันทึก tab */
       .side-section {
-        flex: none;
+        display: none;
+      }
+
+      /* Bottom sheet when open */
+      .side-section.sheet-open {
+        display: flex;
+        position: fixed;
+        bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+        left: 0;
+        right: 0;
+        height: 72vh;
+        z-index: 51;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+        background: var(--color-bg);
+        overflow-y: auto;
+        padding: 0 12px 16px;
+        flex-direction: column;
+        gap: 10px;
         min-width: 0;
         max-width: none;
-        overflow: visible;
-        height: auto;
+        animation: sheetUp 0.22s ease-out;
+      }
+      @keyframes sheetUp {
+        from { transform: translateY(100%); }
+        to   { transform: translateY(0); }
+      }
+
+      .notes-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 50;
       }
 
       .side-realworld { max-height: none; }
@@ -428,8 +467,36 @@ import { VoiceService } from './voice.service';
       .side-summary,
       .side-feedback {
         flex: none;
-        min-height: 120px;
+        min-height: 100px;
         height: auto;
+      }
+
+      /* Sheet header */
+      .sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 4px 8px;
+        position: sticky;
+        top: 0;
+        background: var(--color-bg);
+        z-index: 1;
+        flex-shrink: 0;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 4px;
+      }
+      .sheet-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+      .sheet-close-btn {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       /* Show bottom nav on mobile */
@@ -482,6 +549,7 @@ export class AppComponent implements OnInit {
   protected isAdminPage = signal(
     window.location.pathname.startsWith('/admin/discovery-batches')
   );
+  protected showNotesSheet = signal(false);
 
   @ViewChild('aboutRef') private aboutRef!: AboutComponent;
 
@@ -506,7 +574,8 @@ export class AppComponent implements OnInit {
   }
 
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
-  protected goHome(): void  { this.onboarding.restart(); }
-  protected goLearn(): void { this.onboarding.skip(); this.tutor.init(); }
+  protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
+  protected goLearn(): void { this.showNotesSheet.set(false); this.onboarding.skip(); this.tutor.init(); }
   protected openAbout(): void { this.aboutRef?.open(); }
+  protected toggleNotesSheet(): void { this.showNotesSheet.update(v => !v); }
 }

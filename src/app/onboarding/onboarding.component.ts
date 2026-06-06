@@ -587,6 +587,7 @@ import { VoiceService } from '../voice.service';
 
       .mode-select-bar { padding: 12px; gap: 8px; }
       .mode-prompt { font-size: 13.5px; }
+      .mode-descs { display: none; }
       .mode-btns { width: 100%; gap: 8px; }
       .mode-btn {
         flex: 1;
