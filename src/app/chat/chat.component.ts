@@ -1,9 +1,10 @@
 import {
-  Component, inject, ElementRef, ViewChild, AfterViewChecked, AfterViewInit, effect, computed
+  Component, inject, ElementRef, ViewChild, AfterViewChecked, AfterViewInit, effect, computed, signal
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TutorService } from '../tutor.service';
 import { VoiceService } from '../voice.service';
+import { StudentProfileService } from '../student-profile/student-profile.service';
 import { InteractionMode } from '../models/learning.model';
 
 @Component({
@@ -113,6 +114,21 @@ import { InteractionMode } from '../models/learning.model';
               <span class="ft-btn-sub">เครียด เหนื่อย หรืออยากพัก — คุยได้เลย</span>
             </span>
           </button>
+        </div>
+      }
+
+      @if (askingName()) {
+        <div class="name-prompt-bar">
+          <span class="name-prompt-label">😊 ชื่อเล่นของน้องคืออะไรครับ?</span>
+          <input
+            #nameEl
+            class="name-input"
+            type="text"
+            placeholder="พิมพ์ชื่อเล่น หรือ Enter เพื่อข้าม"
+            [(ngModel)]="nameText"
+            (keydown.enter)="submitName()"
+          />
+          <button class="name-submit-btn" (click)="submitName()">ตกลง</button>
         </div>
       }
 
@@ -412,6 +428,41 @@ import { InteractionMode } from '../models/learning.model';
       30% { transform: translateY(-6px); opacity: 1; }
     }
 
+    .name-prompt-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #fffbeb;
+      border-top: 1px solid #fcd34d;
+      flex-shrink: 0;
+    }
+    .name-prompt-label { font-size: 13px; color: #92400e; white-space: nowrap; flex-shrink: 0; }
+    .name-input {
+      flex: 1;
+      padding: 7px 12px;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13.5px;
+      background: white;
+      outline: none;
+    }
+    .name-input:focus { border-color: #f59e0b; }
+    .name-submit-btn {
+      padding: 7px 14px;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .name-submit-btn:hover { background: #d97706; }
+
     .chat-input-bar {
       display: flex;
       gap: 8px;
@@ -581,9 +632,18 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
   @ViewChild('messagesContainer') private container!: ElementRef<HTMLDivElement>;
   @ViewChild('inputEl') private inputEl!: ElementRef<HTMLInputElement>;
 
-  protected tutor  = inject(TutorService);
-  protected voice  = inject(VoiceService);
+  protected tutor           = inject(TutorService);
+  protected voice           = inject(VoiceService);
+  private   studentProfile  = inject(StudentProfileService);
   protected inputText = '';
+  protected nameText  = '';
+  private   _nameDone = signal(false);
+  protected readonly askingName = computed(() =>
+    !this._nameDone() &&
+    !this.studentProfile.displayName() &&
+    this.tutor.messages().length > 0 &&
+    !this.tutor.inFreeTalk()
+  );
   protected readonly hasUserMsg = computed(() =>
     this.tutor.messages().some(m => m.role === 'user')
   );
@@ -648,6 +708,14 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
       this.voice.error.set('');
       this.voice.startListening();
     }
+  }
+
+  protected submitName(): void {
+    const name = this.nameText.trim();
+    if (name) this.studentProfile.setDisplayName(name);
+    this.nameText = '';
+    this._nameDone.set(true);
+    setTimeout(() => this.focusInput());
   }
 
   private focusInput(): void {

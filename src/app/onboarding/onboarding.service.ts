@@ -82,19 +82,19 @@ export class OnboardingService {
   handleAnswer(text: string): void {
     if (this._loading()) return;
 
-    // Step 0: collect name
+    // Last step: collect name before starting lesson
     if (this._waiting() === 'name') {
       const name = text.trim();
       if (name) this.studentProfile.setDisplayName(name);
       this._messages.update(m => [...m, { role: 'user', content: name || 'ข้ามไปก่อนครับ' }]);
       this._loading.set(true);
-      const greeting = name
-        ? `ยินดีที่ได้รู้จักนะครับ ${name} 😊\n\nวันนี้อยากทำอะไรก่อนดีครับ?`
-        : `ยินดีที่ได้รู้จักครับ 😊\n\nวันนี้อยากทำอะไรก่อนดีครับ?`;
+      const reply = name
+        ? `ยินดีที่ได้รู้จักนะครับ ${name} 😊\n\nพร้อมเริ่มเรียนได้เลยครับ!`
+        : 'ยินดีที่ได้รู้จักครับ 😊\n\nพร้อมเริ่มเรียนได้เลยครับ!';
       setTimeout(() => {
-        this._messages.update(m => [...m, { role: 'assistant', content: greeting }]);
+        this._messages.update(m => [...m, { role: 'assistant', content: reply }]);
         this._loading.set(false);
-        this._waiting.set('learn-or-talk');
+        this._waiting.set('complete');
       }, 600);
       return;
     }
@@ -148,7 +148,16 @@ export class OnboardingService {
     setTimeout(() => {
       this._messages.update(m => [...m, { role: 'assistant', content: intro, isTip: true }]);
       this._loading.set(false);
-      this._waiting.set('complete');
+      setTimeout(() => {
+        this._messages.update(m => [
+          ...m,
+          {
+            role: 'assistant',
+            content: 'ก่อนเริ่มเรียน ขอรู้จักหน่อยนะครับ 😊\n\nชื่อเล่นของน้องคืออะไรครับ?\n(ไม่ต้องใส่ก็ได้ กด Enter เพื่อข้าม)',
+          },
+        ]);
+        this._waiting.set('name');
+      }, 400);
     }, 600);
   }
 
@@ -189,15 +198,23 @@ export class OnboardingService {
   }
 
   private startStep0(): void {
+    const existingName = this.studentProfile.displayName();
+    if (existingName) {
+      this._messages.set([
+        { role: 'assistant', content: `ยินดีต้อนรับกลับนะครับ ${existingName} 😊\n\nเรามาลองทำโจทย์กันก่อนเลยนะครับ` },
+      ]);
+      this.startStep1();
+      return;
+    }
+
     this._step.set(0);
-    this._waiting.set('done');
+    this._waiting.set('name');
     this._messages.set([
       {
         role: 'assistant',
-        content: 'สวัสดีครับ 😊\n\nเรามาลองทำโจทย์กันก่อนเลยนะครับ',
+        content: 'สวัสดีครับ 😊\n\nก่อนเริ่ม ขอรู้จักหน่อยนะครับ\n\nชื่อเล่นของน้องคืออะไรครับ?\n(ไม่ต้องใส่ก็ได้ กด Enter เพื่อข้าม)',
       },
     ]);
-    setTimeout(() => this.startStep1(), 800);
   }
 
   private startStep1(): void {
