@@ -163,6 +163,7 @@ import { InteractionMode } from '../models/learning.model';
             #inputEl
             class="chat-input"
             type="text"
+            inputmode="decimal"
             [placeholder]="tutor.finished() ? 'เรียนจบแล้วครับ 🎉' : 'พิมพ์คำตอบของหนู...'"
             [(ngModel)]="inputText"
             (keydown.enter)="send()"
@@ -611,19 +612,27 @@ import { InteractionMode } from '../models/learning.model';
     @media (max-width: 640px) {
       .chat-input-bar { padding: 8px 10px; gap: 6px; }
 
-      .mode-toggle-btn { padding: 10px 11px; font-size: 18px; }
+      /* 16px prevents iOS Safari from zooming in on focus */
+      .chat-input { font-size: 16px; min-height: 44px; }
+      .send-btn   { min-height: 44px; padding: 10px 16px; }
+
+      .name-input       { font-size: 16px; min-height: 44px; }
+      .name-submit-btn  { min-height: 44px; padding: 8px 14px; }
+
+      .mode-toggle-btn { padding: 10px 11px; font-size: 18px; min-height: 44px; min-width: 44px; }
 
       .mic-btn {
         flex: 1;
         justify-content: center;
         padding: 12px 10px;
         font-size: 14px;
+        min-height: 44px;
       }
 
       .transcript-preview { font-size: 12.5px; }
 
       .assist-bar { padding: 4px 10px 5px; gap: 5px; }
-      .assist-btn { font-size: 12px; padding: 6px 10px; }
+      .assist-btn { font-size: 12px; padding: 9px 12px; min-height: 44px; }
       .assist-btn::after { display: none; }
     }
   `]
@@ -719,7 +728,8 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked {
   }
 
   private focusInput(): void {
-    this.inputEl?.nativeElement?.focus?.();
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (!isTouch) this.inputEl?.nativeElement?.focus?.();
   }
 
   ngAfterViewChecked(): void {

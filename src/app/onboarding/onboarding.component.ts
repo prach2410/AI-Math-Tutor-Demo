@@ -130,6 +130,7 @@ import { VoiceService } from '../voice.service';
             #inputEl
             class="chat-input"
             type="text"
+            [attr.inputmode]="ob.waiting() === 'answer' ? 'decimal' : 'text'"
             [placeholder]="ob.waiting() === 'name' ? 'พิมพ์ชื่อเล่น หรือ Enter เพื่อข้าม...' : 'พิมพ์คำตอบของหนู...'"
             [(ngModel)]="inputText"
             (keydown.enter)="send()"
@@ -576,7 +577,13 @@ import { VoiceService } from '../voice.service';
     /* Mobile */
     @media (max-width: 640px) {
       .badge { font-size: 11px; }
-      .bubble { max-width: 85%; font-size: 14px; }
+      .bubble { max-width: 88%; font-size: 14px; }
+
+      /* Minimum 44px touch targets */
+      .assist-btn  { padding: 10px 14px; min-height: 44px; font-size: 13px; }
+      .send-btn    { min-height: 44px; padding: 10px 16px; }
+      .chat-input  { min-height: 44px; font-size: 16px; } /* 16px prevents iOS zoom-on-focus */
+      .skip-btn    { min-height: 36px; padding: 6px 14px; }
 
       .mode-select-bar { padding: 12px; gap: 8px; }
       .mode-prompt { font-size: 13.5px; }
@@ -613,7 +620,8 @@ export class OnboardingComponent implements AfterViewInit, AfterViewChecked {
     effect(() => {
       const waiting = this.ob.waiting();
       const loading = this.ob.loading();
-      if (!loading && waiting === 'answer') {
+      const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      if (!loading && waiting === 'answer' && !isTouch) {
         setTimeout(() => this.inputEl?.nativeElement.focus(), 50);
       }
     });

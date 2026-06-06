@@ -149,6 +149,7 @@ import { VoiceService } from './voice.service';
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -442,7 +443,7 @@ import { VoiceService } from './voice.service';
         border-top: 1px solid #e2e8f0;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
         z-index: 100;
-        padding-bottom: env(safe-area-inset-bottom, 0);
+        padding-bottom: env(safe-area-inset-bottom, 8px);
       }
 
       .nav-item {
@@ -468,8 +469,8 @@ import { VoiceService } from './voice.service';
       .nav-icon  { font-size: 20px; line-height: 1; }
       .nav-label { font-size: 10px; font-weight: 500; white-space: nowrap; }
 
-      /* Pad content above bottom nav */
-      .layout { padding-bottom: 56px; }
+      /* Pad content above bottom nav (56px nav + safe area for iPhone home indicator) */
+      .layout { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
     }
   `]
 })
