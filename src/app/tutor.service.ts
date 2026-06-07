@@ -69,7 +69,8 @@ export class TutorService {
   private _parentFeedbackSubmitted = signal(false);
   private _interactionMode  = signal<InteractionMode | null>(null);
   private _reasonForChoice  = signal('');
-  private _inFreeTalk       = signal(false);
+  private _inFreeTalk           = signal(false);
+  private _inProjectBrainMode   = signal(false);
   private _pendingTechniqueFeedback = signal<{ techniqueType: string; step: number } | null>(null);
   private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private _abandonListener: (() => void) | null = null;
@@ -93,6 +94,7 @@ export class TutorService {
   readonly interactionMode  = this._interactionMode.asReadonly();
   readonly reasonForChoice  = this._reasonForChoice.asReadonly();
   readonly inFreeTalk              = this._inFreeTalk.asReadonly();
+  readonly inProjectBrainMode      = this._inProjectBrainMode.asReadonly();
   readonly pendingTechniqueFeedback = this._pendingTechniqueFeedback.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
@@ -367,6 +369,20 @@ export class TutorService {
 
   trackFreeTalkDuringLesson(): void {
     this.addEvent('FreeTalkEnteredDuringLesson');
+  }
+
+  enterProjectBrainMode(): void {
+    this._inProjectBrainMode.set(true);
+    this.addEvent('project_brain_entered');
+  }
+
+  exitProjectBrainMode(): void {
+    this._inProjectBrainMode.set(false);
+    this.addEvent('project_brain_exited');
+  }
+
+  addProjectBrainEvent(type: string): void {
+    this.addEvent(type);
   }
 
   exitFreeTalk(): void {

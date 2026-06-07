@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, ViewChild, signal } from '@angular/core';
 import { FreeTalkComponent } from './free-talk/free-talk.component';
+import { ProjectBrainTutorComponent } from './project-brain/project-brain-tutor.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
@@ -21,6 +22,7 @@ import { VoiceService } from './voice.service';
   standalone: true,
   imports: [
     FreeTalkComponent,
+    ProjectBrainTutorComponent,
     FirstTimeGuideComponent,
     AboutComponent,
     OnboardingComponent,
@@ -44,14 +46,14 @@ import { VoiceService } from './voice.service';
         <div class="header-inner">
           <div class="header-text">
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
-            <p class="header-sub">{{ tutor.scenario().title }}</p>
+            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.scenario().title }}</p>
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
               @for (s of tutor.scenarios; track s.id) {
                 <button
                   class="scenario-btn"
-                  [class.active]="tutor.scenario().id === s.id"
+                  [class.active]="tutor.scenario().id === s.id && !tutor.inProjectBrainMode()"
                   [disabled]="tutor.loading()"
                   (click)="tutor.selectScenario(s.id)"
                 >
@@ -59,6 +61,15 @@ import { VoiceService } from './voice.service';
                   <span>{{ s.title }}</span>
                 </button>
               }
+              <button
+                class="scenario-btn pb-btn"
+                [class.active]="tutor.inProjectBrainMode()"
+                [disabled]="tutor.loading()"
+                (click)="enterProjectBrain()"
+              >
+                <span>🧠</span>
+                <span>Project Brain</span>
+              </button>
             </nav>
             <app-about #aboutRef />
           </div>
@@ -70,6 +81,8 @@ import { VoiceService } from './voice.service';
         <section class="chat-section">
           @if (onboarding.isActive()) {
             <app-onboarding />
+          } @else if (tutor.inProjectBrainMode()) {
+            <app-project-brain-tutor />
           } @else if (tutor.inFreeTalk()) {
             <app-free-talk [duringLesson]="tutor.messages().length > 0" />
           } @else if (tutor.finished()) {
@@ -223,6 +236,8 @@ import { VoiceService } from './voice.service';
       font-weight: 600;
     }
     .scenario-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pb-btn { border-color: rgba(147,197,253,0.5); }
+    .pb-btn.active { background: #1e40af; color: white; border-color: #1e40af; }
 
     .content {
       flex: 1;
@@ -573,6 +588,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+  protected enterProjectBrain(): void { this.tutor.enterProjectBrainMode(); }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
   protected goLearn(): void { this.showNotesSheet.set(false); this.onboarding.skip(); this.tutor.init(); }
