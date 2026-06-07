@@ -21,6 +21,7 @@ interface ProjectBrainRequest {
   message: string;
   phase: string;
   studentName?: string;
+  priorEvidenceSummary?: string;
 }
 
 interface ProjectBrainResponse {
@@ -36,7 +37,11 @@ interface SaveEvidenceRequest {
   items: EvidenceItem[];
 }
 
-export type ProjectBrainPhase = 'teach' | 'reflect' | 'grill' | 'summary';
+interface PriorEvidenceEntity {
+  summaryJson: string;
+}
+
+export type ProjectBrainPhase = 'teach' | 'retrieval' | 'check' | 'reflect' | 'grill' | 'summary';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectBrainTutorService {
@@ -63,20 +68,42 @@ export class ProjectBrainTutorService {
     this._evidence.set([]);
 
     this.tutor.addProjectBrainEvent('project_brain_started');
-    this._loadTeach();
+    this._loadOpening();
   }
 
-  private async _loadTeach(): Promise<void> {
+  private async _loadOpening(): Promise<void> {
     this._loading.set(true);
     try {
+      const studentId = this.profile.studentId();
+      let priorSummary: string | null = null;
+
+      // Check for prior evidence
+      try {
+        const prior = await firstValueFrom(
+          this.http.get<PriorEvidenceEntity[]>(
+            `/api/project-brain/evidence?studentId=${encodeURIComponent(studentId)}&limit=3`
+          )
+        );
+        priorSummary = this._formatPriorSummary(prior);
+      } catch { /* no prior evidence or network error — proceed as new session */ }
+
+      const isReturning = !!priorSummary;
+      const phase = isReturning ? 'retrieval' : 'teach';
+
+      if (isReturning) {
+        this.tutor.addProjectBrainEvent('project_brain_returning_user');
+      }
+
       const res = await firstValueFrom(
         this.http.post<ProjectBrainResponse>('/api/project-brain/chat', {
           history: [],
           message: 'เริ่ม',
-          phase: 'teach',
+          phase,
           studentName: this.profile.displayName() || undefined,
+          priorEvidenceSummary: priorSummary ?? undefined,
         })
       );
+
       this._messages.set([{ role: 'assistant', content: res.message }]);
       this._phase.set(res.phase as ProjectBrainPhase);
     } catch {
@@ -84,6 +111,28 @@ export class ProjectBrainTutorService {
     } finally {
       this._loading.set(false);
     }
+  }
+
+  private _formatPriorSummary(entities: PriorEvidenceEntity[]): string | null {
+    if (!entities?.length) return null;
+    const lines: string[] = [];
+    for (const entity of entities) {
+      try {
+        const summary = JSON.parse(entity.summaryJson) as {
+          strongEvidence?: string[];
+          openQuestions?: string[];
+        };
+        if (summary.strongEvidence?.length) {
+          lines.push('✓ Strong:');
+          summary.strongEvidence.slice(0, 3).forEach(e => lines.push(`  • ${e}`));
+        }
+        if (summary.openQuestions?.length) {
+          lines.push('? Questions:');
+          summary.openQuestions.slice(0, 2).forEach(q => lines.push(`  • ${q}`));
+        }
+      } catch { /* skip */ }
+    }
+    return lines.length ? lines.join('\n') : null;
   }
 
   async send(text: string): Promise<void> {
@@ -113,7 +162,6 @@ export class ProjectBrainTutorService {
 
       this._messages.update(m => [...m, { role: 'assistant', content: res.message }]);
 
-      // Accumulate evidence
       if (res.evidence?.length) {
         this._evidence.update(e => [...e, ...res.evidence!]);
       }
@@ -125,7 +173,6 @@ export class ProjectBrainTutorService {
       }
 
       if (res.suggestSummary) this._suggestSummary.set(true);
-
       if (nextPhase === 'summary') {
         this.tutor.addProjectBrainEvent('project_brain_summary_shown');
       }
@@ -153,7 +200,6 @@ export class ProjectBrainTutorService {
       items,
     };
 
-    // Fire-and-forget
     this.http.post(`/api/project-brain/sessions/${sessionId}/evidence`, body)
       .subscribe({ error: () => {} });
 

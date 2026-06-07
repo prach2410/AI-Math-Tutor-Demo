@@ -7,10 +7,12 @@ import { ProjectBrainTutorService, ProjectBrainPhase } from './project-brain-tut
 import { TutorService } from '../tutor.service';
 
 const PHASE_LABELS: Record<ProjectBrainPhase, string> = {
-  teach:   '📖 เรียนรู้',
-  reflect: '💭 สะท้อนความคิด',
-  grill:   '🔍 ฝึกคิด',
-  summary: '📋 สรุปความเข้าใจ',
+  teach:     '📖 เรียนรู้',
+  retrieval: '🔄 ต่อจากครั้งก่อน',
+  check:     '✅ ตรวจความเข้าใจ',
+  reflect:   '💭 สะท้อนความคิด',
+  grill:     '🔍 ฝึกคิด',
+  summary:   '📋 สรุปความเข้าใจ',
 };
 
 @Component({
