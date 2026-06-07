@@ -9,6 +9,13 @@ export interface ProjectBrainMessage {
   content: string;
 }
 
+export interface EvidenceItem {
+  evidenceType: string;
+  userStatement: string;
+  aiInterpretation: string;
+  confidence: number;
+}
+
 interface ProjectBrainRequest {
   history: { role: string; text: string }[];
   message: string;
@@ -20,6 +27,13 @@ interface ProjectBrainResponse {
   message: string;
   phase: string;
   suggestSummary: boolean;
+  evidence?: EvidenceItem[];
+}
+
+interface SaveEvidenceRequest {
+  studentId?: string;
+  topic: string;
+  items: EvidenceItem[];
 }
 
 export type ProjectBrainPhase = 'teach' | 'reflect' | 'grill' | 'summary';
@@ -30,24 +44,25 @@ export class ProjectBrainTutorService {
   private tutor   = inject(TutorService);
   private profile = inject(StudentProfileService);
 
-  private _messages      = signal<ProjectBrainMessage[]>([]);
-  private _loading       = signal(false);
-  private _phase         = signal<ProjectBrainPhase>('teach');
+  private _messages       = signal<ProjectBrainMessage[]>([]);
+  private _loading        = signal(false);
+  private _phase          = signal<ProjectBrainPhase>('teach');
   private _suggestSummary = signal(false);
+  private _evidence       = signal<EvidenceItem[]>([]);
 
   readonly messages       = this._messages.asReadonly();
   readonly loading        = this._loading.asReadonly();
   readonly phase          = this._phase.asReadonly();
   readonly suggestSummary = this._suggestSummary.asReadonly();
+  readonly evidence       = this._evidence.asReadonly();
 
   start(): void {
     this._messages.set([]);
     this._phase.set('teach');
     this._suggestSummary.set(false);
+    this._evidence.set([]);
 
     this.tutor.addProjectBrainEvent('project_brain_started');
-
-    // Kick off by "sending" an empty first message to get the teach content
     this._loadTeach();
   }
 
@@ -98,15 +113,18 @@ export class ProjectBrainTutorService {
 
       this._messages.update(m => [...m, { role: 'assistant', content: res.message }]);
 
+      // Accumulate evidence
+      if (res.evidence?.length) {
+        this._evidence.update(e => [...e, ...res.evidence!]);
+      }
+
       const nextPhase = res.phase as ProjectBrainPhase;
       if (nextPhase !== this._phase()) {
         this._phase.set(nextPhase);
         this.tutor.addProjectBrainEvent(`project_brain_phase_changed:${nextPhase}`);
       }
 
-      if (res.suggestSummary) {
-        this._suggestSummary.set(true);
-      }
+      if (res.suggestSummary) this._suggestSummary.set(true);
 
       if (nextPhase === 'summary') {
         this.tutor.addProjectBrainEvent('project_brain_summary_shown');
@@ -123,5 +141,22 @@ export class ProjectBrainTutorService {
 
   async requestSummary(): Promise<void> {
     await this.send('ขอสรุป');
+  }
+
+  saveEvidence(sessionId: string): void {
+    const items = this._evidence();
+    if (!items.length || !sessionId) return;
+
+    const body: SaveEvidenceRequest = {
+      studentId: this.profile.studentId() || undefined,
+      topic: 'understanding_engine',
+      items,
+    };
+
+    // Fire-and-forget
+    this.http.post(`/api/project-brain/sessions/${sessionId}/evidence`, body)
+      .subscribe({ error: () => {} });
+
+    this.tutor.addProjectBrainEvent(`project_brain_evidence_saved:${items.length}`);
   }
 }
