@@ -41,7 +41,7 @@ interface PriorEvidenceEntity {
   summaryJson: string;
 }
 
-export type ProjectBrainPhase = 'teach' | 'retrieval' | 'check' | 'reflect' | 'grill' | 'summary';
+export type ProjectBrainPhase = 'teach' | 'retrieval' | 'guided' | 'ready' | 'check' | 'reflect' | 'grill' | 'summary';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectBrainTutorService {

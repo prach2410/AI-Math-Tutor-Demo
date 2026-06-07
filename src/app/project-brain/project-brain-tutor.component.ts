@@ -9,6 +9,8 @@ import { TutorService } from '../tutor.service';
 const PHASE_LABELS: Record<ProjectBrainPhase, string> = {
   teach:     '📖 เรียนรู้',
   retrieval: '🔄 ต่อจากครั้งก่อน',
+  guided:    '🧭 สร้างความเข้าใจ',
+  ready:     '🎯 เตรียมอธิบาย',
   check:     '✅ ตรวจความเข้าใจ',
   reflect:   '💭 สะท้อนความคิด',
   grill:     '🔍 ฝึกคิด',
