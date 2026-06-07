@@ -181,6 +181,13 @@ const API = '/api/admin/discovery-batches';
           </div>
         }
 
+        <!-- Export Project Brain Evidence (separate file) -->
+        <div class="export-bar pb-export-bar">
+          <button class="btn btn-pb-export" (click)="downloadProjectBrainExport()">
+            🧠 Download Project Brain Evidence JSON
+          </button>
+        </div>
+
         <!-- Unreviewed count + Create -->
         <div class="top-bar">
           <div class="unreviewed-badge">
@@ -404,6 +411,9 @@ const API = '/api/admin/discovery-batches';
     .export-bar   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .btn-export   { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; }
     .btn-export:hover { background: #dbeafe; opacity: 1; }
+    .pb-export-bar { margin-top: 8px; }
+    .btn-pb-export { background: #f0f9ff; color: #0369a1; border: 1.5px solid #7dd3fc; }
+    .btn-pb-export:hover { background: #e0f2fe; opacity: 1; }
     .btn-prompt   { background: #faf5ff; color: #6d28d9; border: 1.5px solid #c4b5fd; }
     .btn-prompt:hover { background: #ede9fe; opacity: 1; }
     .prompt-text  { color: #e2e8f0; }
@@ -902,6 +912,22 @@ export class DiscoveryBatchesComponent implements OnInit {
     a.download = `sessions-export-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  protected async downloadProjectBrainExport(): Promise<void> {
+    try {
+      const data = await firstValueFrom(this.http.get('/api/admin/project-brain/export'));
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `project-brain-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('Error: ไม่สามารถโหลด Project Brain evidence ได้');
+    }
   }
 
   protected async deleteAllSessions(): Promise<void> {

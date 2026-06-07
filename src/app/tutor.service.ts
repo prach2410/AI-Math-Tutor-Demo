@@ -372,8 +372,20 @@ export class TutorService {
   }
 
   enterProjectBrainMode(): void {
+    this._cancelEmptySession();
     this._inProjectBrainMode.set(true);
     this.addEvent('project_brain_entered');
+  }
+
+  private _cancelEmptySession(): void {
+    const sessionId = this._sessionId();
+    // Only cancel if session exists and no student messages were sent
+    const hasStudentMessages = this._sessionMessages.some(m => m.role === 'student');
+    if (!sessionId || hasStudentMessages) return;
+    this.http.delete(`${SESSION_API}/${sessionId}`).subscribe({ error: () => {} });
+    this._sessionId.set('');
+    this._sessionEvents = [];
+    this._sessionMessages = [];
   }
 
   exitProjectBrainMode(): void {
