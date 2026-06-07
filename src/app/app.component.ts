@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, signal, ElementRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { FreeTalkComponent } from './free-talk/free-talk.component';
 import { ProjectBrainTutorComponent } from './project-brain/project-brain-tutor.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
@@ -35,6 +36,7 @@ import { VoiceService } from './voice.service';
     FeedbackCollectionComponent,
     LessonCompleteComponent,
     DiscoveryBatchesComponent,
+    FormsModule,
   ],
   template: `
     @if (isAdminPage()) {
@@ -162,6 +164,32 @@ import { VoiceService } from './voice.service';
         </a>
       </nav>
     </div>
+
+    <!-- Project Brain password dialog -->
+    @if (showPbDialog()) {
+      <div class="pb-overlay" (click)="cancelPbDialog()">
+        <div class="pb-dialog" (click)="$event.stopPropagation()">
+          <div class="pb-dialog-icon">🧠</div>
+          <h3 class="pb-dialog-title">Project Brain</h3>
+          <p class="pb-dialog-desc">กรุณาใส่รหัสเพื่อเข้าใช้งาน</p>
+          <input
+            #pbInput
+            type="password"
+            class="pb-dialog-input"
+            [(ngModel)]="pbPassword"
+            placeholder="รหัสผ่าน"
+            (keydown.enter)="confirmPbDialog()"
+          />
+          @if (pbError()) {
+            <p class="pb-dialog-error">รหัสไม่ถูกต้อง กรุณาลองใหม่</p>
+          }
+          <div class="pb-dialog-actions">
+            <button class="pb-btn-cancel" (click)="cancelPbDialog()">ยกเลิก</button>
+            <button class="pb-btn-confirm" (click)="confirmPbDialog()">เข้าใช้งาน</button>
+          </div>
+        </div>
+      </div>
+    }
     }
   `,
   styles: [`
