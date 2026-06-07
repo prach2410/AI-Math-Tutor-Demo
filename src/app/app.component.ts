@@ -565,6 +565,8 @@ export class AppComponent implements OnInit {
     window.location.pathname.startsWith('/admin/discovery-batches')
   );
   protected showNotesSheet = signal(false);
+  private readonly PB_KEY = 'adm2026@';
+  private pbUnlocked = false;
 
   @ViewChild('aboutRef') private aboutRef!: AboutComponent;
 
@@ -588,7 +590,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  protected enterProjectBrain(): void { this.tutor.enterProjectBrainMode(); }
+  protected enterProjectBrain(): void {
+    if (!this.pbUnlocked) {
+      const input = window.prompt('กรุณาใส่รหัสเพื่อเข้า Project Brain:');
+      if (input !== this.PB_KEY) {
+        if (input !== null) window.alert('รหัสไม่ถูกต้อง');
+        return;
+      }
+      this.pbUnlocked = true;
+    }
+    this.onboarding.skip();
+    this.tutor.enterProjectBrainMode();
+  }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
   protected goLearn(): void { this.showNotesSheet.set(false); this.onboarding.skip(); this.tutor.init(); }
