@@ -297,7 +297,17 @@ export class OnboardingService {
           content: 'เมื่อเรียนจบบท หนูจะได้รับ\n\n📒 บันทึกของหนู\n🎉 วันนี้ได้เรียนรู้อะไร\n💡 ใช้ในชีวิตจริง\n👨‍👩‍👧 สรุปสำหรับผู้ปกครอง',
         },
       ]);
-      this.startStep5();
+      setTimeout(() => {
+        this._messages.update(m => [
+          ...m,
+          {
+            role: 'assistant',
+            content: 'ระหว่างเรียน ถ้าวิธีคิดไหนช่วยหนูได้\nกด 👍 ไว้ได้เลยครับ\n\nพี่จะได้รู้ว่าวิธีไหนช่วยหนูได้มากที่สุด 😊',
+            isTip: true,
+          },
+        ]);
+        this.startStep5();
+      }, 900);
     }, 800);
   }
 

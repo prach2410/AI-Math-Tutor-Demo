@@ -70,6 +70,7 @@ export class TutorService {
   private _interactionMode  = signal<InteractionMode | null>(null);
   private _reasonForChoice  = signal('');
   private _inFreeTalk       = signal(false);
+  private _pendingTechniqueFeedback = signal<{ techniqueType: string; step: number } | null>(null);
   private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private _abandonListener: (() => void) | null = null;
   private static readonly INACTIVE_MS = 3 * 60 * 1000;
@@ -91,7 +92,8 @@ export class TutorService {
   readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
   readonly interactionMode  = this._interactionMode.asReadonly();
   readonly reasonForChoice  = this._reasonForChoice.asReadonly();
-  readonly inFreeTalk       = this._inFreeTalk.asReadonly();
+  readonly inFreeTalk              = this._inFreeTalk.asReadonly();
+  readonly pendingTechniqueFeedback = this._pendingTechniqueFeedback.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
     const meta = SCENARIOS.find(s => s.id === id);
@@ -106,6 +108,7 @@ export class TutorService {
     this._reflection.set([]);
     this._studentFeedback.set('');
     this._parentCoaching.set('');
+    this._pendingTechniqueFeedback.set(null);
     this._wrongCount        = 0;
     this._hintCount         = 0;
     this._guidedCount       = 0;
@@ -172,6 +175,7 @@ export class TutorService {
     this._messages.update(msgs => [...msgs, userMsg]);
     this.addSessionMessage(userMsg, undefined, inputMode);
     this.addEvent('student_answer_submitted');
+    this.autoSkipTechniqueFeedback();
     if (this.isFollowUpQuestion(text)) {
       this.addEvent(`student_follow_up_question:${text.trim()}`);
     }
@@ -254,6 +258,20 @@ export class TutorService {
     this.addEvent(type);
   }
 
+  submitTechniqueFeedback(feedback: 'like' | 'confused'): void {
+    const pending = this._pendingTechniqueFeedback();
+    if (!pending) return;
+    this.addEvent(`technique_feedback:${pending.techniqueType}:${feedback}`);
+    this._pendingTechniqueFeedback.set(null);
+  }
+
+  private autoSkipTechniqueFeedback(): void {
+    const pending = this._pendingTechniqueFeedback();
+    if (!pending) return;
+    this.addEvent(`technique_feedback:${pending.techniqueType}:skipped`);
+    this._pendingTechniqueFeedback.set(null);
+  }
+
   async submitParentFeedback(req: ParentFeedbackRequest): Promise<void> {
     if (this._parentFeedbackSubmitted()) return;
     this.addEvent('parent_feedback_submitted');
@@ -310,6 +328,7 @@ export class TutorService {
 
     if (res.teachingMomentType) {
       this.addEvent(`teaching_moment_shown:${res.teachingMomentType}`);
+      this._pendingTechniqueFeedback.set({ techniqueType: res.teachingMomentType, step: this._currentStep() });
     }
 
     if (res.nextStep) {

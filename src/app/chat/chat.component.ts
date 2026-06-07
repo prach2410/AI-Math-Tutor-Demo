@@ -94,6 +94,14 @@ import { InteractionMode } from '../models/learning.model';
         }
       </div>
 
+      @if (tutor.pendingTechniqueFeedback() && !tutor.loading()) {
+        <div class="technique-feedback-bar">
+          <span class="technique-feedback-label">วิธีนี้ช่วยหนูไหมครับ?</span>
+          <button class="tf-btn tf-like" (click)="tutor.submitTechniqueFeedback('like')">👍 ชอบวิธีนี้</button>
+          <button class="tf-btn tf-confused" (click)="tutor.submitTechniqueFeedback('confused')">😐 ยังงง</button>
+        </div>
+      }
+
       @if (!tutor.finished() && !tutor.loading()) {
         <div class="assist-bar">
           <button class="assist-btn hint-btn" (click)="tutor.requestAssist('hint')">
@@ -317,6 +325,40 @@ import { InteractionMode } from '../models/learning.model';
       font-family: monospace;
       font-size: 13.5px;
     }
+
+    .technique-feedback-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px 4px;
+      flex-wrap: wrap;
+      animation: fadeSlideIn 0.25s ease;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .technique-feedback-label {
+      font-size: 12px;
+      color: #64748b;
+      white-space: nowrap;
+    }
+    .tf-btn {
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .tf-btn:hover { transform: translateY(-1px); }
+    .tf-like    { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+    .tf-confused { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
+    .tf-like:hover    { background: #dcfce7; }
+    .tf-confused:hover { background: #ffedd5; }
 
     .assist-bar {
       padding: 4px 16px 6px;
