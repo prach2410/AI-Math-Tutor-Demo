@@ -54,18 +54,21 @@ export class ProjectBrainTutorService {
   private _phase          = signal<ProjectBrainPhase>('teach');
   private _suggestSummary = signal(false);
   private _evidence       = signal<EvidenceItem[]>([]);
+  private _pbSessionId    = signal('');
 
   readonly messages       = this._messages.asReadonly();
   readonly loading        = this._loading.asReadonly();
   readonly phase          = this._phase.asReadonly();
   readonly suggestSummary = this._suggestSummary.asReadonly();
   readonly evidence       = this._evidence.asReadonly();
+  readonly pbSessionId    = this._pbSessionId.asReadonly();
 
   start(): void {
     this._messages.set([]);
     this._phase.set('teach');
     this._suggestSummary.set(false);
     this._evidence.set([]);
+    this._pbSessionId.set(crypto.randomUUID());
 
     this.tutor.addProjectBrainEvent('project_brain_started');
     this._loadOpening();
@@ -190,8 +193,9 @@ export class ProjectBrainTutorService {
     await this.send('ขอสรุป');
   }
 
-  saveEvidence(sessionId: string): void {
-    const items = this._evidence();
+  saveEvidence(): void {
+    const items    = this._evidence();
+    const sessionId = this._pbSessionId();
     if (!items.length || !sessionId) return;
 
     const body: SaveEvidenceRequest = {

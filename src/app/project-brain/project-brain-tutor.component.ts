@@ -331,12 +331,12 @@ export class ProjectBrainTutorComponent implements OnInit, AfterViewChecked {
   }
 
   protected requestSummary(): void {
-    this.pb.saveEvidence(this.tutor.sessionId());
+    this.pb.saveEvidence();
     this.pb.requestSummary();
   }
 
   protected exit(): void {
-    this.pb.saveEvidence(this.tutor.sessionId());
+    this.pb.saveEvidence();
     this.tutor.exitProjectBrainMode();
   }
 
