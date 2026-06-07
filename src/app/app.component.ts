@@ -267,6 +267,45 @@ import { VoiceService } from './voice.service';
     .pb-btn { border-color: rgba(147,197,253,0.5); }
     .pb-btn.active { background: #1e40af; color: white; border-color: #1e40af; }
 
+    /* Project Brain password dialog */
+    .pb-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .pb-dialog {
+      background: white; border-radius: 16px;
+      padding: 28px 28px 24px;
+      width: 320px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .pb-dialog-icon { font-size: 2.2rem; line-height: 1; }
+    .pb-dialog-title { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
+    .pb-dialog-desc  { margin: 0; font-size: 0.85rem; color: #64748b; text-align: center; }
+    .pb-dialog-input {
+      width: 100%; box-sizing: border-box;
+      padding: 10px 14px; font-size: 1rem;
+      border: 1.5px solid #cbd5e1; border-radius: 10px;
+      outline: none; letter-spacing: 0.15em;
+      margin-top: 4px;
+    }
+    .pb-dialog-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .pb-dialog-error { margin: 0; font-size: 0.8rem; color: #dc2626; align-self: flex-start; }
+    .pb-dialog-actions { display: flex; gap: 10px; width: 100%; margin-top: 4px; }
+    .pb-btn-cancel {
+      flex: 1; padding: 9px; border-radius: 9px;
+      border: 1.5px solid #e2e8f0; background: white;
+      color: #64748b; font-size: 0.9rem; cursor: pointer;
+    }
+    .pb-btn-confirm {
+      flex: 1; padding: 9px; border-radius: 9px;
+      border: none; background: #1e40af;
+      color: white; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .pb-btn-confirm:hover { background: #1d4ed8; }
+
     .content {
       flex: 1;
       display: flex;
@@ -595,6 +634,9 @@ export class AppComponent implements OnInit {
   protected showNotesSheet = signal(false);
   private readonly PB_KEY = 'adm2026@';
   private pbUnlocked = false;
+  protected showPbDialog = signal(false);
+  protected pbError      = signal(false);
+  protected pbPassword   = '';
 
   @ViewChild('aboutRef') private aboutRef!: AboutComponent;
 
@@ -619,16 +661,32 @@ export class AppComponent implements OnInit {
   }
 
   protected enterProjectBrain(): void {
-    if (!this.pbUnlocked) {
-      const input = window.prompt('กรุณาใส่รหัสเพื่อเข้า Project Brain:');
-      if (input !== this.PB_KEY) {
-        if (input !== null) window.alert('รหัสไม่ถูกต้อง');
-        return;
-      }
-      this.pbUnlocked = true;
+    if (this.pbUnlocked) {
+      this.onboarding.skip();
+      this.tutor.enterProjectBrainMode();
+      return;
     }
-    this.onboarding.skip();
-    this.tutor.enterProjectBrainMode();
+    this.pbPassword = '';
+    this.pbError.set(false);
+    this.showPbDialog.set(true);
+  }
+
+  protected confirmPbDialog(): void {
+    if (this.pbPassword === this.PB_KEY) {
+      this.pbUnlocked = true;
+      this.showPbDialog.set(false);
+      this.onboarding.skip();
+      this.tutor.enterProjectBrainMode();
+    } else {
+      this.pbError.set(true);
+      this.pbPassword = '';
+    }
+  }
+
+  protected cancelPbDialog(): void {
+    this.showPbDialog.set(false);
+    this.pbError.set(false);
+    this.pbPassword = '';
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
