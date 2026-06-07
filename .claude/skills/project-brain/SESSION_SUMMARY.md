@@ -1,6 +1,6 @@
 # PROJECT BRAIN — SESSION SUMMARY
 
-**Generated:** 2026-06-06 (updated end-of-session)
+**Generated:** 2026-06-07 (updated end-of-session)
 **Source:** Full analysis of 90_Project_Brain/* + session changes
 **Purpose:** Single-file context for AI sessions — current truth only, no history
 
@@ -49,7 +49,7 @@ All P0/P1 features are built. The single active blocker is collecting **20–50 
 | Event Tracking | ✅ |
 | Discovery Batch Review (`/admin/discovery-batches`) | ✅ |
 | Voice interaction mode (STT/TTS, Chrome/Edge only) | ✅ |
-| Mobile-responsive layout | ✅ |
+| Mobile-responsive layout (iOS keyboard, touch targets, bottom sheet) | ✅ |
 | **ความเข้าใจของหนู — Reflection Capture (3 free-text questions)** | ✅ NEW |
 | **AI Role Reflection Question (H-10 evidence chip)** | ✅ NEW |
 
@@ -126,7 +126,36 @@ All P0/P1 features are built. The single active blocker is collecting **20–50 
 
 ---
 
-## 9. Session Changes (2026-06-06)
+## 9. Session Changes (2026-06-07)
+
+### Mobile UX Fixes
+
+Critical bugs that would have blocked user testing on mobile devices.
+
+| Fix | Files | Detail |
+|---|---|---|
+| iOS keyboard hides input | `app.component.ts`, `index.html` | `height: 100dvh` + `viewport-fit=cover` — layout now shrinks correctly when keyboard opens |
+| Auto-focus opens keyboard unexpectedly | `onboarding.component.ts`, `chat.component.ts` | Focus skipped on touch devices (`hover: none and pointer: coarse`) |
+| iOS zoom on input tap | `chat.component.ts`, `onboarding.component.ts` | `font-size: 16px` on all inputs — iOS Safari no longer auto-zooms |
+| Touch targets too small | Both components | `min-height: 44px` on all buttons and inputs (Apple/Android guideline) |
+| Full keyboard for math answers | Both components | `inputmode="decimal"` — number pad shown instead |
+| iPhone home indicator overlap | `app.component.ts` | `env(safe-area-inset-bottom)` now applied to both nav padding and layout padding |
+
+### Mobile Layout Changes
+
+| Change | Detail |
+|---|---|
+| Side panels → bottom sheet | ใช้ในชีวิตจริง / บันทึกของหนู / สรุปสำหรับผู้ปกครอง hidden from main scroll on mobile. Accessible via 📋 บันทึก tab in bottom nav. Slides up with backdrop + close button. |
+| Bottom nav: เกี่ยวกับ → 📋 บันทึก | เกี่ยวกับ still accessible from the header `<app-about>` component |
+| Onboarding learn-or-talk | `.mode-descs` (2-line descriptions) hidden on mobile — only prompt text + 2 buttons remain |
+
+### No New Features, No New Evidence, No New Risks
+
+These are bug fixes and UX improvements to ensure the product works correctly on mobile before user testing begins. Feature freeze remains active.
+
+---
+
+## 10. Session Changes (2026-06-06)
 
 ### Bug Fixes
 | Fix | Detail |

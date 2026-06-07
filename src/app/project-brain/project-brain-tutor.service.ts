@@ -22,6 +22,7 @@ interface ProjectBrainRequest {
   phase: string;
   studentName?: string;
   priorEvidenceSummary?: string;
+  topicId?: string;
 }
 
 interface ProjectBrainResponse {
@@ -55,6 +56,7 @@ export class ProjectBrainTutorService {
   private _suggestSummary = signal(false);
   private _evidence       = signal<EvidenceItem[]>([]);
   private _pbSessionId    = signal('');
+  private _topicId        = signal<string>('');
 
   readonly messages       = this._messages.asReadonly();
   readonly loading        = this._loading.asReadonly();
@@ -62,15 +64,17 @@ export class ProjectBrainTutorService {
   readonly suggestSummary = this._suggestSummary.asReadonly();
   readonly evidence       = this._evidence.asReadonly();
   readonly pbSessionId    = this._pbSessionId.asReadonly();
+  readonly topicId        = this._topicId.asReadonly();
 
-  start(): void {
+  start(topicId: string): void {
     this._messages.set([]);
     this._phase.set('teach');
     this._suggestSummary.set(false);
     this._evidence.set([]);
     this._pbSessionId.set(crypto.randomUUID());
+    this._topicId.set(topicId);
 
-    this.tutor.addProjectBrainEvent('project_brain_started');
+    this.tutor.addProjectBrainEvent(`project_brain_started:${topicId}`);
     this._loadOpening();
   }
 
@@ -104,6 +108,7 @@ export class ProjectBrainTutorService {
           phase,
           studentName: this.profile.displayName() || undefined,
           priorEvidenceSummary: priorSummary ?? undefined,
+          topicId: this._topicId(),
         })
       );
 
@@ -157,6 +162,7 @@ export class ProjectBrainTutorService {
         message: text.trim(),
         phase: this._phase(),
         studentName: this.profile.displayName() || undefined,
+        topicId: this._topicId(),
       };
 
       const res = await firstValueFrom(
@@ -200,7 +206,7 @@ export class ProjectBrainTutorService {
 
     const body: SaveEvidenceRequest = {
       studentId: this.profile.studentId() || undefined,
-      topic: 'understanding_engine',
+      topic: this._topicId() || 'understanding_engine',
       items,
     };
 
