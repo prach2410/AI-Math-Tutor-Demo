@@ -308,6 +308,10 @@ export class TutorService {
 
     this._wrongCount = 0;
 
+    if (res.teachingMomentType) {
+      this.addEvent(`teaching_moment_shown:${res.teachingMomentType}`);
+    }
+
     if (res.nextStep) {
       this.addEvent('step_completed');
       this._currentStep.set(res.nextStep.stepNumber);

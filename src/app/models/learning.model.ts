@@ -31,6 +31,7 @@ export interface EvaluateResponse {
   learningReflection: string[] | null;
   studentFeedback: string | null;
   parentCoachingTips: string | null;
+  teachingMomentType: string | null;
 }
 
 export interface AssistResponse {
