@@ -8,6 +8,7 @@ export interface StartResponse {
   question: string;
   isLast: boolean;
   realWorldUses: string[];
+  passiveGrill?: string | null;
 }
 
 export interface EvaluateRequest {
@@ -43,6 +44,7 @@ export interface NextStepDto {
   totalSteps: number;
   question: string;
   isLast: boolean;
+  passiveGrill?: string | null;
 }
 
 // Session collection types

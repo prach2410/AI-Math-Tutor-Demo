@@ -54,6 +54,9 @@ export class TutorService {
   private _reflection       = signal<string[]>([]);
   private _studentFeedback  = signal('');
   private _parentCoaching   = signal('');
+  private _phase             = signal<'passive-grill' | 'readiness-check' | 'questioning'>('questioning');
+  private _passiveGrill      = signal<string | null>(null);
+  private _pendingQuestion   = signal<string | null>(null);
   private _wrongCount        = 0;
   private _hintCount         = 0;
   private _guidedCount       = 0;
@@ -88,6 +91,8 @@ export class TutorService {
   readonly reflection      = this._reflection.asReadonly();
   readonly studentFeedback = this._studentFeedback.asReadonly();
   readonly parentCoaching  = this._parentCoaching.asReadonly();
+  readonly phase           = this._phase.asReadonly();
+  readonly passiveGrill    = this._passiveGrill.asReadonly();
   readonly scenarios       = SCENARIOS;
   readonly sessionId       = this._sessionId.asReadonly();
   readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
@@ -111,6 +116,9 @@ export class TutorService {
     this._studentFeedback.set('');
     this._parentCoaching.set('');
     this._pendingTechniqueFeedback.set(null);
+    this._phase.set('questioning');
+    this._passiveGrill.set(null);
+    this._pendingQuestion.set(null);
     this._wrongCount        = 0;
     this._hintCount         = 0;
     this._guidedCount       = 0;
@@ -148,9 +156,18 @@ export class TutorService {
       this._totalSteps.set(res.totalSteps);
       this._realWorldUses.set(res.realWorldUses);
       this.addEvent('step_started');
-      const q: Message = { role: 'assistant', content: res.question };
-      this._messages.set([q]);
-      this.addSessionMessage(q);
+      if (res.passiveGrill) {
+        this._passiveGrill.set(res.passiveGrill);
+        this._pendingQuestion.set(res.question);
+        this._phase.set('passive-grill');
+        this._messages.set([]);
+      } else {
+        this._phase.set('questioning');
+        this._passiveGrill.set(null);
+        const q: Message = { role: 'assistant', content: res.question };
+        this._messages.set([q]);
+        this.addSessionMessage(q);
+      }
     } catch {
       const errMsg: Message = {
         role: 'assistant',
@@ -250,6 +267,28 @@ export class TutorService {
     }
   }
 
+  confirmPassiveGrill(): void {
+    this._phase.set('readiness-check');
+    this.addEvent('passive_grill_confirmed');
+  }
+
+  submitReadiness(level: 'confused' | 'starting' | 'ready'): void {
+    this.addEvent(`readiness_check:${level}`);
+    if (level === 'confused') {
+      this._phase.set('passive-grill');
+    } else {
+      const q = this._pendingQuestion();
+      if (q) {
+        this._phase.set('questioning');
+        this._passiveGrill.set(null);
+        const msg: Message = { role: 'assistant', content: q };
+        this._messages.update(msgs => [...msgs, msg]);
+        this.addSessionMessage(msg);
+        this._pendingQuestion.set(null);
+      }
+    }
+  }
+
   setInteractionMode(mode: InteractionMode, reason = ''): void {
     this._interactionMode.set(mode);
     this._reasonForChoice.set(reason);
@@ -337,9 +376,17 @@ export class TutorService {
       this.addEvent('step_completed');
       this._currentStep.set(res.nextStep.stepNumber);
       this.addEvent('step_started');
-      const nextMsg: Message = { role: 'assistant', content: res.nextStep.question };
-      this._messages.update(msgs => [...msgs, nextMsg]);
-      this.addSessionMessage(nextMsg);
+      if (res.nextStep.passiveGrill) {
+        this._passiveGrill.set(res.nextStep.passiveGrill);
+        this._pendingQuestion.set(res.nextStep.question);
+        this._phase.set('passive-grill');
+      } else {
+        this._phase.set('questioning');
+        this._passiveGrill.set(null);
+        const nextMsg: Message = { role: 'assistant', content: res.nextStep.question };
+        this._messages.update(msgs => [...msgs, nextMsg]);
+        this.addSessionMessage(nextMsg);
+      }
     }
 
     if (res.studentNote)        this._studentNote.set(res.studentNote);
