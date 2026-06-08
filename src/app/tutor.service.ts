@@ -54,7 +54,7 @@ export class TutorService {
   private _reflection       = signal<string[]>([]);
   private _studentFeedback  = signal('');
   private _parentCoaching   = signal('');
-  private _phase             = signal<'passive-grill' | 'readiness-check' | 'questioning'>('questioning');
+  private _phase             = signal<'awaiting-readiness' | 'questioning'>('questioning');
   private _passiveGrill      = signal<string | null>(null);
   private _pendingQuestion   = signal<string | null>(null);
   private _wrongCount        = 0;
@@ -92,7 +92,6 @@ export class TutorService {
   readonly studentFeedback = this._studentFeedback.asReadonly();
   readonly parentCoaching  = this._parentCoaching.asReadonly();
   readonly phase           = this._phase.asReadonly();
-  readonly passiveGrill    = this._passiveGrill.asReadonly();
   readonly scenarios       = SCENARIOS;
   readonly sessionId       = this._sessionId.asReadonly();
   readonly parentFeedbackSubmitted = this._parentFeedbackSubmitted.asReadonly();
@@ -159,8 +158,10 @@ export class TutorService {
       if (res.passiveGrill) {
         this._passiveGrill.set(res.passiveGrill);
         this._pendingQuestion.set(res.question);
-        this._phase.set('passive-grill');
-        this._messages.set([]);
+        const pgMsg: Message = { role: 'assistant', content: `${res.passiveGrill}\n\nน้องพอเริ่มเห็นภาพไหมครับ 😊` };
+        this._messages.set([pgMsg]);
+        this.addSessionMessage(pgMsg);
+        this._phase.set('awaiting-readiness');
       } else {
         this._phase.set('questioning');
         this._passiveGrill.set(null);
@@ -267,23 +268,32 @@ export class TutorService {
     }
   }
 
-  confirmPassiveGrill(): void {
-    this._phase.set('readiness-check');
-    this.addEvent('passive_grill_confirmed');
-  }
-
   submitReadiness(level: 'confused' | 'starting' | 'ready'): void {
     this.addEvent(`readiness_check:${level}`);
     if (level === 'confused') {
-      this._phase.set('passive-grill');
+      const userMsg: Message = { role: 'user', content: '😕 ยังงงอยู่' };
+      this._messages.update(msgs => [...msgs, userMsg]);
+      this.addSessionMessage(userMsg);
+      const pg = this._passiveGrill();
+      const aiContent = (pg
+        ? `ไม่เป็นไรนะครับ ลองดูอีกทีนะ 😊\n\n${pg}`
+        : 'ไม่เป็นไรนะครับ ลองดูอีกทีนะ 😊'
+      ) + '\n\nน้องพอเริ่มเห็นภาพไหมครับ 😊';
+      const aiMsg: Message = { role: 'assistant', content: aiContent };
+      this._messages.update(msgs => [...msgs, aiMsg]);
+      this.addSessionMessage(aiMsg);
     } else {
+      const label = level === 'starting' ? '🙂 เริ่มเห็นภาพแล้ว' : '😄 เห็นภาพแล้ว';
+      const userMsg: Message = { role: 'user', content: label };
+      this._messages.update(msgs => [...msgs, userMsg]);
+      this.addSessionMessage(userMsg);
       const q = this._pendingQuestion();
       if (q) {
         this._phase.set('questioning');
         this._passiveGrill.set(null);
-        const msg: Message = { role: 'assistant', content: q };
-        this._messages.update(msgs => [...msgs, msg]);
-        this.addSessionMessage(msg);
+        const nextMsg: Message = { role: 'assistant', content: q };
+        this._messages.update(msgs => [...msgs, nextMsg]);
+        this.addSessionMessage(nextMsg);
         this._pendingQuestion.set(null);
       }
     }
@@ -379,7 +389,10 @@ export class TutorService {
       if (res.nextStep.passiveGrill) {
         this._passiveGrill.set(res.nextStep.passiveGrill);
         this._pendingQuestion.set(res.nextStep.question);
-        this._phase.set('passive-grill');
+        const pgMsg: Message = { role: 'assistant', content: `${res.nextStep.passiveGrill}\n\nน้องพอเริ่มเห็นภาพไหมครับ 😊` };
+        this._messages.update(msgs => [...msgs, pgMsg]);
+        this.addSessionMessage(pgMsg);
+        this._phase.set('awaiting-readiness');
       } else {
         this._phase.set('questioning');
         this._passiveGrill.set(null);

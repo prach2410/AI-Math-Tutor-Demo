@@ -84,6 +84,22 @@ import { InteractionMode } from '../models/learning.model';
           </div>
         }
 
+        @if (tutor.phase() === 'awaiting-readiness' && !tutor.loading()) {
+          <div class="readiness-inline">
+            <div class="ri-buttons">
+              <button class="ri-btn ri-confused" (click)="tutor.submitReadiness('confused')">
+                😕 ยังงงอยู่
+              </button>
+              <button class="ri-btn ri-starting" (click)="tutor.submitReadiness('starting')">
+                🙂 เริ่มเห็นภาพแล้ว
+              </button>
+              <button class="ri-btn ri-ready" (click)="tutor.submitReadiness('ready')">
+                😄 เห็นภาพแล้ว
+              </button>
+            </div>
+          </div>
+        }
+
         @if (tutor.loading()) {
           <div class="bubble-row">
             <div class="avatar ai-avatar">🤖</div>
@@ -93,32 +109,6 @@ import { InteractionMode } from '../models/learning.model';
           </div>
         }
       </div>
-
-      @if (tutor.phase() === 'passive-grill' && !tutor.loading()) {
-        <div class="passive-grill-card">
-          <pre class="pg-text">{{ tutor.passiveGrill() }}</pre>
-          <button class="pg-btn" (click)="tutor.confirmPassiveGrill()">
-            เข้าใจแล้ว พร้อมทำโจทย์ →
-          </button>
-        </div>
-      }
-
-      @if (tutor.phase() === 'readiness-check' && !tutor.loading()) {
-        <div class="readiness-card">
-          <p class="rc-label">รู้สึกยังไงกับ concept นี้ครับ?</p>
-          <div class="rc-options">
-            <button class="rc-btn rc-confused" (click)="tutor.submitReadiness('confused')">
-              😕 ยังสับสนอยู่
-            </button>
-            <button class="rc-btn rc-starting" (click)="tutor.submitReadiness('starting')">
-              🙂 เริ่มเห็นภาพแล้ว
-            </button>
-            <button class="rc-btn rc-ready" (click)="tutor.submitReadiness('ready')">
-              😊 เข้าใจดีแล้ว
-            </button>
-          </div>
-        </div>
-      }
 
       @if (tutor.pendingTechniqueFeedback() && !tutor.loading()) {
         <div class="technique-feedback-bar">
@@ -678,80 +668,36 @@ import { InteractionMode } from '../models/learning.model';
     .guide-item strong { font-size: 12.5px; color: #1e293b; }
     .guide-item p { font-size: 11.5px; color: #64748b; margin: 0; line-height: 1.4; }
 
-    /* Passive Grill */
-    .passive-grill-card {
-      margin: 0 16px 10px;
-      padding: 14px 16px;
-      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-      border: 1.5px solid #6ee7b7;
-      border-radius: 12px;
-      animation: fadeSlideIn 0.25s ease;
-    }
-    .pg-text {
-      white-space: pre-wrap;
-      font-family: inherit;
-      font-size: 14px;
-      line-height: 1.7;
-      color: #065f46;
-      margin: 0 0 12px;
-    }
-    .pg-btn {
-      width: 100%;
-      padding: 10px 16px;
-      background: #10b981;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-    }
-    .pg-btn:hover { background: #059669; transform: translateY(-1px); }
-    .pg-btn:active { transform: translateY(0); }
-
-    /* Readiness Check */
-    .readiness-card {
-      margin: 0 16px 10px;
-      padding: 14px 16px;
-      background: #fffbeb;
-      border: 1.5px solid #fcd34d;
-      border-radius: 12px;
+    /* Inline Readiness Quick-Reply */
+    .readiness-inline {
+      padding-left: 44px;
       animation: fadeSlideIn 0.2s ease;
     }
-    .rc-label {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #92400e;
-      margin: 0 0 10px;
-    }
-    .rc-options {
+    .ri-buttons {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
     }
-    .rc-btn {
-      flex: 1;
-      min-width: 120px;
-      padding: 9px 12px;
-      border-radius: 8px;
+    .ri-btn {
+      padding: 8px 14px;
+      border-radius: 20px;
       font-family: inherit;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       border: 1.5px solid;
-      transition: background 0.15s, transform 0.1s;
-      text-align: center;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
-    .rc-btn:hover { transform: translateY(-1px); }
-    .rc-btn:active { transform: translateY(0); }
-    .rc-confused { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
-    .rc-confused:hover { background: #fee2e2; }
-    .rc-starting { background: #fffbeb; color: #92400e; border-color: #fde68a; }
-    .rc-starting:hover { background: #fef3c7; }
-    .rc-ready { background: #f0fdf4; color: #15803d; border-color: #86efac; }
-    .rc-ready:hover { background: #dcfce7; }
+    .ri-btn:hover  { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .ri-btn:active { transform: translateY(0); box-shadow: none; }
+    .ri-confused { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
+    .ri-confused:hover { background: #fee2e2; }
+    .ri-starting { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+    .ri-starting:hover { background: #fef3c7; }
+    .ri-ready    { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+    .ri-ready:hover    { background: #dcfce7; }
 
     /* ── Mobile ── */
     @media (max-width: 640px) {
