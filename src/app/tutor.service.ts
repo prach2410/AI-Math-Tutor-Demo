@@ -361,12 +361,11 @@ export class TutorService {
       return;
     }
 
-    const msg: Message = { role: 'assistant', content: res.message };
-    this._messages.update(msgs => [...msgs, msg]);
-    this.addSessionMessage(msg);
-
     if (!res.correct) {
       this._wrongCount++;
+      const msg: Message = { role: 'assistant', content: res.message };
+      this._messages.update(msgs => [...msgs, msg]);
+      this.addSessionMessage(msg);
       if (res.hint) {
         const hintMsg: Message = { role: 'assistant', content: `💡 ${res.hint}`, isHint: true };
         this._messages.update(msgs => [...msgs, hintMsg]);
@@ -389,17 +388,24 @@ export class TutorService {
       if (res.nextStep.passiveGrill) {
         this._passiveGrill.set(res.nextStep.passiveGrill);
         this._pendingQuestion.set(res.nextStep.question);
-        const pgMsg: Message = { role: 'assistant', content: `${res.nextStep.passiveGrill}\n\nน้องพอเริ่มเห็นภาพไหมครับ 😊` };
+        const pgMsg: Message = { role: 'assistant', content: `${res.message}\n\n${res.nextStep.passiveGrill}\n\nน้องพอเริ่มเห็นภาพไหมครับ 😊` };
         this._messages.update(msgs => [...msgs, pgMsg]);
         this.addSessionMessage(pgMsg);
         this._phase.set('awaiting-readiness');
       } else {
+        const msg: Message = { role: 'assistant', content: res.message };
+        this._messages.update(msgs => [...msgs, msg]);
+        this.addSessionMessage(msg);
         this._phase.set('questioning');
         this._passiveGrill.set(null);
         const nextMsg: Message = { role: 'assistant', content: res.nextStep.question };
         this._messages.update(msgs => [...msgs, nextMsg]);
         this.addSessionMessage(nextMsg);
       }
+    } else {
+      const msg: Message = { role: 'assistant', content: res.message };
+      this._messages.update(msgs => [...msgs, msg]);
+      this.addSessionMessage(msg);
     }
 
     if (res.studentNote)        this._studentNote.set(res.studentNote);

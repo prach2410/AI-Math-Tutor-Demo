@@ -1,6 +1,6 @@
 import {
   Component, inject, OnInit,
-  ElementRef, ViewChild, AfterViewChecked, effect, signal
+  ElementRef, ViewChild, AfterViewChecked, effect, signal, computed
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -95,6 +95,20 @@ const PHASE_LABELS: Record<ProjectBrainPhase, string> = {
               @if (msg.role === 'user') {
                 <div class="pb-avatar">🧑</div>
               }
+            </div>
+          }
+
+          @if (showReadinessButtons()) {
+            <div class="pb-readiness">
+              <button class="pb-ri-btn pb-ri-confused" (click)="sendReadiness('😕 ยังงงอยู่')">
+                😕 ยังงงอยู่
+              </button>
+              <button class="pb-ri-btn pb-ri-starting" (click)="sendReadiness('🙂 เริ่มเห็นภาพแล้ว')">
+                🙂 เริ่มเห็นภาพแล้ว
+              </button>
+              <button class="pb-ri-btn pb-ri-ready" (click)="sendReadiness('😄 เห็นภาพแล้ว')">
+                😄 เห็นภาพแล้ว
+              </button>
             </div>
           }
 
@@ -409,6 +423,39 @@ const PHASE_LABELS: Record<ProjectBrainPhase, string> = {
     .pb-send-btn:hover:not(:disabled) { background: #1e3a8a; }
     .pb-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* ── Readiness Quick-Reply ── */
+    .pb-readiness {
+      padding-left: 42px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      animation: fadeSlideIn 0.2s ease;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .pb-ri-btn {
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-ri-btn:hover  { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .pb-ri-btn:active { transform: translateY(0); box-shadow: none; }
+    .pb-ri-confused { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
+    .pb-ri-confused:hover { background: #fee2e2; }
+    .pb-ri-starting { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+    .pb-ri-starting:hover { background: #fef3c7; }
+    .pb-ri-ready    { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+    .pb-ri-ready:hover    { background: #dcfce7; }
+
     @media (max-width: 640px) {
       .pb-bubble { max-width: 85%; font-size: 14px; }
       .topic-grid { grid-template-columns: 1fr 1fr; }
@@ -428,6 +475,15 @@ export class ProjectBrainTutorComponent implements OnInit, AfterViewChecked {
   protected topics       = signal<TopicSummary[]>([]);
   protected topicsLoading = signal(true);
   protected selectedTopic = signal<TopicSummary | null>(null);
+  protected readonly showReadinessButtons = computed(() => {
+    const msgs = this.pb.messages();
+    return (
+      this.pb.phase() === 'guided' &&
+      !this.pb.loading() &&
+      msgs.length > 0 &&
+      msgs[msgs.length - 1].role === 'assistant'
+    );
+  });
 
   protected get phaseLabel(): string {
     return PHASE_LABELS[this.pb.phase()] ?? '';
@@ -496,6 +552,10 @@ export class ProjectBrainTutorComponent implements OnInit, AfterViewChecked {
     const text = this.inputText.trim();
     if (!text) return;
     this.inputText = '';
+    this.pb.send(text);
+  }
+
+  protected sendReadiness(text: string): void {
     this.pb.send(text);
   }
 
