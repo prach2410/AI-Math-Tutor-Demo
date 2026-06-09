@@ -79,6 +79,10 @@ import { Component, signal } from '@angular/core';
               <p class="from">— จากโครงการเล็ก ๆ ในครอบครัว สู่เพื่อนร่วมเรียนรู้สำหรับนักเรียนทุกคน</p>
             </section>
 
+            <div class="pb-entry">
+              <a href="/?pb" class="pb-entry-link">🧠 Project Brain Portal</a>
+            </div>
+
           </div>
         </div>
       </div>
@@ -274,6 +278,19 @@ import { Component, signal } from '@angular/core';
       margin-top: 10px;
       font-style: italic;
     }
+
+    /* PB Entry */
+    .pb-entry {
+      text-align: center;
+      padding-top: 4px;
+    }
+    .pb-entry-link {
+      font-size: 12px;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .pb-entry-link:hover { color: #3b82f6; }
 
     /* Mobile */
     @media (max-width: 600px) {
