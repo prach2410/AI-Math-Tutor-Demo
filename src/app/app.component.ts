@@ -63,15 +63,6 @@ import { VoiceService } from './voice.service';
                   <span>{{ s.title }}</span>
                 </button>
               }
-              <button
-                class="scenario-btn pb-btn"
-                [class.active]="tutor.inProjectBrainMode()"
-                [disabled]="tutor.loading()"
-                (click)="enterProjectBrain()"
-              >
-                <span>🧠</span>
-                <span>Project Brain</span>
-              </button>
             </nav>
             <app-about #aboutRef />
           </div>
@@ -657,6 +648,10 @@ export class AppComponent implements OnInit {
     this.onboarding.init();
     if (!this.onboarding.isActive()) {
       this.tutor.init();
+    }
+
+    if (window.location.search.includes('pb')) {
+      this.enterProjectBrain();
     }
   }
 
