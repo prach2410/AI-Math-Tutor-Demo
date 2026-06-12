@@ -2,7 +2,12 @@ import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { HomeworkService, HomeworkAnalysisResult } from './homework.service';
 import { TutorService } from '../tutor.service';
 
-type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
+type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result' | 'confirmed';
+
+interface SelectedImage {
+  file: File;
+  url: string;
+}
 
 @Component({
   selector: 'app-homework-upload',
@@ -16,6 +21,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
 
       <div class="hw-body">
         @switch (state()) {
+
           @case ('idle') {
             <div class="upload-zone">
               <div class="upload-icon-big">📷</div>
@@ -25,26 +31,57 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
                 <button class="btn btn-primary" (click)="cameraInput.click()">📷 ถ่ายรูป</button>
                 <button class="btn btn-secondary" (click)="fileInput.click()">📁 เลือกไฟล์</button>
               </div>
-              <input #cameraInput type="file" accept="image/*" capture="environment" hidden (change)="onFileSelected($event)" />
-              <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+              <input #cameraInput type="file" accept="image/*" capture="environment" hidden (change)="addFiles($event)" />
+              <input #fileInput type="file" accept="image/*" multiple hidden (change)="addFiles($event)" />
             </div>
           }
+
+          @case ('collecting') {
+            <div class="collecting-zone">
+              <p class="collecting-heading">รูปที่เลือก ({{ images().length }} รูป)</p>
+              <div class="thumbnails">
+                @for (img of images(); track img.url; let i = $index) {
+                  <div class="thumb-wrapper">
+                    <img class="thumb" [src]="img.url" [alt]="'รูปที่ ' + (i + 1)" />
+                    <button class="thumb-remove" (click)="removeImage(i)" title="ลบรูปนี้">✕</button>
+                    <span class="thumb-num">{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+              <p class="collecting-hint">โจทย์ยาวหลายหน้า? เพิ่มรูปทุกหน้า แล้วกดวิเคราะห์</p>
+              <div class="collecting-btns">
+                <button class="btn btn-ghost" (click)="cameraMore.click()">📷 เพิ่มรูป</button>
+                <button class="btn btn-ghost" (click)="fileMore.click()">📁 เพิ่มไฟล์</button>
+                <button class="btn btn-analyze" (click)="analyze()">
+                  🔍 วิเคราะห์โจทย์{{ images().length > 1 ? ' (' + images().length + ' รูป)' : '' }}
+                </button>
+              </div>
+              <input #cameraMore type="file" accept="image/*" capture="environment" hidden (change)="addFiles($event)" />
+              <input #fileMore type="file" accept="image/*" multiple hidden (change)="addFiles($event)" />
+            </div>
+          }
+
           @case ('analyzing') {
             <div class="analyzing-zone">
-              @if (imageUrl()) {
-                <img class="preview-img" [src]="imageUrl()!" alt="ภาพโจทย์" />
-              }
+              <div class="thumbnails">
+                @for (img of images(); track img.url; let i = $index) {
+                  <img class="thumb" [src]="img.url" [alt]="'รูปที่ ' + (i + 1)" />
+                }
+              </div>
               <div class="spinner-wrapper">
                 <div class="spinner"></div>
-                <p class="analyzing-text">กำลังอ่านโจทย์...</p>
+                <p class="analyzing-text">กำลังอ่านโจทย์{{ images().length > 1 ? ' (' + images().length + ' รูป)' : '' }}...</p>
               </div>
             </div>
           }
+
           @case ('result') {
             <div class="result-zone">
-              @if (imageUrl()) {
-                <img class="preview-img" [src]="imageUrl()!" alt="ภาพโจทย์" />
-              }
+              <div class="thumbnails small">
+                @for (img of images(); track img.url; let i = $index) {
+                  <img class="thumb" [src]="img.url" [alt]="'รูปที่ ' + (i + 1)" />
+                }
+              </div>
               @if (result()?.readable) {
                 <div class="problem-card">
                   <p class="problem-label">โจทย์ที่อ่านได้</p>
@@ -72,6 +109,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
               }
             </div>
           }
+
           @case ('confirmed') {
             <div class="confirmed-zone">
               <p class="confirmed-icon-big">✅</p>
@@ -86,6 +124,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
               <button class="btn btn-secondary" (click)="retake()">เลือกโจทย์ใหม่</button>
             </div>
           }
+
         }
       </div>
     </div>
@@ -124,12 +163,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
     .back-btn:hover { background: #f1f5f9; }
 
-    .hw-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-    }
+    .hw-title { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0; }
 
     .hw-body {
       flex: 1;
@@ -139,6 +173,38 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
       flex-direction: column;
       align-items: center;
     }
+
+    /* Buttons */
+    .btn {
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary  { background: var(--color-primary, #2563eb); color: white; }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .btn-ghost { background: transparent; color: #475569; border: 1px solid #cbd5e1; }
+    .btn-ghost:hover { background: #f1f5f9; }
+
+    .btn-analyze { background: var(--color-primary, #2563eb); color: white; flex: 1; }
+    .btn-analyze:hover { opacity: 0.9; }
+
+    .btn-confirm { background: #16a34a; color: white; flex: 1; }
+    .btn-confirm:hover { opacity: 0.9; }
+
+    .btn-retake  { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; flex: 1; }
+    .btn-retake:hover { background: #e2e8f0; }
 
     /* Upload zone */
     .upload-zone {
@@ -153,19 +219,8 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
 
     .upload-icon-big { font-size: 64px; line-height: 1; }
-
-    .upload-heading {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-    }
-
-    .upload-sub {
-      font-size: 14px;
-      color: #64748b;
-      margin: 0;
-    }
+    .upload-heading  { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0; }
+    .upload-sub      { font-size: 14px; color: #64748b; margin: 0; }
 
     .upload-btns {
       display: flex;
@@ -175,30 +230,79 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
       justify-content: center;
     }
 
-    /* Buttons */
-    .btn {
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s, transform 0.1s;
+    /* Thumbnails */
+    .thumbnails {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
     }
-    .btn:active { transform: scale(0.97); }
+    .thumbnails.small .thumb { max-height: 80px; }
 
-    .btn-primary { background: var(--color-primary, #2563eb); color: white; }
-    .btn-primary:hover { opacity: 0.9; }
+    .thumb-wrapper {
+      position: relative;
+      display: inline-block;
+    }
 
-    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
-    .btn-secondary:hover { background: #e2e8f0; }
+    .thumb {
+      max-height: 140px;
+      max-width: 160px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: block;
+    }
 
-    .btn-confirm { background: #16a34a; color: white; flex: 1; }
-    .btn-confirm:hover { opacity: 0.9; }
+    .thumb-remove {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: white;
+      border: none;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .thumb-remove:hover { background: #dc2626; }
 
-    .btn-retake { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; flex: 1; }
-    .btn-retake:hover { background: #e2e8f0; }
+    .thumb-num {
+      position: absolute;
+      bottom: 4px; left: 4px;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    /* Collecting zone */
+    .collecting-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .collecting-heading { font-size: 15px; font-weight: 600; color: #1e293b; margin: 0; }
+    .collecting-hint    { font-size: 13px; color: #64748b; margin: 0; text-align: center; }
+
+    .collecting-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+    }
 
     /* Analyzing zone */
     .analyzing-zone {
@@ -207,15 +311,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
       align-items: center;
       gap: 16px;
       width: 100%;
-      max-width: 400px;
-    }
-
-    .preview-img {
-      width: 100%;
-      max-height: 240px;
-      object-fit: contain;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
+      max-width: 480px;
     }
 
     .spinner-wrapper {
@@ -258,7 +354,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
 
     .problem-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       color: #64748b;
@@ -266,12 +362,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
       letter-spacing: 0.05em;
     }
 
-    .problem-text {
-      font-size: 15px;
-      color: #1e293b;
-      margin: 0;
-      line-height: 1.65;
-    }
+    .problem-text { font-size: 15px; color: #1e293b; margin: 0; line-height: 1.65; }
 
     .latex-box {
       display: flex;
@@ -283,13 +374,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
 
     .latex-label { font-size: 12px; color: #64748b; white-space: nowrap; }
-
-    .latex-text {
-      font-size: 14px;
-      color: #0f172a;
-      font-family: monospace;
-      word-break: break-all;
-    }
+    .latex-text  { font-size: 14px; color: #0f172a; font-family: monospace; word-break: break-all; }
 
     .topic-chip {
       display: inline-block;
@@ -317,7 +402,7 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
 
     .error-icon-big { font-size: 36px; line-height: 1; }
-    .error-msg { font-size: 15px; color: #9a3412; margin: 0; }
+    .error-msg      { font-size: 15px; color: #9a3412; margin: 0; }
 
     /* Confirmed zone */
     .confirmed-zone {
@@ -331,39 +416,45 @@ type UploadState = 'idle' | 'analyzing' | 'result' | 'confirmed';
     }
 
     .confirmed-icon-big { font-size: 56px; line-height: 1; }
-
-    .confirmed-heading {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-    }
-
-    .sprint-note { font-size: 13px; color: #94a3b8; margin: 0; }
+    .confirmed-heading  { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0; }
+    .sprint-note        { font-size: 13px; color: #94a3b8; margin: 0; }
   `]
 })
 export class HomeworkUploadComponent implements OnDestroy {
   protected tutor = inject(TutorService);
   private homeworkService = inject(HomeworkService);
 
-  protected state = signal<UploadState>('idle');
+  protected state  = signal<UploadState>('idle');
+  protected images = signal<SelectedImage[]>([]);
   protected result = signal<HomeworkAnalysisResult | null>(null);
-  protected imageUrl = signal<string | null>(null);
 
-  private objectUrl: string | null = null;
-
-  async onFileSelected(event: Event): Promise<void> {
+  addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
+    const files = Array.from(input.files ?? []);
+    if (!files.length) return;
 
-    if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
-    this.objectUrl = URL.createObjectURL(file);
-    this.imageUrl.set(this.objectUrl);
+    const newEntries = files.map(f => ({ file: f, url: URL.createObjectURL(f) }));
+    this.images.update(prev => [...prev, ...newEntries]);
+    this.state.set('collecting');
+    input.value = '';
+  }
+
+  removeImage(index: number): void {
+    this.images.update(prev => {
+      URL.revokeObjectURL(prev[index].url);
+      const next = prev.filter((_, i) => i !== index);
+      return next;
+    });
+    if (this.images().length === 0) this.state.set('idle');
+  }
+
+  async analyze(): Promise<void> {
+    const imgs = this.images();
+    if (!imgs.length) return;
+
     this.state.set('analyzing');
-
     try {
-      const result = await this.homeworkService.analyze(file);
+      const result = await this.homeworkService.analyze(imgs.map(i => i.file));
       this.result.set(result);
     } catch {
       this.result.set({
@@ -372,9 +463,7 @@ export class HomeworkUploadComponent implements OnDestroy {
         message: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
       });
     }
-
     this.state.set('result');
-    input.value = '';
   }
 
   protected confirmProblem(): void {
@@ -382,16 +471,13 @@ export class HomeworkUploadComponent implements OnDestroy {
   }
 
   protected retake(): void {
-    if (this.objectUrl) {
-      URL.revokeObjectURL(this.objectUrl);
-      this.objectUrl = null;
-    }
-    this.imageUrl.set(null);
+    this.images().forEach(i => URL.revokeObjectURL(i.url));
+    this.images.set([]);
     this.result.set(null);
     this.state.set('idle');
   }
 
   ngOnDestroy(): void {
-    if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+    this.images().forEach(i => URL.revokeObjectURL(i.url));
   }
 }

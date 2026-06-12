@@ -14,9 +14,9 @@ export interface HomeworkAnalysisResult {
 export class HomeworkService {
   private http = inject(HttpClient);
 
-  analyze(file: File): Promise<HomeworkAnalysisResult> {
+  analyze(files: File[]): Promise<HomeworkAnalysisResult> {
     const formData = new FormData();
-    formData.append('image', file);
+    files.forEach(f => formData.append('images', f));
     return firstValueFrom(
       this.http.post<HomeworkAnalysisResult>('/api/homework/analyze', formData)
     );
