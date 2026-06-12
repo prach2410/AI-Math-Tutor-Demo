@@ -16,10 +16,17 @@ export interface StartTeachingResponse {
 }
 
 export interface AnswerResponse {
-  verdict: string;
+  verdict: 'correct' | 'partial' | 'wrong';
+  reason: string;
+  missing: string;
   encouragement: string;
   nextStep: TeachingStep | null;
   done: boolean;
+}
+
+export interface HintResponse {
+  level: number;
+  help: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,6 +42,12 @@ export class TeachingService {
   answer(sessionId: string, answer: string): Promise<AnswerResponse> {
     return firstValueFrom(
       this.http.post<AnswerResponse>(`/api/teaching/${sessionId}/answer`, { answer })
+    );
+  }
+
+  hint(sessionId: string, level: number): Promise<HintResponse> {
+    return firstValueFrom(
+      this.http.post<HintResponse>(`/api/teaching/${sessionId}/hint`, { level })
     );
   }
 }
