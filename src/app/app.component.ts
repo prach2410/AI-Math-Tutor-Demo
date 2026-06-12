@@ -15,6 +15,7 @@ import { LearningReflectionComponent } from './learning-reflection/learning-refl
 import { LearningFeedbackComponent } from './learning-feedback/learning-feedback.component';
 import { FeedbackCollectionComponent } from './feedback-collection/feedback-collection.component';
 import { LessonCompleteComponent } from './lesson-complete/lesson-complete.component';
+import { HomeworkUploadComponent } from './homework/homework-upload.component';
 import { TutorService } from './tutor.service';
 import { VoiceService } from './voice.service';
 
@@ -35,6 +36,7 @@ import { VoiceService } from './voice.service';
     LearningFeedbackComponent,
     FeedbackCollectionComponent,
     LessonCompleteComponent,
+    HomeworkUploadComponent,
     DiscoveryBatchesComponent,
     FormsModule,
   ],
@@ -55,7 +57,7 @@ import { VoiceService } from './voice.service';
               @for (s of tutor.scenarios; track s.id) {
                 <button
                   class="scenario-btn"
-                  [class.active]="tutor.scenario().id === s.id && !tutor.inProjectBrainMode()"
+                  [class.active]="tutor.scenario().id === s.id && !tutor.inProjectBrainMode() && !tutor.inHomeworkMode()"
                   [disabled]="tutor.loading()"
                   (click)="tutor.selectScenario(s.id)"
                 >
@@ -63,6 +65,15 @@ import { VoiceService } from './voice.service';
                   <span>{{ s.title }}</span>
                 </button>
               }
+              <button
+                class="scenario-btn camera-btn"
+                [class.active]="tutor.inHomeworkMode()"
+                [disabled]="tutor.loading()"
+                (click)="toggleHomework()"
+              >
+                <span>📷</span>
+                <span>การบ้าน</span>
+              </button>
             </nav>
             <app-about #aboutRef />
           </div>
@@ -76,6 +87,8 @@ import { VoiceService } from './voice.service';
             <app-onboarding />
           } @else if (tutor.inProjectBrainMode()) {
             <app-project-brain-tutor />
+          } @else if (tutor.inHomeworkMode()) {
+            <app-homework-upload />
           } @else if (tutor.inFreeTalk()) {
             <app-free-talk [duringLesson]="tutor.messages().length > 0" />
           } @else if (tutor.finished()) {
@@ -257,6 +270,8 @@ import { VoiceService } from './voice.service';
     .scenario-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .pb-btn { border-color: rgba(147,197,253,0.5); }
     .pb-btn.active { background: #1e40af; color: white; border-color: #1e40af; }
+    .camera-btn { border-color: rgba(134,239,172,0.5); }
+    .camera-btn.active { background: #16a34a; color: white; border-color: #16a34a; }
 
     /* Project Brain password dialog */
     .pb-overlay {
@@ -682,6 +697,13 @@ export class AppComponent implements OnInit {
     this.showPbDialog.set(false);
     this.pbError.set(false);
     this.pbPassword = '';
+  }
+  protected toggleHomework(): void {
+    if (this.tutor.inHomeworkMode()) {
+      this.tutor.exitHomeworkMode();
+    } else {
+      this.tutor.enterHomeworkMode();
+    }
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
