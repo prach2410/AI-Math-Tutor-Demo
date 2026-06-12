@@ -95,8 +95,14 @@ import { VoiceService } from './voice.service';
             <app-lesson-complete />
           } @else if (tutor.interactionMode() === null) {
             <div class="mode-select-card">
-              <p class="mode-select-title">คุณอยากเรียนแบบไหนคะ? 😊</p>
-              <p class="mode-select-sub">เลือกวิธีที่สะดวกสำหรับตอนนี้</p>
+              <p class="mode-select-title">ติดการบ้านอยู่ไหมคะ? 📚</p>
+              <p class="mode-select-sub">ถ่ายรูปโจทย์ แล้วให้ AI อ่านให้เลย</p>
+              <button class="mode-btn hw-btn" (click)="tutor.enterHomeworkMode()">
+                <span class="mode-icon">📷</span>
+                <span class="mode-label">ถ่ายรูปโจทย์</span>
+                <span class="mode-note hw-note">AI อ่านโจทย์ให้ทันที</span>
+              </button>
+              <p class="mode-or-divider">— หรือเรียนกับโจทย์ตัวอย่าง —</p>
               <div class="mode-select-btns">
                 <button class="mode-btn text-btn" (click)="chooseMode('text')">
                   <span class="mode-icon">⌨️</span>
@@ -429,6 +435,29 @@ import { VoiceService } from './voice.service';
     .text-btn:hover:not(:disabled)  { border-color: var(--color-primary); }
     .voice-btn:hover:not(:disabled) { border-color: #16a34a; }
 
+    .hw-btn {
+      width: 100%;
+      max-width: 280px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-color: transparent;
+      color: white;
+      padding: 20px 28px;
+      box-shadow: 0 4px 14px rgba(16,185,129,0.35);
+    }
+    .hw-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.45);
+    }
+    .hw-btn .mode-label { color: white; font-size: 17px; }
+    .hw-note  { font-size: 12px; color: rgba(255,255,255,0.85); }
+
+    .mode-or-divider {
+      font-size: 12px;
+      color: #94a3b8;
+      margin: 0;
+      letter-spacing: 0.03em;
+    }
+
     .mode-icon  { font-size: 36px; line-height: 1; }
     .mode-label { font-size: 15px; font-weight: 600; color: #1e293b; }
     .mode-note  { font-size: 11px; color: #94a3b8; }
@@ -550,6 +579,8 @@ import { VoiceService } from './voice.service';
       }
       .mode-icon  { font-size: 28px; }
       .mode-label { font-size: 15px; }
+      .hw-btn { max-width: none; padding: 18px 20px; }
+      .hw-btn .mode-label { font-size: 16px; }
 
       .side-note,
       .side-summary,
