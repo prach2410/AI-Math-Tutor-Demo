@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnDestroy } from '@angular/core';
 import { HomeworkService, HomeworkAnalysisResult } from './homework.service';
 import { TutorService } from '../tutor.service';
+import { TeachingFlowComponent } from './teaching-flow.component';
 
 type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result' | 'confirmed';
 
@@ -12,6 +13,7 @@ interface SelectedImage {
 @Component({
   selector: 'app-homework-upload',
   standalone: true,
+  imports: [TeachingFlowComponent],
   template: `
     <div class="hw-container">
       <div class="hw-header">
@@ -112,16 +114,14 @@ interface SelectedImage {
 
           @case ('confirmed') {
             <div class="confirmed-zone">
-              <p class="confirmed-icon-big">✅</p>
-              <p class="confirmed-heading">ยืนยันโจทย์เรียบร้อย!</p>
-              <div class="problem-card" style="width:100%">
-                <p class="problem-text">{{ result()?.problemText }}</p>
-                @if (result()?.topic) {
-                  <span class="topic-chip">{{ result()?.topic }}</span>
-                }
+              <div class="confirmed-header">
+                <span class="confirmed-badge">✅ ยืนยันโจทย์แล้ว</span>
+                <button class="btn btn-ghost btn-sm" (click)="retake()">เปลี่ยนโจทย์</button>
               </div>
-              <p class="sprint-note">🚧 การสอนแบบ AI จะพร้อมใน Sprint ถัดไป</p>
-              <button class="btn btn-secondary" (click)="retake()">เลือกโจทย์ใหม่</button>
+              <app-teaching-flow
+                [problem]="result()!"
+                [onRestart]="retake.bind(this)">
+              </app-teaching-flow>
             </div>
           }
 
@@ -412,12 +412,26 @@ interface SelectedImage {
       gap: 14px;
       width: 100%;
       max-width: 480px;
-      text-align: center;
     }
 
-    .confirmed-icon-big { font-size: 56px; line-height: 1; }
-    .confirmed-heading  { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0; }
-    .sprint-note        { font-size: 13px; color: #94a3b8; margin: 0; }
+    .confirmed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .confirmed-badge {
+      font-size: 13px;
+      font-weight: 600;
+      color: #16a34a;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
   `]
 })
 export class HomeworkUploadComponent implements OnDestroy {
