@@ -32,6 +32,15 @@ interface JudgeFeedback {
         @case ('step') {
           <div class="tf-step">
 
+            <!-- Problem card — stays visible throughout all steps -->
+            <div class="tf-problem-banner">
+              <p class="tf-problem-banner-label">โจทย์</p>
+              <p class="tf-problem-banner-text">{{ problem.problemText }}</p>
+              @if (problem.latex) {
+                <code class="tf-problem-banner-latex">{{ problem.latex }}</code>
+              }
+            </div>
+
             <!-- Progress -->
             <div class="tf-progress">
               <span class="tf-step-label">ขั้นที่ {{ currentStep()?.step }} / {{ totalSteps() }}</span>
@@ -158,6 +167,25 @@ interface JudgeFeedback {
       flex-direction: column;
       width: 100%;
       max-width: 480px;
+    }
+
+    /* Problem banner */
+    .tf-problem-banner {
+      background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 12px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .tf-problem-banner-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #1e40af; margin: 0;
+    }
+    .tf-problem-banner-text {
+      font-size: 15px; color: #1e293b; margin: 0; line-height: 1.65; font-weight: 500;
+    }
+    .tf-problem-banner-latex {
+      font-size: 13px; color: #1d4ed8; background: #dbeafe;
+      border-radius: 6px; padding: 4px 8px; font-family: monospace;
+      word-break: break-all; display: block;
     }
 
     /* Loading */

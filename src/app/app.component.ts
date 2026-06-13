@@ -50,20 +50,22 @@ import { VoiceService } from './voice.service';
         <div class="header-inner">
           <div class="header-text">
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
-            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.scenario().title }}</p>
+            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.scenario().title }}</p>
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
-              @for (s of tutor.scenarios; track s.id) {
-                <button
-                  class="scenario-btn"
-                  [class.active]="tutor.scenario().id === s.id && !tutor.inProjectBrainMode() && !tutor.inHomeworkMode()"
-                  [disabled]="tutor.loading()"
-                  (click)="tutor.selectScenario(s.id)"
-                >
-                  <span>{{ s.icon }}</span>
-                  <span>{{ s.title }}</span>
-                </button>
+              @if (!tutor.inHomeworkMode()) {
+                @for (s of tutor.scenarios; track s.id) {
+                  <button
+                    class="scenario-btn"
+                    [class.active]="tutor.scenario().id === s.id && !tutor.inProjectBrainMode()"
+                    [disabled]="tutor.loading()"
+                    (click)="tutor.selectScenario(s.id)"
+                  >
+                    <span>{{ s.icon }}</span>
+                    <span>{{ s.title }}</span>
+                  </button>
+                }
               }
               <button
                 class="scenario-btn camera-btn"
@@ -72,7 +74,7 @@ import { VoiceService } from './voice.service';
                 (click)="toggleHomework()"
               >
                 <span>📷</span>
-                <span>การบ้าน</span>
+                <span>{{ tutor.inHomeworkMode() ? 'ออกจากการบ้าน' : 'การบ้าน' }}</span>
               </button>
             </nav>
             <app-about #aboutRef />
