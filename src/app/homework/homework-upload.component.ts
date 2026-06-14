@@ -84,22 +84,29 @@ interface SelectedImage {
                   <img class="thumb" [src]="img.url" [alt]="'รูปที่ ' + (i + 1)" />
                 }
               </div>
-              @if (result()?.readable) {
+              @if (result()?.readable && result()!.problems.length > 0) {
+                @if (result()!.problems.length > 1) {
+                  <p class="count-badge">พบ {{ result()!.problems.length }} ข้อ</p>
+                }
                 <div class="problem-card">
-                  <p class="problem-label">โจทย์ที่อ่านได้</p>
-                  <p class="problem-text">{{ result()?.problemText }}</p>
-                  @if (result()?.latex) {
+                  <p class="problem-label">
+                    {{ result()!.problems.length > 1 ? 'ข้อที่ ' + result()!.problems[0].index + ' (ตัวอย่าง)' : 'โจทย์ที่อ่านได้' }}
+                  </p>
+                  <p class="problem-text">{{ result()!.problems[0].problemText }}</p>
+                  @if (result()!.problems[0].latex) {
                     <div class="latex-box">
                       <span class="latex-label">สูตร:</span>
-                      <code class="latex-text">{{ result()?.latex }}</code>
+                      <code class="latex-text">{{ result()!.problems[0].latex }}</code>
                     </div>
                   }
-                  @if (result()?.topic) {
-                    <span class="topic-chip">{{ result()?.topic }}</span>
+                  @if (result()!.problems[0].topic) {
+                    <span class="topic-chip">{{ result()!.problems[0].topic }}</span>
                   }
                 </div>
                 <div class="confirm-row">
-                  <button class="btn btn-confirm" (click)="confirmProblem()">✅ ใช่ โจทย์นี้เลย</button>
+                  <button class="btn btn-confirm" (click)="confirmProblem()">
+                    ✅ {{ result()!.problems.length > 1 ? 'เริ่มทำ (' + result()!.problems.length + ' ข้อ)' : 'ใช่ โจทย์นี้เลย' }}
+                  </button>
                   <button class="btn btn-retake" (click)="retake()">🔄 ถ่ายใหม่</button>
                 </div>
               } @else {
@@ -115,11 +122,18 @@ interface SelectedImage {
           @case ('confirmed') {
             <div class="confirmed-zone">
               <div class="confirmed-header">
-                <span class="confirmed-badge">✅ ยืนยันโจทย์แล้ว</span>
+                <span class="confirmed-badge">
+                  ✅ ข้อที่ {{ result()!.problems[currentProblemIndex()].index }}
+                  @if (result()!.problems.length > 1) {
+                    / {{ result()!.problems.length }}
+                  }
+                </span>
                 <button class="btn btn-ghost btn-sm" (click)="retake()">เปลี่ยนโจทย์</button>
               </div>
               <app-teaching-flow
-                [problem]="result()!"
+                [problem]="result()!.problems[currentProblemIndex()]"
+                [hasNextProblem]="currentProblemIndex() < result()!.problems.length - 1"
+                [onNextProblem]="nextProblem.bind(this)"
                 [onRestart]="retake.bind(this)">
               </app-teaching-flow>
             </div>
@@ -404,6 +418,12 @@ interface SelectedImage {
     .error-icon-big { font-size: 36px; line-height: 1; }
     .error-msg      { font-size: 15px; color: #9a3412; margin: 0; }
 
+    .count-badge {
+      font-size: 13px; font-weight: 700; color: #1e40af;
+      background: #dbeafe; border-radius: 20px; padding: 4px 14px;
+      margin: 0; width: fit-content; align-self: center;
+    }
+
     /* Confirmed zone */
     .confirmed-zone {
       display: flex;
@@ -438,9 +458,10 @@ export class HomeworkUploadComponent implements OnDestroy {
   protected tutor = inject(TutorService);
   private homeworkService = inject(HomeworkService);
 
-  protected state  = signal<UploadState>('idle');
-  protected images = signal<SelectedImage[]>([]);
-  protected result = signal<HomeworkAnalysisResult | null>(null);
+  protected state               = signal<UploadState>('idle');
+  protected images              = signal<SelectedImage[]>([]);
+  protected result              = signal<HomeworkAnalysisResult | null>(null);
+  protected currentProblemIndex = signal(0);
 
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -472,16 +493,21 @@ export class HomeworkUploadComponent implements OnDestroy {
       this.result.set(result);
     } catch {
       this.result.set({
-        problemText: '', latex: '', topic: '',
         readable: false,
         message: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+        problems: [],
       });
     }
     this.state.set('result');
   }
 
   protected confirmProblem(): void {
+    this.currentProblemIndex.set(0);
     this.state.set('confirmed');
+  }
+
+  protected nextProblem(): void {
+    this.currentProblemIndex.update(i => i + 1);
   }
 
   protected retake(): void {

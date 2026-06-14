@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HomeworkAnalysisResult } from './homework.service';
+import { ProblemItem } from './homework.service';
 import { TeachingService, TeachingStep } from './teaching.service';
 
 type FlowState = 'loading' | 'step' | 'done' | 'error';
@@ -34,7 +34,7 @@ interface JudgeFeedback {
 
             <!-- Problem card — stays visible throughout all steps -->
             <div class="tf-problem-banner">
-              <p class="tf-problem-banner-label">โจทย์</p>
+              <p class="tf-problem-banner-label">โจทย์ข้อที่ {{ problem.index }}</p>
               <p class="tf-problem-banner-text">{{ problem.problemText }}</p>
               @if (problem.latex) {
                 <code class="tf-problem-banner-latex">{{ problem.latex }}</code>
@@ -140,11 +140,14 @@ interface JudgeFeedback {
         @case ('done') {
           <div class="tf-done">
             <div class="tf-done-icon">🎉</div>
-            <p class="tf-done-heading">เยี่ยมมาก! ทำโจทย์เสร็จแล้ว!</p>
+            <p class="tf-done-heading">เยี่ยมมาก! ทำข้อ {{ problem.index }} เสร็จแล้ว!</p>
             <div class="tf-problem-recap">
-              <p class="tf-recap-label">โจทย์</p>
+              <p class="tf-recap-label">โจทย์ข้อที่ {{ problem.index }}</p>
               <p class="tf-recap-text">{{ problem.problemText }}</p>
             </div>
+            @if (hasNextProblem) {
+              <button class="tf-btn-primary" (click)="goNextProblem()">ข้อต่อไป →</button>
+            }
             <button class="tf-btn-secondary" (click)="restart()">เลือกโจทย์ใหม่</button>
           </div>
         }
@@ -318,9 +321,11 @@ interface JudgeFeedback {
     .tf-btn-secondary:hover { background: #e2e8f0; }
   `]
 })
-export class TeachingFlowComponent implements OnInit {
-  @Input({ required: true }) problem!: HomeworkAnalysisResult;
+export class TeachingFlowComponent implements OnInit, OnChanges {
+  @Input({ required: true }) problem!: ProblemItem;
   @Input() onRestart?: () => void;
+  @Input() onNextProblem?: () => void;
+  @Input() hasNextProblem = false;
 
   private teaching = inject(TeachingService);
 
@@ -344,6 +349,16 @@ export class TeachingFlowComponent implements OnInit {
 
   ngOnInit(): void { this.loadSession(); }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['problem'] && !changes['problem'].firstChange) {
+      this.answer = '';
+      this.hintBadge.set('');
+      this.hintText.set('');
+      this.judgeFeedback.set(null);
+      this.loadSession();
+    }
+  }
+
   protected async loadSession(): Promise<void> {
     this.state.set('loading');
     this.judgeFeedback.set(null);
@@ -353,7 +368,7 @@ export class TeachingFlowComponent implements OnInit {
         this.problem.problemText,
         this.problem.latex,
         this.problem.topic,
-        false  // hasFigure — Confirm Step ทำใน S2c
+        false // hasFigure — Confirm Step ทำใน S2c
       );
       this.sessionId = res.sessionId;
       this.currentStep.set(res.currentStep);
@@ -432,4 +447,5 @@ export class TeachingFlowComponent implements OnInit {
   }
 
   protected restart(): void { this.onRestart?.(); }
+  protected goNextProblem(): void { this.onNextProblem?.(); }
 }

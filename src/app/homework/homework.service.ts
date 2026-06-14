@@ -2,12 +2,18 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-export interface HomeworkAnalysisResult {
+export interface ProblemItem {
+  index: number;
   problemText: string;
   latex: string;
   topic: string;
+  hasFigure: boolean;
+}
+
+export interface HomeworkAnalysisResult {
   readable: boolean;
   message: string;
+  problems: ProblemItem[];
 }
 
 @Injectable({ providedIn: 'root' })
