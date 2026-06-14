@@ -134,7 +134,7 @@ interface SelectedImage {
                 [problem]="result()!.problems[currentProblemIndex()]"
                 [hasNextProblem]="currentProblemIndex() < result()!.problems.length - 1"
                 [onNextProblem]="nextProblem.bind(this)"
-                [onRestart]="retake.bind(this)">
+                [onRestart]="backToList.bind(this)">
               </app-teaching-flow>
             </div>
           }
@@ -508,6 +508,11 @@ export class HomeworkUploadComponent implements OnDestroy {
 
   protected nextProblem(): void {
     this.currentProblemIndex.update(i => i + 1);
+  }
+
+  protected backToList(): void {
+    this.currentProblemIndex.set(0);
+    this.state.set('result');
   }
 
   protected retake(): void {
