@@ -41,6 +41,12 @@ export interface NotesResponse {
   parentSummary: string;
 }
 
+export interface SolveResponse {
+  sessionId: string;
+  solutionSteps: string[];
+  understandingStep: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TeachingService {
   private http = inject(HttpClient);
@@ -72,6 +78,12 @@ export class TeachingService {
   notes(sessionId: string): Promise<NotesResponse> {
     return firstValueFrom(
       this.http.get<NotesResponse>(`/api/teaching/${sessionId}/notes`)
+    );
+  }
+
+  solve(problemText: string, latex: string, topic: string): Promise<SolveResponse> {
+    return firstValueFrom(
+      this.http.post<SolveResponse>('/api/teaching/solve', { problemText, latex, topic })
     );
   }
 }

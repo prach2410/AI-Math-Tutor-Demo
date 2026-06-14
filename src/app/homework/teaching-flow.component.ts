@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ProblemItem } from './homework.service';
 import { TeachingService, TeachingStep, NotesResponse, ConfirmFigureResponse } from './teaching.service';
 
-type FlowState = 'loading' | 'confirm' | 'step' | 'done' | 'error';
+type FlowState = 'mode-select' | 'loading' | 'confirm' | 'step' | 'done' | 'solve' | 'error';
 type Verdict   = 'correct' | 'partial' | 'wrong' | null;
 
 interface JudgeFeedback {
@@ -21,6 +21,33 @@ interface JudgeFeedback {
     <div class="tf-container">
 
       @switch (state()) {
+
+        @case ('mode-select') {
+          <div class="tf-mode-select">
+            <!-- Problem card -->
+            <div class="tf-problem-banner">
+              <p class="tf-problem-banner-label">โจทย์ข้อที่ {{ problem.index }}</p>
+              <p class="tf-problem-banner-text">{{ problem.problemText }}</p>
+              @if (problem.latex) {
+                <code class="tf-problem-banner-latex">{{ problem.latex }}</code>
+              }
+            </div>
+
+            <p class="tf-mode-heading">เลือกวิธีเรียน</p>
+            <div class="tf-mode-btns">
+              <button class="tf-mode-btn tf-mode-btn--guide" (click)="selectGuideFirst()">
+                <span class="tf-mode-btn-icon">🧠</span>
+                <span class="tf-mode-btn-label">สอนให้คิดเอง</span>
+                <span class="tf-mode-btn-desc">AI ถามทีละขั้น คิดหาคำตอบด้วยตัวเอง</span>
+              </button>
+              <button class="tf-mode-btn tf-mode-btn--solve" (click)="loadSolve()">
+                <span class="tf-mode-btn-icon">💡</span>
+                <span class="tf-mode-btn-label">ช่วยทำก่อน สอนทีหลัง</span>
+                <span class="tf-mode-btn-desc">ดูวิธีทำเต็มก่อน แล้วค่อยทำความเข้าใจ</span>
+              </button>
+            </div>
+          </div>
+        }
 
         @case ('loading') {
           <div class="tf-loading">
@@ -203,6 +230,44 @@ interface JudgeFeedback {
               <button class="tf-btn-primary" (click)="goNextProblem()">ข้อต่อไป →</button>
             }
             <button class="tf-btn-secondary" (click)="restart()">เลือกโจทย์ใหม่</button>
+          </div>
+        }
+
+        @case ('solve') {
+          <div class="tf-solve">
+            <!-- Problem card -->
+            <div class="tf-problem-banner">
+              <p class="tf-problem-banner-label">โจทย์ข้อที่ {{ problem.index }}</p>
+              <p class="tf-problem-banner-text">{{ problem.problemText }}</p>
+              @if (problem.latex) {
+                <code class="tf-problem-banner-latex">{{ problem.latex }}</code>
+              }
+            </div>
+
+            <!-- Solution steps -->
+            <div class="tf-solve-section">
+              <p class="tf-solve-section-label">📋 วิธีทำทีละขั้น</p>
+              <ol class="tf-solve-steps">
+                @for (step of solutionSteps(); track $index) {
+                  <li class="tf-solve-step">{{ step }}</li>
+                }
+              </ol>
+            </div>
+
+            <!-- Understanding nudge -->
+            @if (understandingStep()) {
+              <div class="tf-understand-card">
+                <p class="tf-understand-label">🤔 ก่อนไปต่อ ลองคิดดู...</p>
+                <p class="tf-understand-text">{{ understandingStep() }}</p>
+              </div>
+            }
+
+            <div class="tf-solve-actions">
+              @if (hasNextProblem) {
+                <button class="tf-btn-primary" (click)="goNextProblem()">ข้อต่อไป →</button>
+              }
+              <button class="tf-btn-secondary" (click)="restart()">เลือกโจทย์ใหม่</button>
+            </div>
           </div>
         }
 
@@ -400,6 +465,41 @@ interface JudgeFeedback {
       font-family: inherit; cursor: pointer;
     }
     .tf-btn-secondary:hover { background: #e2e8f0; }
+
+    /* Mode select */
+    .tf-mode-select { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .tf-mode-heading { font-size: 14px; font-weight: 600; color: #475569; margin: 0; text-align: center; }
+    .tf-mode-btns { display: flex; flex-direction: column; gap: 10px; }
+    .tf-mode-btn {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+      padding: 14px 16px; border-radius: 12px; border: 2px solid transparent;
+      background: white; cursor: pointer; font-family: inherit; text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .tf-mode-btn--guide  { border-color: #bfdbfe; background: #eff6ff; }
+    .tf-mode-btn--guide:hover  { border-color: #2563eb; background: #dbeafe; }
+    .tf-mode-btn--solve  { border-color: #bbf7d0; background: #f0fdf4; }
+    .tf-mode-btn--solve:hover  { border-color: #16a34a; background: #dcfce7; }
+    .tf-mode-btn-icon  { font-size: 22px; line-height: 1; }
+    .tf-mode-btn-label { font-size: 15px; font-weight: 700; color: #1e293b; }
+    .tf-mode-btn-desc  { font-size: 12px; color: #64748b; line-height: 1.4; }
+
+    /* Solve */
+    .tf-solve { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .tf-solve-section {
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .tf-solve-section-label { font-size: 13px; font-weight: 700; color: #475569; margin: 0; }
+    .tf-solve-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .tf-solve-step { font-size: 14px; color: #1e293b; line-height: 1.65; }
+    .tf-understand-card {
+      background: #fefce8; border: 1.5px solid #fde68a; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .tf-understand-label { font-size: 13px; font-weight: 700; color: #92400e; margin: 0; }
+    .tf-understand-text  { font-size: 14px; color: #1e293b; margin: 0; line-height: 1.65; }
+    .tf-solve-actions { display: flex; flex-direction: column; gap: 8px; }
   `]
 })
 export class TeachingFlowComponent implements OnInit, OnChanges {
@@ -423,6 +523,9 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   protected notesLoading       = signal(false);
   protected figureDescription  = signal('');
   protected confirming         = signal(false);
+  protected solutionSteps      = signal<string[]>([]);
+  protected understandingStep  = signal('');
+  protected solveLoading       = signal(false);
 
   protected answer       = '';
   protected studentNote  = '';
@@ -433,7 +536,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
     return v === 'partial' || v === 'wrong';
   }
 
-  ngOnInit(): void { this.loadSession(); }
+  ngOnInit(): void { this.state.set('mode-select'); }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['problem'] && !changes['problem'].firstChange) {
@@ -441,7 +544,35 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
       this.hintBadge.set('');
       this.hintText.set('');
       this.judgeFeedback.set(null);
-      this.loadSession();
+      this.solutionSteps.set([]);
+      this.understandingStep.set('');
+      this.state.set('mode-select');
+    }
+  }
+
+  protected selectGuideFirst(): void {
+    this.loadSession();
+  }
+
+  protected async loadSolve(): Promise<void> {
+    if (this.solveLoading()) return;
+    this.solveLoading.set(true);
+    this.state.set('loading');
+    try {
+      const res = await this.teaching.solve(
+        this.problem.problemText,
+        this.problem.latex,
+        this.problem.topic
+      );
+      this.sessionId = res.sessionId;
+      this.solutionSteps.set(res.solutionSteps);
+      this.understandingStep.set(res.understandingStep);
+      this.state.set('solve');
+    } catch {
+      this.errorMsg.set('ไม่สามารถโหลดวิธีทำได้ กรุณาลองใหม่');
+      this.state.set('error');
+    } finally {
+      this.solveLoading.set(false);
     }
   }
 
