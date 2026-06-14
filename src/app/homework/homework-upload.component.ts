@@ -86,29 +86,40 @@ interface SelectedImage {
               </div>
               @if (result()?.readable && result()!.problems.length > 0) {
                 @if (result()!.problems.length > 1) {
-                  <p class="count-badge">พบ {{ result()!.problems.length }} ข้อ</p>
+                  <!-- Multiple problems: show selectable list -->
+                  <p class="count-badge">พบ {{ result()!.problems.length }} ข้อ — เลือกข้อที่จะทำ</p>
+                  <div class="problem-list">
+                    @for (p of result()!.problems; track p.index; let i = $index) {
+                      <button class="problem-list-item" (click)="confirmProblem(i)">
+                        <span class="pli-num">ข้อ {{ p.index }}</span>
+                        <span class="pli-text">{{ p.problemText }}</span>
+                        @if (p.topic) {
+                          <span class="pli-chip">{{ p.topic }}</span>
+                        }
+                      </button>
+                    }
+                  </div>
+                  <button class="btn btn-retake" style="width:100%" (click)="retake()">🔄 ถ่ายใหม่</button>
+                } @else {
+                  <!-- Single problem: keep existing confirm flow -->
+                  <div class="problem-card">
+                    <p class="problem-label">โจทย์ที่อ่านได้</p>
+                    <p class="problem-text">{{ result()!.problems[0].problemText }}</p>
+                    @if (result()!.problems[0].latex) {
+                      <div class="latex-box">
+                        <span class="latex-label">สูตร:</span>
+                        <code class="latex-text">{{ result()!.problems[0].latex }}</code>
+                      </div>
+                    }
+                    @if (result()!.problems[0].topic) {
+                      <span class="topic-chip">{{ result()!.problems[0].topic }}</span>
+                    }
+                  </div>
+                  <div class="confirm-row">
+                    <button class="btn btn-confirm" (click)="confirmProblem(0)">✅ ใช่ โจทย์นี้เลย</button>
+                    <button class="btn btn-retake" (click)="retake()">🔄 ถ่ายใหม่</button>
+                  </div>
                 }
-                <div class="problem-card">
-                  <p class="problem-label">
-                    {{ result()!.problems.length > 1 ? 'ข้อที่ ' + result()!.problems[0].index + ' (ตัวอย่าง)' : 'โจทย์ที่อ่านได้' }}
-                  </p>
-                  <p class="problem-text">{{ result()!.problems[0].problemText }}</p>
-                  @if (result()!.problems[0].latex) {
-                    <div class="latex-box">
-                      <span class="latex-label">สูตร:</span>
-                      <code class="latex-text">{{ result()!.problems[0].latex }}</code>
-                    </div>
-                  }
-                  @if (result()!.problems[0].topic) {
-                    <span class="topic-chip">{{ result()!.problems[0].topic }}</span>
-                  }
-                </div>
-                <div class="confirm-row">
-                  <button class="btn btn-confirm" (click)="confirmProblem()">
-                    ✅ {{ result()!.problems.length > 1 ? 'เริ่มทำ (' + result()!.problems.length + ' ข้อ)' : 'ใช่ โจทย์นี้เลย' }}
-                  </button>
-                  <button class="btn btn-retake" (click)="retake()">🔄 ถ่ายใหม่</button>
-                </div>
               } @else {
                 <div class="error-card">
                   <p class="error-icon-big">🔍</p>
@@ -403,6 +414,28 @@ interface SelectedImage {
 
     .confirm-row { display: flex; gap: 10px; }
 
+    /* Problem list (multi-problem result) */
+    .problem-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .problem-list-item {
+      display: flex; flex-direction: column; gap: 4px; text-align: left;
+      padding: 12px 14px; border-radius: 12px; border: 1.5px solid #e2e8f0;
+      background: white; cursor: pointer; font-family: inherit;
+      transition: border-color 0.15s, background 0.12s;
+    }
+    .problem-list-item:hover { border-color: #2563eb; background: #eff6ff; }
+    .problem-list-item:active { transform: scale(0.98); }
+    .pli-num  { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pli-text {
+      font-size: 14px; color: #1e293b; line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pli-chip {
+      font-size: 11px; font-weight: 600; color: #1e40af;
+      background: #dbeafe; border-radius: 20px;
+      padding: 2px 8px; width: fit-content;
+    }
+
     .error-card {
       background: #fff7ed;
       border: 1px solid #fed7aa;
@@ -501,8 +534,8 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.state.set('result');
   }
 
-  protected confirmProblem(): void {
-    this.currentProblemIndex.set(0);
+  protected confirmProblem(index: number): void {
+    this.currentProblemIndex.set(index);
     this.state.set('confirmed');
   }
 
@@ -511,7 +544,6 @@ export class HomeworkUploadComponent implements OnDestroy {
   }
 
   protected backToList(): void {
-    this.currentProblemIndex.set(0);
     this.state.set('result');
   }
 

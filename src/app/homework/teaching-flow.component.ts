@@ -52,7 +52,7 @@ interface JudgeFeedback {
         @case ('loading') {
           <div class="tf-loading">
             <div class="spinner"></div>
-            <p class="tf-loading-text">AI กำลังวางแผนการสอน...</p>
+            <p class="tf-loading-text">{{ loadingText() }}</p>
           </div>
         }
 
@@ -526,6 +526,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   protected solutionSteps      = signal<string[]>([]);
   protected understandingStep  = signal('');
   protected solveLoading       = signal(false);
+  protected loadingText        = signal('AI กำลังวางแผนการสอน...');
 
   protected answer       = '';
   protected studentNote  = '';
@@ -551,12 +552,14 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   }
 
   protected selectGuideFirst(): void {
+    this.loadingText.set('AI กำลังวางแผนการสอน...');
     this.loadSession();
   }
 
   protected async loadSolve(): Promise<void> {
     if (this.solveLoading()) return;
     this.solveLoading.set(true);
+    this.loadingText.set('AI กำลังเตรียมวิธีทำ...');
     this.state.set('loading');
     try {
       const res = await this.teaching.solve(

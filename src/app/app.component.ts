@@ -102,7 +102,7 @@ import { VoiceService } from './voice.service';
               <button class="mode-btn hw-btn" (click)="tutor.enterHomeworkMode()">
                 <span class="mode-icon">📷</span>
                 <span class="mode-label">ถ่ายรูปโจทย์</span>
-                <span class="mode-note hw-note">AI อ่านโจทย์ให้ทันที</span>
+                <span class="hw-note">AI อ่านโจทย์ให้ทันที</span>
               </button>
               <p class="mode-or-divider">— หรือเรียนกับโจทย์ตัวอย่าง —</p>
               <div class="mode-select-btns">
