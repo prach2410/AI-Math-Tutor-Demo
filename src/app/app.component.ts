@@ -54,7 +54,7 @@ import { VoiceService } from './voice.service';
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
-              @if (!tutor.inHomeworkMode()) {
+              @if (!tutor.inHomeworkMode() && tutor.interactionMode() !== null) {
                 @for (s of tutor.scenarios; track s.id) {
                   <button
                     class="scenario-btn"
