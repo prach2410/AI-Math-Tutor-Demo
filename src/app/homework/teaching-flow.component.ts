@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProblemItem } from './homework.service';
-import { TeachingService, TeachingStep } from './teaching.service';
+import { TeachingService, TeachingStep, NotesResponse, ConfirmFigureResponse } from './teaching.service';
 
-type FlowState = 'loading' | 'step' | 'done' | 'error';
+type FlowState = 'loading' | 'confirm' | 'step' | 'done' | 'error';
 type Verdict   = 'correct' | 'partial' | 'wrong' | null;
 
 interface JudgeFeedback {
@@ -26,6 +26,42 @@ interface JudgeFeedback {
           <div class="tf-loading">
             <div class="spinner"></div>
             <p class="tf-loading-text">AI กำลังวางแผนการสอน...</p>
+          </div>
+        }
+
+        @case ('confirm') {
+          <div class="tf-confirm">
+            <!-- Problem card -->
+            <div class="tf-problem-banner">
+              <p class="tf-problem-banner-label">โจทย์ข้อที่ {{ problem.index }}</p>
+              <p class="tf-problem-banner-text">{{ problem.problemText }}</p>
+              @if (problem.latex) {
+                <code class="tf-problem-banner-latex">{{ problem.latex }}</code>
+              }
+            </div>
+
+            <div class="tf-confirm-card">
+              <p class="tf-confirm-heading">🔍 AI เข้าใจรูปว่า...</p>
+              <p class="tf-confirm-desc">{{ figureDescription() }}</p>
+            </div>
+
+            <div class="tf-confirm-input-group">
+              <label class="tf-confirm-label">มีอะไรที่ต่างจากรูปจริงบ้างไหม? (ถ้าไม่มี กดยืนยันได้เลย)</label>
+              <textarea
+                class="tf-input"
+                [(ngModel)]="studentNote"
+                placeholder="เช่น มุมฉากอยู่ที่มุม C ด้านที่ต้องหาคือ AB"
+                rows="2"
+                [disabled]="confirming()">
+              </textarea>
+            </div>
+
+            <button
+              class="tf-submit"
+              (click)="confirmFigure()"
+              [disabled]="confirming()">
+              {{ confirming() ? 'กำลังโหลด...' : '✅ ยืนยัน เริ่มเรียน' }}
+            </button>
           </div>
         }
 
@@ -145,6 +181,24 @@ interface JudgeFeedback {
               <p class="tf-recap-label">โจทย์ข้อที่ {{ problem.index }}</p>
               <p class="tf-recap-text">{{ problem.problemText }}</p>
             </div>
+
+            <!-- Notes & Parent Summary -->
+            @if (notesLoading()) {
+              <div class="tf-notes-loading">
+                <div class="spinner"></div>
+                <p>กำลังสรุปสิ่งที่เรียน...</p>
+              </div>
+            } @else if (notes()) {
+              <div class="tf-notes-card">
+                <p class="tf-notes-label">📝 บันทึกของฉัน</p>
+                <p class="tf-notes-text">{{ notes()!.studentNotes }}</p>
+              </div>
+              <div class="tf-summary-card">
+                <p class="tf-notes-label">👨‍👩‍👧 สรุปสำหรับผู้ปกครอง</p>
+                <p class="tf-notes-text">{{ notes()!.parentSummary }}</p>
+              </div>
+            }
+
             @if (hasNextProblem) {
               <button class="tf-btn-primary" (click)="goNextProblem()">ข้อต่อไป →</button>
             }
@@ -190,6 +244,17 @@ interface JudgeFeedback {
       border-radius: 6px; padding: 4px 8px; font-family: monospace;
       word-break: break-all; display: block;
     }
+
+    /* Confirm Step */
+    .tf-confirm { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .tf-confirm-card {
+      background: #fefce8; border: 1.5px solid #fde68a; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .tf-confirm-heading { font-size: 14px; font-weight: 700; color: #92400e; margin: 0; }
+    .tf-confirm-desc    { font-size: 14px; color: #1e293b; margin: 0; line-height: 1.7; white-space: pre-wrap; }
+    .tf-confirm-input-group { display: flex; flex-direction: column; gap: 6px; }
+    .tf-confirm-label { font-size: 13px; color: #475569; font-weight: 500; }
 
     /* Loading */
     .tf-loading {
@@ -299,6 +364,22 @@ interface JudgeFeedback {
     .tf-recap-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin: 0 0 4px; }
     .tf-recap-text  { font-size: 14px; color: #1e293b; margin: 0; line-height: 1.6; }
 
+    .tf-notes-loading {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #64748b;
+    }
+    .tf-notes-loading .spinner { width: 18px; height: 18px; border-width: 2px; }
+    .tf-notes-loading p { margin: 0; }
+
+    .tf-notes-card, .tf-summary-card {
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 14px; width: 100%; text-align: left;
+    }
+    .tf-notes-card   { border-left: 3px solid #2563eb; }
+    .tf-summary-card { border-left: 3px solid #7c3aed; }
+    .tf-notes-label  { font-size: 12px; font-weight: 700; color: #475569; margin: 0 0 6px; }
+    .tf-notes-text   { font-size: 14px; color: #1e293b; margin: 0; line-height: 1.7; white-space: pre-wrap; }
+
     /* Error */
     .tf-error {
       display: flex; flex-direction: column; align-items: center;
@@ -338,8 +419,13 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   protected hintLoading   = signal(false);
   protected errorMsg      = signal('');
   protected submitting    = signal(false);
+  protected notes              = signal<NotesResponse | null>(null);
+  protected notesLoading       = signal(false);
+  protected figureDescription  = signal('');
+  protected confirming         = signal(false);
 
-  protected answer = '';
+  protected answer       = '';
+  protected studentNote  = '';
   private sessionId = '';
 
   protected showHintLadder(): boolean {
@@ -363,20 +449,46 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
     this.state.set('loading');
     this.judgeFeedback.set(null);
     this.hintText.set('');
+    this.notes.set(null);
+    this.figureDescription.set('');
+    this.studentNote = '';
     try {
       const res = await this.teaching.start(
         this.problem.problemText,
         this.problem.latex,
         this.problem.topic,
-        false // hasFigure — Confirm Step ทำใน S2c
+        this.problem.hasFigure
       );
       this.sessionId = res.sessionId;
+
+      if (res.needsConfirm) {
+        this.figureDescription.set(res.figureDescription);
+        this.state.set('confirm');
+        return;
+      }
+
       this.currentStep.set(res.currentStep);
       this.totalSteps.set(res.totalSteps);
       this.state.set('step');
     } catch {
       this.errorMsg.set('ไม่สามารถเริ่มการสอนได้ กรุณาลองใหม่');
       this.state.set('error');
+    }
+  }
+
+  protected async confirmFigure(): Promise<void> {
+    if (this.confirming()) return;
+    this.confirming.set(true);
+    try {
+      const res = await this.teaching.confirmFigure(this.sessionId, this.studentNote.trim());
+      this.currentStep.set(res.currentStep);
+      this.totalSteps.set(res.totalSteps);
+      this.state.set('step');
+    } catch {
+      this.errorMsg.set('ยืนยันรูปไม่สำเร็จ กรุณาลองใหม่');
+      this.state.set('error');
+    } finally {
+      this.confirming.set(false);
     }
   }
 
@@ -399,6 +511,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
 
       if (res.done) {
         this.state.set('done');
+        this.loadNotes();
         return;
       }
 
@@ -444,6 +557,19 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   protected requestHintWithConfirm(level: number): void {
     if (level === 4 && !confirm('ดูเฉลยขั้นนี้เลยไหม?\n(ลองคิดด้วยตัวเองก่อนดีกว่านะ 😊)')) return;
     this.requestHint(level);
+  }
+
+  private async loadNotes(): Promise<void> {
+    if (!this.sessionId) return;
+    this.notesLoading.set(true);
+    try {
+      const res = await this.teaching.notes(this.sessionId);
+      this.notes.set(res);
+    } catch {
+      // fail silently — notes are a nice-to-have
+    } finally {
+      this.notesLoading.set(false);
+    }
   }
 
   protected restart(): void { this.onRestart?.(); }

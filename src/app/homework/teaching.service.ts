@@ -11,6 +11,13 @@ export interface TeachingStep {
 
 export interface StartTeachingResponse {
   sessionId: string;
+  needsConfirm: boolean;
+  figureDescription: string;
+  currentStep: TeachingStep | null;
+  totalSteps: number;
+}
+
+export interface ConfirmFigureResponse {
   currentStep: TeachingStep;
   totalSteps: number;
 }
@@ -27,6 +34,11 @@ export interface AnswerResponse {
 export interface HintResponse {
   level: number;
   help: string;
+}
+
+export interface NotesResponse {
+  studentNotes: string;
+  parentSummary: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +60,18 @@ export class TeachingService {
   hint(sessionId: string, level: number): Promise<HintResponse> {
     return firstValueFrom(
       this.http.post<HintResponse>(`/api/teaching/${sessionId}/hint`, { level })
+    );
+  }
+
+  confirmFigure(sessionId: string, studentNote: string): Promise<ConfirmFigureResponse> {
+    return firstValueFrom(
+      this.http.post<ConfirmFigureResponse>(`/api/teaching/${sessionId}/confirm-figure`, { studentNote })
+    );
+  }
+
+  notes(sessionId: string): Promise<NotesResponse> {
+    return firstValueFrom(
+      this.http.get<NotesResponse>(`/api/teaching/${sessionId}/notes`)
     );
   }
 }
