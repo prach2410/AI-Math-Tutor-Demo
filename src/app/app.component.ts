@@ -16,6 +16,7 @@ import { LearningFeedbackComponent } from './learning-feedback/learning-feedback
 import { FeedbackCollectionComponent } from './feedback-collection/feedback-collection.component';
 import { LessonCompleteComponent } from './lesson-complete/lesson-complete.component';
 import { HomeworkUploadComponent } from './homework/homework-upload.component';
+import { LearningJournalUploadComponent } from './learning-journal/learning-journal-upload.component';
 import { TutorService } from './tutor.service';
 import { VoiceService } from './voice.service';
 
@@ -37,6 +38,7 @@ import { VoiceService } from './voice.service';
     FeedbackCollectionComponent,
     LessonCompleteComponent,
     HomeworkUploadComponent,
+    LearningJournalUploadComponent,
     DiscoveryBatchesComponent,
     FormsModule,
   ],
@@ -50,7 +52,7 @@ import { VoiceService } from './voice.service';
         <div class="header-inner">
           <div class="header-text">
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
-            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.scenario().title }}</p>
+            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.inLearningJournalMode() ? '📚 สิ่งที่เรียนวันนี้' : tutor.scenario().title }}</p>
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
@@ -91,18 +93,24 @@ import { VoiceService } from './voice.service';
             <app-project-brain-tutor />
           } @else if (tutor.inHomeworkMode()) {
             <app-homework-upload />
+          } @else if (tutor.inLearningJournalMode()) {
+            <app-learning-journal-upload />
           } @else if (tutor.inFreeTalk()) {
             <app-free-talk [duringLesson]="tutor.messages().length > 0" />
           } @else if (tutor.finished()) {
             <app-lesson-complete />
           } @else if (tutor.interactionMode() === null) {
             <div class="mode-select-card">
-              <p class="mode-select-title">ติดการบ้านอยู่ไหมคะ? 📚</p>
-              <p class="mode-select-sub">ถ่ายรูปโจทย์ แล้วให้ AI อ่านให้เลย</p>
+              <p class="mode-select-title">วันนี้มีอะไรให้ช่วยไหม? 👋</p>
               <button class="mode-btn hw-btn" (click)="tutor.enterHomeworkMode()">
                 <span class="mode-icon">📷</span>
-                <span class="mode-label">ถ่ายรูปโจทย์</span>
-                <span class="hw-note">AI อ่านโจทย์ให้ทันที</span>
+                <span class="mode-label">ช่วยทำการบ้าน</span>
+                <span class="hw-note">ถ่ายรูปโจทย์ · AI อ่านและสอน</span>
+              </button>
+              <button class="mode-btn journal-btn" (click)="tutor.enterLearningJournalMode()">
+                <span class="mode-icon">📚</span>
+                <span class="mode-label">สิ่งที่เรียนวันนี้</span>
+                <span class="hw-note">ถ่ายกระดาน/สมุด · AI สรุปให้</span>
               </button>
               <p class="mode-or-divider">— หรือเรียนกับโจทย์ตัวอย่าง —</p>
               <div class="mode-select-btns">
@@ -453,6 +461,22 @@ import { VoiceService } from './voice.service';
     .hw-btn .mode-label { color: white; font-size: 17px; }
     .hw-note  { font-size: 12px; color: rgba(255,255,255,0.85); }
 
+    .journal-btn {
+      width: 100%;
+      max-width: 280px;
+      background: linear-gradient(135deg, #6d28d9, #7c3aed);
+      border-color: transparent;
+      color: white;
+      padding: 20px 28px;
+      box-shadow: 0 4px 14px rgba(124,58,237,0.35);
+    }
+    .journal-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124,58,237,0.45);
+    }
+    .journal-btn .mode-label { color: white; font-size: 17px; }
+    .journal-btn .hw-note    { color: rgba(255,255,255,0.85); }
+
     .mode-or-divider {
       font-size: 12px;
       color: #94a3b8;
@@ -583,6 +607,8 @@ import { VoiceService } from './voice.service';
       .mode-label { font-size: 15px; }
       .hw-btn { max-width: none; padding: 18px 20px; }
       .hw-btn .mode-label { font-size: 16px; }
+      .journal-btn { max-width: none; padding: 18px 20px; }
+      .journal-btn .mode-label { font-size: 16px; }
 
       .side-note,
       .side-summary,
