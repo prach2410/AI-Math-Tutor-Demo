@@ -6,12 +6,12 @@ type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result';
 
 interface SelectedImage { file: File; url: string; }
 
-const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color: string }> = {
-  Whiteboard: { label: 'กระดานในห้องเรียน', icon: '📋', bg: '#dbeafe', color: '#1e40af' },
-  Notebook:   { label: 'สมุดจดของนักเรียน', icon: '📓', bg: '#ede9fe', color: '#5b21b6' },
-  Textbook:   { label: 'หนังสือเรียน',       icon: '📕', bg: '#fee2e2', color: '#991b1b' },
-  Worksheet:  { label: 'ใบงาน',              icon: '📄', bg: '#dcfce7', color: '#166534' },
-  Homework:   { label: 'การบ้าน',            icon: '📝', bg: '#fef3c7', color: '#92400e' },
+const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color: string; highlightLabel: string }> = {
+  Whiteboard: { label: 'กระดานในห้องเรียน', icon: '📋', bg: '#dbeafe', color: '#1e40af', highlightLabel: 'ที่ครูสอน' },
+  Notebook:   { label: 'สมุดจดของนักเรียน', icon: '📓', bg: '#ede9fe', color: '#5b21b6', highlightLabel: 'สิ่งที่จด' },
+  Textbook:   { label: 'หนังสือเรียน',       icon: '📕', bg: '#fee2e2', color: '#991b1b', highlightLabel: 'แนวคิดหลัก' },
+  Worksheet:  { label: 'ใบงาน',              icon: '📄', bg: '#dcfce7', color: '#166534', highlightLabel: 'โจทย์ที่ฝึก' },
+  Homework:   { label: 'การบ้าน',            icon: '📝', bg: '#fef3c7', color: '#92400e', highlightLabel: 'งานที่ได้รับ' },
 };
 
 @Component({
@@ -103,6 +103,16 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                   <div class="summary-card">
                     <p class="summary-label">สรุปเนื้อหา</p>
                     <p class="summary-text">{{ r.summary }}</p>
+                  </div>
+                }
+                @if (r.highlights.length > 0) {
+                  <div class="highlights-card">
+                    <p class="highlights-label">{{ dt.highlightLabel }}</p>
+                    <ul class="highlights-list">
+                      @for (h of r.highlights; track h) {
+                        <li>{{ h }}</li>
+                      }
+                    </ul>
                   </div>
                 }
                 @if (r.keywords.length > 0) {
@@ -263,6 +273,21 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
     }
     .summary-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0; }
     .summary-text  { font-size: 14px; color: #334155; line-height: 1.7; margin: 0; }
+    .highlights-card {
+      background: white; border: 1px solid #e2e8f0;
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .highlights-label {
+      font-size: 11px; font-weight: 700; color: #94a3b8;
+      text-transform: uppercase; margin: 0;
+    }
+    .highlights-list {
+      margin: 0; padding-left: 18px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .highlights-list li { font-size: 14px; color: #1e293b; line-height: 1.5; }
+
     .keywords-row  { display: flex; flex-wrap: wrap; gap: 8px; }
     .keyword-chip  {
       padding: 4px 12px; background: #f1f5f9;
@@ -312,7 +337,7 @@ export class LearningJournalUploadComponent implements OnDestroy {
       const result = await this.journalService.analyze(imgs.map(i => i.file));
       this.result.set(result);
     } catch {
-      this.result.set({ readable: false, message: 'เกิดข้อผิดพลาด กรุณาลองใหม่', documentType: '', topic: '', summary: '', keywords: [] });
+      this.result.set({ readable: false, message: 'เกิดข้อผิดพลาด กรุณาลองใหม่', documentType: '', topic: '', summary: '', highlights: [], keywords: [] });
     }
     this.state.set('result');
   }

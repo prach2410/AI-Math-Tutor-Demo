@@ -8,6 +8,7 @@ export interface LearningJournalAnalysis {
   documentType: string;
   topic: string;
   summary: string;
+  highlights: string[];
   keywords: string[];
 }
 
