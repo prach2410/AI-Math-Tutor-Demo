@@ -128,6 +128,9 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                   <p class="error-msg">{{ result()?.message ?? 'วิเคราะห์ไม่ออก' }}</p>
                 </div>
               }
+              @if (saved()) {
+                <div class="saved-badge">✅ บันทึกแล้ว</div>
+              }
               <button class="btn btn-retake" (click)="retake()">🔄 เลือกรูปใหม่</button>
             </div>
           }
@@ -294,6 +297,14 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       border-radius: 20px; font-size: 13px; color: #475569;
       border: 1px solid #e2e8f0;
     }
+    .saved-badge {
+      background: #dcfce7; color: #166534;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px; padding: 8px 14px;
+      font-size: 13px; font-weight: 600;
+      text-align: center;
+    }
+
     .error-card {
       background: #fff7ed; border: 1px solid #fed7aa;
       border-radius: 12px; padding: 24px;
@@ -310,6 +321,7 @@ export class LearningJournalUploadComponent implements OnDestroy {
   protected state  = signal<UploadState>('idle');
   protected images = signal<SelectedImage[]>([]);
   protected result = signal<LearningJournalAnalysis | null>(null);
+  protected saved  = signal(false);
 
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -336,8 +348,10 @@ export class LearningJournalUploadComponent implements OnDestroy {
     try {
       const result = await this.journalService.analyze(imgs.map(i => i.file));
       this.result.set(result);
+      this.saved.set(result.readable);
     } catch {
       this.result.set({ readable: false, message: 'เกิดข้อผิดพลาด กรุณาลองใหม่', documentType: '', topic: '', summary: '', highlights: [], keywords: [] });
+      this.saved.set(false);
     }
     this.state.set('result');
   }
@@ -346,6 +360,7 @@ export class LearningJournalUploadComponent implements OnDestroy {
     this.images().forEach(i => URL.revokeObjectURL(i.url));
     this.images.set([]);
     this.result.set(null);
+    this.saved.set(false);
     this.state.set('idle');
   }
 

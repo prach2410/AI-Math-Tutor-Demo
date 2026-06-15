@@ -17,6 +17,7 @@ import { FeedbackCollectionComponent } from './feedback-collection/feedback-coll
 import { LessonCompleteComponent } from './lesson-complete/lesson-complete.component';
 import { HomeworkUploadComponent } from './homework/homework-upload.component';
 import { LearningJournalUploadComponent } from './learning-journal/learning-journal-upload.component';
+import { DailyLogsComponent } from './learning-journal/daily-logs.component';
 import { TutorService } from './tutor.service';
 import { VoiceService } from './voice.service';
 
@@ -39,6 +40,7 @@ import { VoiceService } from './voice.service';
     LessonCompleteComponent,
     HomeworkUploadComponent,
     LearningJournalUploadComponent,
+    DailyLogsComponent,
     DiscoveryBatchesComponent,
     FormsModule,
   ],
@@ -52,7 +54,7 @@ import { VoiceService } from './voice.service';
         <div class="header-inner">
           <div class="header-text">
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
-            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.inLearningJournalMode() ? '📚 สิ่งที่เรียนวันนี้' : tutor.scenario().title }}</p>
+            <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.inLearningJournalMode() ? '📚 สิ่งที่เรียนวันนี้' : tutor.inDailyLogsMode() ? '📋 บันทึกการเรียน' : tutor.scenario().title }}</p>
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
@@ -95,6 +97,8 @@ import { VoiceService } from './voice.service';
             <app-homework-upload />
           } @else if (tutor.inLearningJournalMode()) {
             <app-learning-journal-upload />
+          } @else if (tutor.inDailyLogsMode()) {
+            <app-daily-logs />
           } @else if (tutor.inFreeTalk()) {
             <app-free-talk [duringLesson]="tutor.messages().length > 0" />
           } @else if (tutor.finished()) {
@@ -111,6 +115,11 @@ import { VoiceService } from './voice.service';
                 <span class="mode-icon">📚</span>
                 <span class="mode-label">สิ่งที่เรียนวันนี้</span>
                 <span class="hw-note">ถ่ายกระดาน/สมุด · AI สรุปให้</span>
+              </button>
+              <button class="mode-btn logs-btn" (click)="tutor.enterDailyLogsMode()">
+                <span class="mode-icon">📋</span>
+                <span class="mode-label">ดูบันทึกการเรียน</span>
+                <span class="hw-note">สิ่งที่เรียนทั้งหมด · รายวัน</span>
               </button>
               <p class="mode-or-divider">— หรือเรียนกับโจทย์ตัวอย่าง —</p>
               <div class="mode-select-btns">
@@ -477,6 +486,22 @@ import { VoiceService } from './voice.service';
     .journal-btn .mode-label { color: white; font-size: 17px; }
     .journal-btn .hw-note    { color: rgba(255,255,255,0.85); }
 
+    .logs-btn {
+      width: 100%;
+      max-width: 280px;
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      border-color: transparent;
+      color: white;
+      padding: 20px 28px;
+      box-shadow: 0 4px 14px rgba(13,148,136,0.3);
+    }
+    .logs-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(13,148,136,0.42);
+    }
+    .logs-btn .mode-label { color: white; font-size: 17px; }
+    .logs-btn .hw-note    { color: rgba(255,255,255,0.85); }
+
     .mode-or-divider {
       font-size: 12px;
       color: #94a3b8;
@@ -609,6 +634,8 @@ import { VoiceService } from './voice.service';
       .hw-btn .mode-label { font-size: 16px; }
       .journal-btn { max-width: none; padding: 18px 20px; }
       .journal-btn .mode-label { font-size: 16px; }
+      .logs-btn { max-width: none; padding: 18px 20px; }
+      .logs-btn .mode-label { font-size: 16px; }
 
       .side-note,
       .side-summary,

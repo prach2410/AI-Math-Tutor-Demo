@@ -76,6 +76,7 @@ export class TutorService {
   private _inProjectBrainMode   = signal(false);
   private _inHomeworkMode          = signal(false);
   private _inLearningJournalMode   = signal(false);
+  private _inDailyLogsMode         = signal(false);
   private _pendingTechniqueFeedback = signal<{ techniqueType: string; step: number } | null>(null);
   private _inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private _abandonListener: (() => void) | null = null;
@@ -103,6 +104,7 @@ export class TutorService {
   readonly inProjectBrainMode      = this._inProjectBrainMode.asReadonly();
   readonly inHomeworkMode          = this._inHomeworkMode.asReadonly();
   readonly inLearningJournalMode   = this._inLearningJournalMode.asReadonly();
+  readonly inDailyLogsMode         = this._inDailyLogsMode.asReadonly();
   readonly pendingTechniqueFeedback = this._pendingTechniqueFeedback.asReadonly();
 
   async selectScenario(id: string): Promise<void> {
@@ -481,6 +483,14 @@ export class TutorService {
   exitLearningJournalMode(): void {
     this._inLearningJournalMode.set(false);
     this.addEvent('learning_journal_exited');
+  }
+
+  enterDailyLogsMode(): void {
+    this._inDailyLogsMode.set(true);
+  }
+
+  exitDailyLogsMode(): void {
+    this._inDailyLogsMode.set(false);
   }
 
   addProjectBrainEvent(type: string): void {
