@@ -62,9 +62,9 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                           }
                         </div>
                       }
-                      <a class="export-btn" [href]="'/api/learning-records/' + rec.id + '/export'" download>
+                      <button class="export-btn" (click)="downloadMd(rec.id, rec.topic, group.date)">
                         ⬇️ บันทึกเป็น .md
-                      </a>
+                      </button>
                     </div>
                   }
                 </div>
@@ -229,5 +229,21 @@ export class DailyLogsComponent implements OnInit {
 
   protected truncate(text: string, max: number): string {
     return text.length <= max ? text : text.slice(0, max) + '…';
+  }
+
+  protected async downloadMd(id: string, topic: string, date: string): Promise<void> {
+    try {
+      const response = await fetch(`/api/learning-records/${id}/export`);
+      if (!response.ok) throw new Error(`${response.status}`);
+      const blob = await response.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `${date}_${topic}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('ดาวน์โหลดไม่สำเร็จ กรุณาลองใหม่');
+    }
   }
 }
