@@ -62,6 +62,9 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                           }
                         </div>
                       }
+                      <a class="export-btn" [href]="'/api/learning-records/' + rec.id + '/export'" download>
+                        ⬇️ บันทึกเป็น .md
+                      </a>
                     </div>
                   }
                 </div>
@@ -175,6 +178,20 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       font-size: 12px; color: #64748b;
       border: 1px solid #e2e8f0;
     }
+
+    .export-btn {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 6px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 12px; color: #475569;
+      text-decoration: none;
+      align-self: flex-start;
+      transition: background 0.15s;
+    }
+    .export-btn:hover { background: #e2e8f0; }
   `]
 })
 export class DailyLogsComponent implements OnInit {
