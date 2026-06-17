@@ -10,6 +10,7 @@ interface LearningRecord {
   summary: string;
   keywords: string[];
   createdAt: string;
+  downloadedAt: string;
 }
 
 interface HomeworkSession {
@@ -20,6 +21,7 @@ interface HomeworkSession {
   status: string;
   mode: string;
   createdAt: string;
+  downloadedAt: string;
 }
 
 interface DayGroup {
@@ -82,6 +84,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                         <li class="record-item">
                           <span class="record-badge">{{ r.documentType }}</span>
                           <span class="record-topic">{{ r.topic }}</span>
+                          @if (r.downloadedAt) {
+                            <span class="dl-done-chip">✅ {{ fmtDl(r.downloadedAt) }}</span>
+                          }
                           <button class="dl-btn" title="download .md" (click)="downloadLearning(r.id)">⬇️</button>
                         </li>
                       }
@@ -99,6 +104,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                           <span class="status-chip" [class.done]="s.status === 'done'">
                             {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
                           </span>
+                          @if (s.downloadedAt) {
+                            <span class="dl-done-chip">✅ {{ fmtDl(s.downloadedAt) }}</span>
+                          }
                           <button class="dl-btn" title="download .md" (click)="downloadHomework(s.id)">⬇️</button>
                         </li>
                       }
@@ -248,6 +256,16 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       flex-shrink: 0;
     }
     .status-chip.done { color: #16a34a; font-weight: 600; }
+    .dl-done-chip {
+      font-size: 11px;
+      background: #dcfce7;
+      color: #166534;
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
     .dl-btn {
       background: white;
       border: 1px solid #e2e8f0;
@@ -339,12 +357,33 @@ export class AdminExportComponent implements OnInit {
     const a = document.createElement('a');
     a.href = `/api/learning-records/${id}/export`;
     a.click();
+    this.markDownloaded('learning', id);
   }
 
   downloadHomework(id: string) {
     const a = document.createElement('a');
     a.href = `/api/admin/export/homework/${id}`;
     a.click();
+    this.markDownloaded('homework', id);
+  }
+
+  fmtDl(isoStr: string): string {
+    if (!isoStr) return '';
+    const d = new Date(isoStr);
+    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+  }
+
+  private markDownloaded(type: 'learning' | 'homework', id: string): void {
+    const now = new Date().toISOString();
+    this.dayGroups.update(days => days.map(day => ({
+      ...day,
+      learningRecords: type === 'learning'
+        ? day.learningRecords.map(r => r.id === id ? { ...r, downloadedAt: now } : r)
+        : day.learningRecords,
+      homeworkSessions: type === 'homework'
+        ? day.homeworkSessions.map(s => s.id === id ? { ...s, downloadedAt: now } : s)
+        : day.homeworkSessions,
+    })));
   }
 
   private groupByDate(lrs: LearningRecord[], hws: HomeworkSession[]): DayGroup[] {
