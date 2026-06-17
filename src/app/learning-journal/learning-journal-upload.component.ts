@@ -421,6 +421,7 @@ export class LearningJournalUploadComponent implements OnDestroy {
     setTimeout(() => {
       const body = (this.el.nativeElement as HTMLElement).querySelector('.lj-body');
       body?.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 50);
   }
 
