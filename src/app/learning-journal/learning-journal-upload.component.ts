@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnDestroy, ElementRef } from '@angular/core';
 import { TutorService } from '../tutor.service';
 import { LearningJournalService, LearningJournalAnalysis } from './learning-journal.service';
 
@@ -185,12 +185,11 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       flex-shrink: 0;
     }
     .back-btn {
-      background: none; border: none;
-      color: var(--color-primary, #2563eb);
-      font-size: 14px; cursor: pointer;
-      padding: 4px 8px; border-radius: 6px; font-family: inherit;
+      background: #eff6ff; border: 1.5px solid #bfdbfe;
+      color: #1d4ed8; font-size: 14px; font-weight: 600;
+      cursor: pointer; padding: 6px 14px; border-radius: 8px; font-family: inherit;
     }
-    .back-btn:hover { background: #f1f5f9; }
+    .back-btn:hover { background: #dbeafe; border-color: #93c5fd; }
     .lj-title { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0; }
 
     .lj-body {
@@ -378,6 +377,7 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
 export class LearningJournalUploadComponent implements OnDestroy {
   protected tutor = inject(TutorService);
   private journalService = inject(LearningJournalService);
+  private el = inject(ElementRef);
 
   protected state      = signal<UploadState>('idle');
   protected images     = signal<SelectedImage[]>([]);
@@ -418,6 +418,10 @@ export class LearningJournalUploadComponent implements OnDestroy {
       this.saved.set(false);
     }
     this.state.set('result');
+    setTimeout(() => {
+      const body = (this.el.nativeElement as HTMLElement).querySelector('.lj-body');
+      body?.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 50);
   }
 
   protected retake(): void {

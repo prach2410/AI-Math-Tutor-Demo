@@ -176,17 +176,12 @@ interface SelectedImage {
     }
 
     .back-btn {
-      background: none;
-      border: none;
-      color: var(--color-primary, #2563eb);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-family: inherit;
+      background: #eff6ff; border: 1.5px solid #bfdbfe;
+      color: #1d4ed8; font-size: 14px; font-weight: 600;
+      cursor: pointer; padding: 6px 14px; border-radius: 8px; font-family: inherit;
       white-space: nowrap;
     }
-    .back-btn:hover { background: #f1f5f9; }
+    .back-btn:hover { background: #dbeafe; border-color: #93c5fd; }
 
     .hw-title { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0; }
 
