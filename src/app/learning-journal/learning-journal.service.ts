@@ -12,6 +12,7 @@ export interface LearningJournalAnalysis {
   keywords: string[];
   duplicate?: boolean;
   existingDate?: string;
+  id?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +24,12 @@ export class LearningJournalService {
     files.forEach(f => formData.append('images', f));
     return firstValueFrom(
       this.http.post<LearningJournalAnalysis>('/api/learning-journal/analyze', formData)
+    );
+  }
+
+  setReflection(id: string, reflection: string): Promise<void> {
+    return firstValueFrom(
+      this.http.patch<void>(`/api/learning-records/${id}/reflection`, { reflection })
     );
   }
 }

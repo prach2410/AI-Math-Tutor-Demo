@@ -11,6 +11,7 @@ interface LearningRecord {
   keywords: string[];
   createdAt: string;
   downloadedAt: string;
+  reflection?: string;
 }
 
 interface HomeworkSession {
@@ -84,6 +85,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                         <li class="record-item">
                           <span class="record-badge">{{ r.documentType }}</span>
                           <span class="record-topic">{{ r.topic }}</span>
+                          @if (r.reflection) {
+                            <span class="reflection-chip">{{ reflectionEmoji(r.reflection) }}</span>
+                          }
                           @if (r.downloadedAt) {
                             <span class="dl-done-chip">✅ {{ fmtDl(r.downloadedAt) }}</span>
                           }
@@ -256,6 +260,10 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       flex-shrink: 0;
     }
     .status-chip.done { color: #16a34a; font-weight: 600; }
+    .reflection-chip {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
     .dl-done-chip {
       font-size: 11px;
       background: #dcfce7;
@@ -365,6 +373,16 @@ export class AdminExportComponent implements OnInit {
     a.href = `/api/admin/export/homework/${id}`;
     a.click();
     this.markDownloaded('homework', id);
+  }
+
+  reflectionEmoji(val: string): string {
+    const map: Record<string, string> = {
+      'Understood':           '🟢',
+      'StartingToUnderstand': '🟡',
+      'StillConfused':        '🟠',
+      'NotUnderstand':        '🔴',
+    };
+    return map[val] ?? '';
   }
 
   fmtDl(isoStr: string): string {

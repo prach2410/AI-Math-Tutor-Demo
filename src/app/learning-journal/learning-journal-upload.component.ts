@@ -4,6 +4,13 @@ import { LearningJournalService, LearningJournalAnalysis } from './learning-jour
 
 type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result';
 
+const REFLECTION_OPTIONS = [
+  { emoji: '🟢', label: 'อ๋อ เข้าใจแล้ว',  value: 'Understood' },
+  { emoji: '🟡', label: 'เริ่มเข้าใจแล้ว', value: 'StartingToUnderstand' },
+  { emoji: '🟠', label: 'ยังงงอยู่',        value: 'StillConfused' },
+  { emoji: '🔴', label: 'ไม่เข้าใจเลย',    value: 'NotUnderstand' },
+] as const;
+
 interface SelectedImage { file: File; url: string; }
 
 const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color: string; highlightLabel: string }> = {
@@ -128,6 +135,22 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                     }
                   </div>
                 }
+                <div class="reflection-card">
+                  <p class="reflection-q">ตอนนี้หนูอยู่ตรงไหน?</p>
+                  <div class="reflection-btns">
+                    @for (opt of reflectionOptions; track opt.value) {
+                      <button
+                        class="reflection-btn"
+                        [class.selected]="reflection() === opt.value"
+                        (click)="setReflection(opt.value)">
+                        {{ opt.emoji }} {{ opt.label }}
+                      </button>
+                    }
+                  </div>
+                  @if (reflection()) {
+                    <p class="reflection-thanks">ขอบคุณที่บอกนะ</p>
+                  }
+                </div>
               } @else {
                 <div class="error-card">
                   <p class="error-icon">🔍</p>
@@ -311,6 +334,29 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       text-align: center;
     }
 
+    .reflection-card {
+      background: #faf5ff; border: 1px solid #e9d5ff;
+      border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .reflection-q {
+      font-size: 15px; font-weight: 700; color: #6b21a8;
+      margin: 0; text-align: center;
+    }
+    .reflection-btns { display: flex; flex-direction: column; gap: 8px; }
+    .reflection-btn {
+      padding: 10px 16px; border-radius: 10px;
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      cursor: pointer; border: 2px solid #e9d5ff;
+      background: white; color: #1e293b;
+      text-align: left; transition: background 0.12s, border-color 0.12s;
+    }
+    .reflection-btn:hover { background: #f5f3ff; border-color: #c4b5fd; }
+    .reflection-btn.selected { background: #7c3aed; color: white; border-color: #7c3aed; }
+    .reflection-thanks {
+      font-size: 13px; color: #7c3aed; margin: 0; text-align: center; font-weight: 600;
+    }
+
     .duplicate-card {
       background: #eff6ff; border: 1px solid #bfdbfe;
       border-radius: 12px; padding: 24px;
@@ -333,10 +379,13 @@ export class LearningJournalUploadComponent implements OnDestroy {
   protected tutor = inject(TutorService);
   private journalService = inject(LearningJournalService);
 
-  protected state  = signal<UploadState>('idle');
-  protected images = signal<SelectedImage[]>([]);
-  protected result = signal<LearningJournalAnalysis | null>(null);
-  protected saved  = signal(false);
+  protected state      = signal<UploadState>('idle');
+  protected images     = signal<SelectedImage[]>([]);
+  protected result     = signal<LearningJournalAnalysis | null>(null);
+  protected saved      = signal(false);
+  protected reflection = signal<string | null>(null);
+
+  protected readonly reflectionOptions = REFLECTION_OPTIONS;
 
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -376,7 +425,16 @@ export class LearningJournalUploadComponent implements OnDestroy {
     this.images.set([]);
     this.result.set(null);
     this.saved.set(false);
+    this.reflection.set(null);
     this.state.set('idle');
+  }
+
+  protected async setReflection(value: string): Promise<void> {
+    this.reflection.set(value);
+    const id = this.result()?.id;
+    if (!id) return;
+    try { await this.journalService.setReflection(id, value); }
+    catch { /* silent — UI already updated */ }
   }
 
   protected docType(type: string) {
