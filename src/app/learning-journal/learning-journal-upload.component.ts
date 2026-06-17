@@ -87,7 +87,13 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                   <img class="thumb" [src]="img.url" alt="" />
                 }
               </div>
-              @if (result()?.readable) {
+              @if (result()?.duplicate) {
+                <div class="duplicate-card">
+                  <p class="dup-icon">🔁</p>
+                  <p class="dup-msg">รูปนี้บันทึกไว้แล้ว</p>
+                  <p class="dup-date">เมื่อ {{ formatDate(result()!.existingDate!) }}</p>
+                </div>
+              } @else if (result()?.readable) {
                 @let r = result()!;
                 @let dt = docType(r.documentType);
                 <div class="type-badge" [style.background]="dt.bg" [style.color]="dt.color">
@@ -305,6 +311,15 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       text-align: center;
     }
 
+    .duplicate-card {
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 12px; padding: 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+    }
+    .dup-icon { font-size: 32px; line-height: 1; margin: 0; }
+    .dup-msg  { font-size: 15px; font-weight: 600; color: #1e40af; margin: 0; }
+    .dup-date { font-size: 13px; color: #3b82f6; margin: 0; }
+
     .error-card {
       background: #fff7ed; border: 1px solid #fed7aa;
       border-radius: 12px; padding: 24px;
@@ -348,7 +363,7 @@ export class LearningJournalUploadComponent implements OnDestroy {
     try {
       const result = await this.journalService.analyze(imgs.map(i => i.file));
       this.result.set(result);
-      this.saved.set(result.readable);
+      this.saved.set(result.readable && !result.duplicate);
     } catch {
       this.result.set({ readable: false, message: 'เกิดข้อผิดพลาด กรุณาลองใหม่', documentType: '', topic: '', summary: '', highlights: [], keywords: [] });
       this.saved.set(false);
@@ -366,6 +381,11 @@ export class LearningJournalUploadComponent implements OnDestroy {
 
   protected docType(type: string) {
     return DOC_TYPES[type] ?? { label: type || 'ไม่ทราบประเภท', icon: '📄', bg: '#f1f5f9', color: '#475569' };
+  }
+
+  protected formatDate(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   ngOnDestroy(): void {

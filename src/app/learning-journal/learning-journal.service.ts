@@ -10,6 +10,8 @@ export interface LearningJournalAnalysis {
   summary: string;
   highlights: string[];
   keywords: string[];
+  duplicate?: boolean;
+  existingDate?: string;
 }
 
 @Injectable({ providedIn: 'root' })
