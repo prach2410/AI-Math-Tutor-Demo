@@ -1,10 +1,10 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
 interface LearningRecord {
   id: string;
+  date: string;
   documentType: string;
   topic: string;
   summary: string;
@@ -14,6 +14,7 @@ interface LearningRecord {
 
 interface HomeworkSession {
   id: string;
+  date: string;
   topic: string;
   problemText: string;
   status: string;
@@ -21,24 +22,35 @@ interface HomeworkSession {
   createdAt: string;
 }
 
+interface DayGroup {
+  date: string;
+  learningRecords: LearningRecord[];
+  homeworkSessions: HomeworkSession[];
+}
+
+interface ApiResponse {
+  weekStart: string;
+  weekEnd: string;
+  learningRecords: LearningRecord[];
+  homeworkSessions: HomeworkSession[];
+}
+
+const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
 @Component({
   selector: 'app-admin-export',
   standalone: true,
-  imports: [FormsModule],
   template: `
     <div class="admin-wrap">
       <div class="admin-container">
 
         <header class="admin-header">
           <h1 class="admin-title">📤 Admin Export</h1>
-          <div class="date-row">
-            <label class="date-label">วันที่</label>
-            <input
-              type="date"
-              class="date-input"
-              [ngModel]="selectedDate()"
-              (ngModelChange)="onDateChange($event)"
-            />
+          <div class="week-nav">
+            <button class="nav-btn" (click)="prevWeek()">◀</button>
+            <span class="week-label">{{ weekLabel() }}</span>
+            <button class="nav-btn" (click)="nextWeek()">▶</button>
+            <button class="today-btn" (click)="goToday()">สัปดาห์นี้</button>
           </div>
         </header>
 
@@ -52,44 +64,51 @@ interface HomeworkSession {
             <p class="error-text">{{ error() }}</p>
             <button class="retry-btn" (click)="load()">ลองใหม่</button>
           </div>
+        } @else if (dayGroups().length === 0) {
+          <div class="state-center">
+            <p class="state-text">ไม่มีข้อมูลในสัปดาห์นี้</p>
+          </div>
         } @else {
+          <div class="timeline">
+            @for (day of dayGroups(); track day.date) {
+              <div class="day-group">
+                <div class="day-header">{{ formatDay(day.date) }}</div>
 
-          <section class="section">
-            <h2 class="section-title">📚 สิ่งที่เรียน ({{ learningRecords().length }} รายการ)</h2>
-            @if (learningRecords().length === 0) {
-              <p class="empty-text">ไม่มีข้อมูลสำหรับวันนี้</p>
-            } @else {
-              <ul class="record-list">
-                @for (r of learningRecords(); track r.id) {
-                  <li class="record-item">
-                    <span class="record-badge">{{ r.documentType }}</span>
-                    <span class="record-topic">{{ r.topic }}</span>
-                    <button class="dl-btn" title="download .md" (click)="downloadLearning(r.id)">⬇️</button>
-                  </li>
+                @if (day.learningRecords.length > 0) {
+                  <div class="sub-section">
+                    <div class="sub-title">📚 สิ่งที่เรียน</div>
+                    <ul class="record-list">
+                      @for (r of day.learningRecords; track r.id) {
+                        <li class="record-item">
+                          <span class="record-badge">{{ r.documentType }}</span>
+                          <span class="record-topic">{{ r.topic }}</span>
+                          <button class="dl-btn" title="download .md" (click)="downloadLearning(r.id)">⬇️</button>
+                        </li>
+                      }
+                    </ul>
+                  </div>
                 }
-              </ul>
-            }
-          </section>
 
-          <section class="section">
-            <h2 class="section-title">📷 โจทย์การบ้าน ({{ homeworkSessions().length }} รายการ)</h2>
-            @if (homeworkSessions().length === 0) {
-              <p class="empty-text">ไม่มีข้อมูลสำหรับวันนี้</p>
-            } @else {
-              <ul class="record-list">
-                @for (s of homeworkSessions(); track s.id) {
-                  <li class="record-item">
-                    <span class="record-topic">{{ s.topic }}</span>
-                    <span class="status-chip" [class.done]="s.status === 'done'">
-                      {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
-                    </span>
-                    <button class="dl-btn" title="download .md" (click)="downloadHomework(s.id)">⬇️</button>
-                  </li>
+                @if (day.homeworkSessions.length > 0) {
+                  <div class="sub-section">
+                    <div class="sub-title">📷 การบ้าน</div>
+                    <ul class="record-list">
+                      @for (s of day.homeworkSessions; track s.id) {
+                        <li class="record-item">
+                          <span class="record-topic">{{ s.topic }}</span>
+                          <span class="status-chip" [class.done]="s.status === 'done'">
+                            {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
+                          </span>
+                          <button class="dl-btn" title="download .md" (click)="downloadHomework(s.id)">⬇️</button>
+                        </li>
+                      }
+                    </ul>
+                  </div>
                 }
-              </ul>
-            }
-          </section>
 
+              </div>
+            }
+          </div>
         }
 
       </div>
@@ -103,7 +122,7 @@ interface HomeworkSession {
       box-sizing: border-box;
     }
     .admin-container {
-      max-width: 640px;
+      max-width: 680px;
       margin: 0 auto;
       background: white;
       border-radius: 16px;
@@ -113,7 +132,7 @@ interface HomeworkSession {
     .admin-header {
       background: #1e3a8a;
       color: white;
-      padding: 20px 24px;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -121,40 +140,84 @@ interface HomeworkSession {
       flex-wrap: wrap;
     }
     .admin-title { margin: 0; font-size: 18px; font-weight: 700; }
-    .date-row { display: flex; align-items: center; gap: 8px; }
-    .date-label { font-size: 14px; opacity: 0.85; }
-    .date-input {
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 14px;
-      color: #1e293b;
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 6px;
+      width: 30px; height: 30px;
       cursor: pointer;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.1s;
     }
-    .section {
-      padding: 20px 24px;
-      border-bottom: 1px solid #f1f5f9;
+    .nav-btn:hover { background: rgba(255,255,255,0.25); }
+    .week-label {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 150px;
+      text-align: center;
     }
-    .section:last-child { border-bottom: none; }
-    .section-title {
-      font-size: 15px;
+    .today-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.1s;
+    }
+    .today-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .timeline {
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .day-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .day-header {
+      font-size: 12px;
       font-weight: 700;
-      color: #1e3a8a;
-      margin: 0 0 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .sub-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sub-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
     }
     .record-list {
       list-style: none;
-      padding: 0;
-      margin: 0;
+      padding: 0; margin: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     .record-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 12px 14px;
+      padding: 10px 14px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
@@ -163,7 +226,7 @@ interface HomeworkSession {
       font-size: 11px;
       background: #dbeafe;
       color: #1e40af;
-      padding: 3px 8px;
+      padding: 2px 8px;
       border-radius: 20px;
       white-space: nowrap;
       flex-shrink: 0;
@@ -189,13 +252,14 @@ interface HomeworkSession {
       background: white;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 5px 10px;
+      padding: 4px 10px;
       cursor: pointer;
       font-size: 14px;
       flex-shrink: 0;
       transition: background 0.1s, border-color 0.1s;
     }
     .dl-btn:hover { background: #eff6ff; border-color: #bfdbfe; }
+
     .state-center {
       padding: 48px 24px;
       text-align: center;
@@ -221,41 +285,54 @@ interface HomeworkSession {
       cursor: pointer;
       font-size: 14px;
     }
-    .empty-text { color: #94a3b8; font-size: 14px; margin: 4px 0; }
   `]
 })
 export class AdminExportComponent implements OnInit {
   private http = inject(HttpClient);
 
-  selectedDate     = signal(new Date().toISOString().slice(0, 10));
-  loading          = signal(false);
-  error            = signal('');
-  learningRecords  = signal<LearningRecord[]>([]);
-  homeworkSessions = signal<HomeworkSession[]>([]);
+  weekOf    = signal(this.todayLocal());
+  weekStart = signal('');
+  weekEnd   = signal('');
+  loading   = signal(false);
+  error     = signal('');
+  dayGroups = signal<DayGroup[]>([]);
+
+  weekLabel = computed(() => {
+    const s = this.weekStart();
+    const e = this.weekEnd();
+    if (!s || !e) return '...';
+    const [sy, sm, sd] = s.split('-').map(Number);
+    const [, em, ed]   = e.split('-').map(Number);
+    if (sm === em) return `${sd}–${ed} ${MONTHS_SHORT[sm-1]} ${sy}`;
+    return `${sd} ${MONTHS_SHORT[sm-1]} – ${ed} ${MONTHS_SHORT[em-1]} ${sy}`;
+  });
 
   ngOnInit() { this.load(); }
 
-  onDateChange(date: string) {
-    this.selectedDate.set(date);
-    this.load();
-  }
+  prevWeek()  { this.weekOf.set(this.addDays(this.weekOf(), -7)); this.load(); }
+  nextWeek()  { this.weekOf.set(this.addDays(this.weekOf(), 7));  this.load(); }
+  goToday()   { this.weekOf.set(this.todayLocal()); this.load(); }
 
   async load() {
     this.loading.set(true);
     this.error.set('');
     try {
       const data = await firstValueFrom(
-        this.http.get<{ learningRecords: LearningRecord[]; homeworkSessions: HomeworkSession[] }>(
-          `/api/admin/sessions?date=${this.selectedDate()}`
-        )
+        this.http.get<ApiResponse>(`/api/admin/sessions?weekOf=${this.weekOf()}`)
       );
-      this.learningRecords.set(data.learningRecords);
-      this.homeworkSessions.set(data.homeworkSessions);
+      this.weekStart.set(data.weekStart);
+      this.weekEnd.set(data.weekEnd);
+      this.dayGroups.set(this.groupByDate(data.learningRecords, data.homeworkSessions));
     } catch {
       this.error.set('โหลดข้อมูลไม่ได้ กรุณาลองใหม่');
     } finally {
       this.loading.set(false);
     }
+  }
+
+  formatDay(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' });
   }
 
   downloadLearning(id: string) {
@@ -268,5 +345,27 @@ export class AdminExportComponent implements OnInit {
     const a = document.createElement('a');
     a.href = `/api/admin/export/homework/${id}`;
     a.click();
+  }
+
+  private groupByDate(lrs: LearningRecord[], hws: HomeworkSession[]): DayGroup[] {
+    const map = new Map<string, DayGroup>();
+    const ensure = (date: string) => {
+      if (!map.has(date)) map.set(date, { date, learningRecords: [], homeworkSessions: [] });
+      return map.get(date)!;
+    };
+    for (const r of lrs) ensure(r.date).learningRecords.push(r);
+    for (const s of hws) ensure(s.date).homeworkSessions.push(s);
+    return [...map.values()].sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  private todayLocal(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  }
+
+  private addDays(dateStr: string, days: number): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d + days);
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
   }
 }
