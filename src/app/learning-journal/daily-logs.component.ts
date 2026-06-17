@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { TutorService } from '../tutor.service';
-import { LearningRecordsService, DailyLogGroup, LearningRecordEntry } from './learning-records.service';
+import { LearningRecordsService, DailyLogGroup } from './learning-records.service';
 
 const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color: string }> = {
   Whiteboard: { label: 'กระดานในห้องเรียน', icon: '📋', bg: '#dbeafe', color: '#1e40af' },
@@ -62,9 +62,7 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
                           }
                         </div>
                       }
-                      <button class="export-btn" (click)="downloadMd(rec.id, rec.topic, group.date)">
-                        ⬇️ บันทึกเป็น .md
-                      </button>
+
                     </div>
                   }
                 </div>
@@ -179,19 +177,6 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
       border: 1px solid #e2e8f0;
     }
 
-    .export-btn {
-      display: inline-block;
-      margin-top: 4px;
-      padding: 6px 14px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 12px; color: #475569;
-      text-decoration: none;
-      align-self: flex-start;
-      transition: background 0.15s;
-    }
-    .export-btn:hover { background: #e2e8f0; }
   `]
 })
 export class DailyLogsComponent implements OnInit {
@@ -231,19 +216,4 @@ export class DailyLogsComponent implements OnInit {
     return text.length <= max ? text : text.slice(0, max) + '…';
   }
 
-  protected async downloadMd(id: string, topic: string, date: string): Promise<void> {
-    try {
-      const response = await fetch(`/api/learning-records/${id}/export`);
-      if (!response.ok) throw new Error(`${response.status}`);
-      const blob = await response.blob();
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = `${date}_${topic}.md`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      alert('ดาวน์โหลดไม่สำเร็จ กรุณาลองใหม่');
-    }
-  }
 }

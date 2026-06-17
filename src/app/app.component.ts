@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { FreeTalkComponent } from './free-talk/free-talk.component';
 import { ProjectBrainTutorComponent } from './project-brain/project-brain-tutor.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
+import { AdminExportComponent } from './admin/admin-export.component';
 import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
 import { OnboardingComponent } from './onboarding/onboarding.component';
@@ -42,11 +43,14 @@ import { VoiceService } from './voice.service';
     LearningJournalUploadComponent,
     DailyLogsComponent,
     DiscoveryBatchesComponent,
+    AdminExportComponent,
     FormsModule,
   ],
   template: `
-    @if (isAdminPage()) {
+    @if (adminRoute === 'discovery-batches') {
       <app-discovery-batches />
+    } @else if (adminRoute === 'export') {
+      <app-admin-export />
     } @else {
     <app-first-time-guide />
     <div class="layout">
@@ -720,9 +724,12 @@ export class AppComponent implements OnInit {
   protected onboarding  = inject(OnboardingService);
   protected voice       = inject(VoiceService);
 
-  protected isAdminPage = signal(
-    window.location.pathname.startsWith('/admin/discovery-batches')
-  );
+  protected readonly adminRoute = (() => {
+    const p = window.location.pathname;
+    if (p.startsWith('/admin/discovery-batches')) return 'discovery-batches';
+    if (p.startsWith('/admin')) return 'export';
+    return null;
+  })();
   protected showNotesSheet = signal(false);
   private readonly PB_KEY = 'adm2026@';
   private pbUnlocked = false;
