@@ -14,6 +14,7 @@ interface SelectedImage {
   selector: 'app-homework-upload',
   standalone: true,
   imports: [TeachingFlowComponent],
+  host: { style: 'display: flex; flex-direction: column; flex: 1; min-height: 0;' },
   template: `
     <div class="hw-container">
       <div class="hw-header">
