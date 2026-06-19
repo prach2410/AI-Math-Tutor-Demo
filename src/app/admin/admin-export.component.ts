@@ -12,6 +12,9 @@ interface LearningRecord {
   createdAt: string;
   downloadedAt: string;
   reflection?: string;
+  visionModel?: string;
+  analysisStartedAt?: string;
+  analysisEndedAt?: string;
 }
 
 interface HomeworkSession {
@@ -84,7 +87,12 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                       @for (r of day.learningRecords; track r.id) {
                         <li class="record-item">
                           <span class="record-badge">{{ r.documentType }}</span>
-                          <span class="record-topic">{{ r.topic }}</span>
+                          <div class="record-main">
+                            <span class="record-topic">{{ r.topic }}</span>
+                            <span class="record-meta">
+                              @if (r.visionModel) { ⚡ {{ r.visionModel }} · {{ analysisDuration(r) }}s · }{{ formatTime(r.createdAt) }}
+                            </span>
+                          </div>
                           @if (r.reflection) {
                             <span class="reflection-chip">{{ reflectionEmoji(r.reflection) }}</span>
                           }
@@ -104,7 +112,10 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                     <ul class="record-list">
                       @for (s of day.homeworkSessions; track s.id) {
                         <li class="record-item">
-                          <span class="record-topic">{{ s.topic }}</span>
+                          <div class="record-main">
+                            <span class="record-topic">{{ s.topic }}</span>
+                            <span class="record-meta">{{ formatTime(s.createdAt) }}</span>
+                          </div>
                           <span class="status-chip" [class.done]="s.status === 'done'">
                             {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
                           </span>
@@ -244,14 +255,27 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       flex-shrink: 0;
       font-weight: 500;
     }
-    .record-topic {
+    .record-main {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .record-topic {
       font-size: 14px;
       font-weight: 500;
       color: #1e293b;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    .record-meta {
+      font-size: 11px;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .status-chip {
       font-size: 12px;
@@ -389,6 +413,17 @@ export class AdminExportComponent implements OnInit {
     if (!isoStr) return '';
     const d = new Date(isoStr);
     return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+  }
+
+  formatTime(iso: string): string {
+    if (!iso) return '';
+    return new Date(iso).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  analysisDuration(r: LearningRecord): string {
+    if (!r.analysisStartedAt || !r.analysisEndedAt) return '?';
+    const ms = new Date(r.analysisEndedAt).getTime() - new Date(r.analysisStartedAt).getTime();
+    return (ms / 1000).toFixed(1);
   }
 
   private markDownloaded(type: 'learning' | 'homework', id: string): void {
