@@ -507,6 +507,9 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   @Input() onRestart?: () => void;
   @Input() onNextProblem?: () => void;
   @Input() hasNextProblem = false;
+  @Input() visionModel = '';
+  @Input() analysisStartedAt = '';
+  @Input() analysisEndedAt = '';
 
   private teaching = inject(TeachingService);
 
@@ -565,7 +568,10 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
       const res = await this.teaching.solve(
         this.problem.problemText,
         this.problem.latex,
-        this.problem.topic
+        this.problem.topic,
+        this.visionModel,
+        this.analysisStartedAt,
+        this.analysisEndedAt
       );
       this.sessionId = res.sessionId;
       this.solutionSteps.set(res.solutionSteps);
@@ -591,7 +597,10 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
         this.problem.problemText,
         this.problem.latex,
         this.problem.topic,
-        this.problem.hasFigure
+        this.problem.hasFigure,
+        this.visionModel,
+        this.analysisStartedAt,
+        this.analysisEndedAt
       );
       this.sessionId = res.sessionId;
 

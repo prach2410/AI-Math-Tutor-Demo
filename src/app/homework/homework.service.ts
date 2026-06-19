@@ -14,6 +14,9 @@ export interface HomeworkAnalysisResult {
   readable: boolean;
   message: string;
   problems: ProblemItem[];
+  visionModel?: string;
+  analysisStartedAt?: string;
+  analysisEndedAt?: string;
 }
 
 @Injectable({ providedIn: 'root' })

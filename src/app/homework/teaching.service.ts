@@ -51,9 +51,11 @@ export interface SolveResponse {
 export class TeachingService {
   private http = inject(HttpClient);
 
-  start(problemText: string, latex: string, topic: string, hasFigure: boolean): Promise<StartTeachingResponse> {
+  start(problemText: string, latex: string, topic: string, hasFigure: boolean,
+        visionModel = '', analysisStartedAt = '', analysisEndedAt = ''): Promise<StartTeachingResponse> {
     return firstValueFrom(
-      this.http.post<StartTeachingResponse>('/api/teaching/start', { problemText, latex, topic, hasFigure })
+      this.http.post<StartTeachingResponse>('/api/teaching/start',
+        { problemText, latex, topic, hasFigure, visionModel, analysisStartedAt, analysisEndedAt })
     );
   }
 
@@ -81,9 +83,11 @@ export class TeachingService {
     );
   }
 
-  solve(problemText: string, latex: string, topic: string): Promise<SolveResponse> {
+  solve(problemText: string, latex: string, topic: string,
+        visionModel = '', analysisStartedAt = '', analysisEndedAt = ''): Promise<SolveResponse> {
     return firstValueFrom(
-      this.http.post<SolveResponse>('/api/teaching/solve', { problemText, latex, topic })
+      this.http.post<SolveResponse>('/api/teaching/solve',
+        { problemText, latex, topic, visionModel, analysisStartedAt, analysisEndedAt })
     );
   }
 }

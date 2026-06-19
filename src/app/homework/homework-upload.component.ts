@@ -145,7 +145,10 @@ interface SelectedImage {
                 [problem]="result()!.problems[currentProblemIndex()]"
                 [hasNextProblem]="currentProblemIndex() < result()!.problems.length - 1"
                 [onNextProblem]="nextProblem.bind(this)"
-                [onRestart]="backToList.bind(this)">
+                [onRestart]="backToList.bind(this)"
+                [visionModel]="visionModel()"
+                [analysisStartedAt]="analysisStartedAt()"
+                [analysisEndedAt]="analysisEndedAt()">
               </app-teaching-flow>
             </div>
           }
@@ -490,6 +493,9 @@ export class HomeworkUploadComponent implements OnDestroy {
   protected images              = signal<SelectedImage[]>([]);
   protected result              = signal<HomeworkAnalysisResult | null>(null);
   protected currentProblemIndex = signal(0);
+  protected visionModel         = signal('');
+  protected analysisStartedAt   = signal('');
+  protected analysisEndedAt     = signal('');
 
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -519,6 +525,9 @@ export class HomeworkUploadComponent implements OnDestroy {
     try {
       const result = await this.homeworkService.analyze(imgs.map(i => i.file));
       this.result.set(result);
+      this.visionModel.set(result.visionModel ?? '');
+      this.analysisStartedAt.set(result.analysisStartedAt ?? '');
+      this.analysisEndedAt.set(result.analysisEndedAt ?? '');
     } catch {
       this.result.set({
         readable: false,
@@ -546,6 +555,9 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.images().forEach(i => URL.revokeObjectURL(i.url));
     this.images.set([]);
     this.result.set(null);
+    this.visionModel.set('');
+    this.analysisStartedAt.set('');
+    this.analysisEndedAt.set('');
     this.state.set('idle');
   }
 

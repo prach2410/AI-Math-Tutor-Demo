@@ -26,6 +26,9 @@ interface HomeworkSession {
   mode: string;
   createdAt: string;
   downloadedAt: string;
+  visionModel?: string;
+  analysisStartedAt?: string;
+  analysisEndedAt?: string;
 }
 
 interface DayGroup {
@@ -114,7 +117,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                         <li class="record-item">
                           <div class="record-main">
                             <span class="record-topic">{{ s.topic }}</span>
-                            <span class="record-meta">{{ formatTime(s.createdAt) }}</span>
+                            <span class="record-meta">
+                              @if (s.visionModel) { ⚡ {{ s.visionModel }} · {{ hwDuration(s) }}s · }{{ formatTime(s.createdAt) }}
+                            </span>
                           </div>
                           <span class="status-chip" [class.done]="s.status === 'done'">
                             {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
@@ -418,6 +423,12 @@ export class AdminExportComponent implements OnInit {
   formatTime(iso: string): string {
     if (!iso) return '';
     return new Date(iso).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  hwDuration(s: HomeworkSession): string {
+    if (!s.analysisStartedAt || !s.analysisEndedAt) return '?';
+    const ms = new Date(s.analysisEndedAt).getTime() - new Date(s.analysisStartedAt).getTime();
+    return (ms / 1000).toFixed(1);
   }
 
   analysisDuration(r: LearningRecord): string {
