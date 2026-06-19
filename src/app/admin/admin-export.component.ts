@@ -17,6 +17,18 @@ interface LearningRecord {
   analysisEndedAt?: string;
 }
 
+interface HomeworkRead {
+  id: number;
+  date: string;
+  topic: string;
+  readable: boolean;
+  reason: string;
+  createdAt: string;
+  visionModel?: string;
+  analysisStartedAt?: string;
+  analysisEndedAt?: string;
+}
+
 interface HomeworkSession {
   id: string;
   date: string;
@@ -34,6 +46,7 @@ interface HomeworkSession {
 interface DayGroup {
   date: string;
   learningRecords: LearningRecord[];
+  homeworkReads: HomeworkRead[];
   homeworkSessions: HomeworkSession[];
 }
 
@@ -41,6 +54,7 @@ interface ApiResponse {
   weekStart: string;
   weekEnd: string;
   learningRecords: LearningRecord[];
+  homeworkReads: HomeworkRead[];
   homeworkSessions: HomeworkSession[];
 }
 
@@ -109,9 +123,28 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                   </div>
                 }
 
+                @if (day.homeworkReads.length > 0) {
+                  <div class="sub-section">
+                    <div class="sub-title">📤 อัพโหลดการบ้าน</div>
+                    <ul class="record-list">
+                      @for (r of day.homeworkReads; track r.id) {
+                        <li class="record-item">
+                          <span class="record-badge">{{ r.readable ? '✅ อ่านได้' : '❌ อ่านไม่ได้' }}</span>
+                          <div class="record-main">
+                            <span class="record-topic">{{ r.topic || '(ไม่ระบุหัวข้อ)' }}</span>
+                            <span class="record-meta">
+                              @if (r.visionModel) { ⚡ {{ r.visionModel }} · {{ hrDuration(r) }}s · }{{ formatTime(r.createdAt) }}
+                            </span>
+                          </div>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+
                 @if (day.homeworkSessions.length > 0) {
                   <div class="sub-section">
-                    <div class="sub-title">📷 การบ้าน</div>
+                    <div class="sub-title">📷 การบ้าน (สอน)</div>
                     <ul class="record-list">
                       @for (s of day.homeworkSessions; track s.id) {
                         <li class="record-item">
@@ -377,7 +410,7 @@ export class AdminExportComponent implements OnInit {
       );
       this.weekStart.set(data.weekStart);
       this.weekEnd.set(data.weekEnd);
-      this.dayGroups.set(this.groupByDate(data.learningRecords, data.homeworkSessions));
+      this.dayGroups.set(this.groupByDate(data.learningRecords, data.homeworkReads ?? [], data.homeworkSessions));
     } catch {
       this.error.set('โหลดข้อมูลไม่ได้ กรุณาลองใหม่');
     } finally {
@@ -431,6 +464,12 @@ export class AdminExportComponent implements OnInit {
     return (ms / 1000).toFixed(1);
   }
 
+  hrDuration(r: HomeworkRead): string {
+    if (!r.analysisStartedAt || !r.analysisEndedAt) return '?';
+    const ms = new Date(r.analysisEndedAt).getTime() - new Date(r.analysisStartedAt).getTime();
+    return (ms / 1000).toFixed(1);
+  }
+
   analysisDuration(r: LearningRecord): string {
     if (!r.analysisStartedAt || !r.analysisEndedAt) return '?';
     const ms = new Date(r.analysisEndedAt).getTime() - new Date(r.analysisStartedAt).getTime();
@@ -450,13 +489,14 @@ export class AdminExportComponent implements OnInit {
     })));
   }
 
-  private groupByDate(lrs: LearningRecord[], hws: HomeworkSession[]): DayGroup[] {
+  private groupByDate(lrs: LearningRecord[], hrs: HomeworkRead[], hws: HomeworkSession[]): DayGroup[] {
     const map = new Map<string, DayGroup>();
     const ensure = (date: string) => {
-      if (!map.has(date)) map.set(date, { date, learningRecords: [], homeworkSessions: [] });
+      if (!map.has(date)) map.set(date, { date, learningRecords: [], homeworkReads: [], homeworkSessions: [] });
       return map.get(date)!;
     };
     for (const r of lrs) ensure(r.date).learningRecords.push(r);
+    for (const r of hrs) ensure(r.date).homeworkReads.push(r);
     for (const s of hws) ensure(s.date).homeworkSessions.push(s);
     return [...map.values()].sort((a, b) => a.date.localeCompare(b.date));
   }
