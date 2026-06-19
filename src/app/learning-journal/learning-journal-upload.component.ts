@@ -24,6 +24,7 @@ const DOC_TYPES: Record<string, { label: string; icon: string; bg: string; color
 @Component({
   selector: 'app-learning-journal-upload',
   standalone: true,
+  host: { style: 'display: flex; flex-direction: column; flex: 1; min-height: 0;' },
   template: `
     <div class="lj-container">
       <div class="lj-header">
