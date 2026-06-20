@@ -1,9 +1,9 @@
 import { Component, inject, signal, OnDestroy } from '@angular/core';
-import { HomeworkService, HomeworkAnalysisResult } from './homework.service';
+import { HomeworkService, HomeworkAnalysisResult, HomeworkRead } from './homework.service';
 import { TutorService } from '../tutor.service';
 import { TeachingFlowComponent } from './teaching-flow.component';
 
-type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result' | 'confirmed';
+type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result' | 'confirmed' | 'history';
 
 interface SelectedImage {
   file: File;
@@ -36,6 +36,7 @@ interface SelectedImage {
               </div>
               <input #cameraInput type="file" accept="image/*" capture="environment" hidden (change)="addFiles($event)" />
               <input #fileInput type="file" accept="image/*" multiple hidden (change)="addFiles($event)" />
+              <button class="btn btn-history" (click)="loadHistory()">📚 การบ้านที่อัปไว้</button>
             </div>
           }
 
@@ -151,6 +152,38 @@ interface SelectedImage {
                 [analysisStartedAt]="analysisStartedAt()"
                 [analysisEndedAt]="analysisEndedAt()">
               </app-teaching-flow>
+            </div>
+          }
+
+          @case ('history') {
+            <div class="history-zone">
+              <div class="history-top">
+                <button class="btn btn-ghost btn-sm" (click)="state.set('idle')">← กลับ</button>
+                <p class="history-heading">📚 การบ้านที่อัปไว้</p>
+              </div>
+              @if (historyLoading()) {
+                <div class="spinner-wrapper">
+                  <div class="spinner"></div>
+                  <p class="analyzing-text">กำลังโหลด...</p>
+                </div>
+              } @else if (historyList().length === 0) {
+                <div class="error-card">
+                  <p class="error-icon-big">📭</p>
+                  <p class="error-msg">ยังไม่มีการบ้านที่อัปไว้</p>
+                </div>
+              } @else {
+                <div class="history-list">
+                  @for (r of historyList(); track r.id) {
+                    <button class="history-item" (click)="openRead(r)">
+                      <div class="hi-top">
+                        <span class="hi-topic">{{ r.topic || 'ไม่ระบุหัวข้อ' }}</span>
+                        <span class="hi-count">{{ r.problemCount }} ข้อ</span>
+                      </div>
+                      <p class="hi-time">{{ formatTime(r.createdAt) }}</p>
+                    </button>
+                  }
+                </div>
+              }
             </div>
           }
 
@@ -484,6 +517,94 @@ interface SelectedImage {
     }
 
     .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+    .btn-history {
+      margin-top: 4px;
+      background: transparent;
+      color: #2563eb;
+      border: 1.5px dashed #93c5fd;
+      border-radius: 10px;
+      padding: 9px 20px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-history:hover { background: #eff6ff; border-color: #2563eb; }
+
+    /* History zone */
+    .history-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .history-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .history-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, background 0.12s;
+    }
+    .history-item:hover { border-color: #2563eb; background: #eff6ff; }
+    .history-item:active { transform: scale(0.98); }
+
+    .hi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .hi-topic {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .hi-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e40af;
+      background: #dbeafe;
+      border-radius: 20px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .hi-time {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+    }
   `]
 })
 export class HomeworkUploadComponent implements OnDestroy {
@@ -497,6 +618,8 @@ export class HomeworkUploadComponent implements OnDestroy {
   protected visionModel         = signal('');
   protected analysisStartedAt   = signal('');
   protected analysisEndedAt     = signal('');
+  protected historyList         = signal<HomeworkRead[]>([]);
+  protected historyLoading      = signal(false);
 
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -560,6 +683,37 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.analysisStartedAt.set('');
     this.analysisEndedAt.set('');
     this.state.set('idle');
+  }
+
+  async loadHistory(): Promise<void> {
+    this.tutor.logEvent('homework_history_opened');
+    this.historyLoading.set(true);
+    this.state.set('history');
+    try {
+      const list = await this.homeworkService.listReads();
+      this.historyList.set(list);
+    } catch {
+      this.historyList.set([]);
+    } finally {
+      this.historyLoading.set(false);
+    }
+  }
+
+  protected openRead(r: HomeworkRead): void {
+    this.result.set({ readable: true, message: '', problems: r.problems });
+    this.visionModel.set(r.visionModel ?? '');
+    this.analysisStartedAt.set(r.analysisStartedAt ?? '');
+    this.analysisEndedAt.set(r.analysisEndedAt ?? '');
+    this.tutor.logEvent('homework_resumed');
+    this.state.set('result');
+  }
+
+  protected formatTime(iso: string): string {
+    if (!iso) return '';
+    return new Date(iso).toLocaleString('th-TH', {
+      month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
   }
 
   ngOnDestroy(): void {

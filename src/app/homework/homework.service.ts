@@ -19,6 +19,17 @@ export interface HomeworkAnalysisResult {
   analysisEndedAt?: string;
 }
 
+export interface HomeworkRead {
+  id: number;
+  createdAt: string;
+  topic: string;
+  problemCount: number;
+  visionModel?: string;
+  analysisStartedAt?: string;
+  analysisEndedAt?: string;
+  problems: ProblemItem[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class HomeworkService {
   private http = inject(HttpClient);
@@ -28,6 +39,12 @@ export class HomeworkService {
     files.forEach(f => formData.append('images', f));
     return firstValueFrom(
       this.http.post<HomeworkAnalysisResult>('/api/homework/analyze', formData)
+    );
+  }
+
+  listReads(limit = 30): Promise<HomeworkRead[]> {
+    return firstValueFrom(
+      this.http.get<HomeworkRead[]>(`/api/homework/reads?limit=${limit}`)
     );
   }
 }
