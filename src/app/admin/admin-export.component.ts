@@ -27,6 +27,7 @@ interface HomeworkRead {
   visionModel?: string;
   analysisStartedAt?: string;
   analysisEndedAt?: string;
+  taught?: boolean;
 }
 
 interface HomeworkSession {
@@ -136,6 +137,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                               @if (r.visionModel) { ⚡ {{ r.visionModel }} · {{ hrDuration(r) }}s · }{{ formatTime(r.createdAt) }}
                             </span>
                           </div>
+                          <span class="taught-chip" [class.taught]="r.taught">
+                            {{ r.taught ? '✅ สอนแล้ว' : '⏳ ยังไม่สอน' }}
+                          </span>
                         </li>
                       }
                     </ul>
@@ -336,6 +340,21 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       flex-shrink: 0;
       font-weight: 500;
     }
+    .taught-chip {
+      font-size: 11px;
+      background: #fef9c3;
+      color: #854d0e;
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+    .taught-chip.taught {
+      background: #dcfce7;
+      color: #166534;
+    }
+
     .dl-btn {
       background: white;
       border: 1px solid #e2e8f0;
