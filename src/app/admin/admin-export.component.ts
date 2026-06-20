@@ -118,6 +118,7 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                             <span class="dl-done-chip">✅ {{ fmtDl(r.downloadedAt) }}</span>
                           }
                           <button class="dl-btn" title="download .md" (click)="downloadLearning(r.id)">⬇️</button>
+                          <button class="del-btn" title="ลบ" (click)="deleteLearning(r.id)">🗑️</button>
                         </li>
                       }
                     </ul>
@@ -140,6 +141,7 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                           <span class="taught-chip" [class.taught]="r.taught">
                             {{ r.taught ? '✅ สอนแล้ว' : '⏳ ยังไม่สอน' }}
                           </span>
+                          <button class="del-btn" title="ลบ" (click)="deleteHomeworkRead(r.id)">🗑️</button>
                         </li>
                       }
                     </ul>
@@ -165,6 +167,7 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                             <span class="dl-done-chip">✅ {{ fmtDl(s.downloadedAt) }}</span>
                           }
                           <button class="dl-btn" title="download .md" (click)="downloadHomework(s.id)">⬇️</button>
+                          <button class="del-btn" title="ลบ" (click)="deleteHomeworkSession(s.id)">🗑️</button>
                         </li>
                       }
                     </ul>
@@ -366,6 +369,13 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       transition: background 0.1s, border-color 0.1s;
     }
     .dl-btn:hover { background: #eff6ff; border-color: #bfdbfe; }
+    .del-btn {
+      background: white; border: 1px solid #fecaca;
+      border-radius: 6px; padding: 4px 10px;
+      cursor: pointer; font-size: 14px; flex-shrink: 0;
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .del-btn:hover { background: #fef2f2; border-color: #f87171; }
 
     .state-center {
       padding: 48px 24px;
@@ -493,6 +503,33 @@ export class AdminExportComponent implements OnInit {
     if (!r.analysisStartedAt || !r.analysisEndedAt) return '?';
     const ms = new Date(r.analysisEndedAt).getTime() - new Date(r.analysisStartedAt).getTime();
     return (ms / 1000).toFixed(1);
+  }
+
+  async deleteLearning(id: string): Promise<void> {
+    if (!confirm('ลบรายการนี้?')) return;
+    await firstValueFrom(this.http.delete(`/api/admin/learning-record/${id}`));
+    this.dayGroups.update(days => days
+      .map(d => ({ ...d, learningRecords: d.learningRecords.filter(r => r.id !== id) }))
+      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
+    );
+  }
+
+  async deleteHomeworkRead(id: number): Promise<void> {
+    if (!confirm('ลบรายการนี้?')) return;
+    await firstValueFrom(this.http.delete(`/api/admin/homework-read/${id}`));
+    this.dayGroups.update(days => days
+      .map(d => ({ ...d, homeworkReads: d.homeworkReads.filter(r => r.id !== id) }))
+      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
+    );
+  }
+
+  async deleteHomeworkSession(id: string): Promise<void> {
+    if (!confirm('ลบรายการนี้?')) return;
+    await firstValueFrom(this.http.delete(`/api/admin/homework-session/${id}`));
+    this.dayGroups.update(days => days
+      .map(d => ({ ...d, homeworkSessions: d.homeworkSessions.filter(s => s.id !== id) }))
+      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
+    );
   }
 
   private markDownloaded(type: 'learning' | 'homework', id: string): void {
