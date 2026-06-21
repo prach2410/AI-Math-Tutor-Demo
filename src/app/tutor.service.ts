@@ -493,6 +493,15 @@ export class TutorService {
     this._inDailyLogsMode.set(false);
   }
 
+  resetToHome(): void {
+    this._inHomeworkMode.set(false);
+    this._inLearningJournalMode.set(false);
+    this._inDailyLogsMode.set(false);
+    this._inFreeTalk.set(false);
+    this._interactionMode.set(null);
+    this.addEvent('home_reset');
+  }
+
   addProjectBrainEvent(type: string): void {
     this.addEvent(type);
   }

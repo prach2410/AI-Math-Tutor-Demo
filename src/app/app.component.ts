@@ -52,7 +52,6 @@ import { VoiceService } from './voice.service';
     } @else if (adminRoute === 'export') {
       <app-admin-export />
     } @else {
-    <app-first-time-guide />
     <div class="layout">
       <header class="header">
         <div class="header-inner">
@@ -109,23 +108,24 @@ import { VoiceService } from './voice.service';
             <app-lesson-complete />
           } @else if (tutor.interactionMode() === null) {
             <div class="mode-select-card">
-              <p class="mode-select-title">วันนี้มีอะไรให้ช่วยไหม? 👋</p>
+              <p class="mode-hero-headline">มีเรื่องที่ยังไม่เข้าใจไหม?</p>
+              <p class="mode-hero-sub">ถ่ายรูปโจทย์ กระดาน สมุดจด หรือใบงาน — AI จะช่วยอธิบายใหม่ จนหนูเข้าใจ</p>
               <button class="mode-btn hw-btn" (click)="tutor.enterHomeworkMode()">
                 <span class="mode-icon">📷</span>
-                <span class="mode-label">ช่วยทำการบ้าน</span>
-                <span class="hw-note">ถ่ายรูปโจทย์ · AI อ่านและสอน</span>
+                <span class="mode-label">ทำการบ้าน</span>
+                <span class="hw-note">ถ่ายรูปโจทย์ที่ติด · AI อ่านและช่วยคิดทีละขั้น</span>
               </button>
               <button class="mode-btn journal-btn" (click)="tutor.enterLearningJournalMode()">
                 <span class="mode-icon">📚</span>
                 <span class="mode-label">สิ่งที่เรียนวันนี้</span>
-                <span class="hw-note">ถ่ายกระดาน/สมุด · AI สรุปให้</span>
+                <span class="hw-note">ถ่ายรูปกระดาน/สมุด · AI สรุปและอธิบายใหม่</span>
               </button>
               <button class="mode-btn logs-btn" (click)="tutor.enterDailyLogsMode()">
                 <span class="mode-icon">📋</span>
                 <span class="mode-label">ดูบันทึกการเรียน</span>
                 <span class="hw-note">สิ่งที่เรียนทั้งหมด · รายวัน</span>
               </button>
-              <p class="mode-or-divider">— หรือเรียนกับโจทย์ตัวอย่าง —</p>
+              <p class="mode-or-divider">— หรือลองโจทย์ตัวอย่าง —</p>
               <div class="mode-select-btns">
                 <button class="mode-btn text-btn" (click)="chooseMode('text')">
                   <span class="mode-icon">⌨️</span>
@@ -179,11 +179,11 @@ import { VoiceService } from './voice.service';
 
       <!-- Mobile bottom navigation -->
       <nav class="mobile-bottom-nav">
-        <button class="nav-item" [class.active]="onboarding.isActive()" (click)="goHome()">
+        <button class="nav-item" [class.active]="tutor.interactionMode() === null && !tutor.inHomeworkMode() && !tutor.inLearningJournalMode() && !tutor.inDailyLogsMode()" (click)="goHome()">
           <span class="nav-icon">🏠</span>
           <span class="nav-label">หน้าแรก</span>
         </button>
-        <button class="nav-item" [class.active]="!onboarding.isActive() && !showNotesSheet()" (click)="goLearn()">
+        <button class="nav-item" [class.active]="tutor.interactionMode() !== null && !showNotesSheet()" (click)="goLearn()">
           <span class="nav-icon">📚</span>
           <span class="nav-label">เรียน</span>
         </button>
@@ -420,6 +420,23 @@ import { VoiceService } from './voice.service';
       text-align: center;
     }
 
+    .mode-hero-headline {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: center;
+      margin: 0;
+    }
+
+    .mode-hero-sub {
+      font-size: 14px;
+      color: #475569;
+      text-align: center;
+      margin: -4px 0 4px;
+      max-width: 320px;
+      line-height: 1.6;
+    }
+
     .mode-select-sub {
       font-size: 14px;
       color: #64748b;
@@ -621,8 +638,10 @@ import { VoiceService } from './voice.service';
         justify-content: flex-start;
         padding-top: 40px;
       }
-      .mode-select-title { font-size: 17px; }
-      .mode-select-sub   { font-size: 13px; }
+      .mode-select-title    { font-size: 17px; }
+      .mode-hero-headline   { font-size: 19px; }
+      .mode-hero-sub        { font-size: 13px; }
+      .mode-select-sub      { font-size: 13px; }
       .mode-select-btns  { width: 100%; flex-direction: column; gap: 10px; }
       .mode-btn {
         width: 100%;
@@ -753,10 +772,7 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    this.onboarding.init();
-    if (!this.onboarding.isActive()) {
-      this.tutor.init();
-    }
+    this.tutor.init();
 
     if (window.location.search.includes('pb')) {
       this.enterProjectBrain();
@@ -799,8 +815,8 @@ export class AppComponent implements OnInit {
     }
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
-  protected goHome(): void  { this.showNotesSheet.set(false); this.onboarding.restart(); }
-  protected goLearn(): void { this.showNotesSheet.set(false); this.onboarding.skip(); this.tutor.init(); }
+  protected goHome(): void  { this.showNotesSheet.set(false); this.tutor.resetToHome(); }
+  protected goLearn(): void { this.showNotesSheet.set(false); this.tutor.init(); }
   protected openAbout(): void { this.aboutRef?.open(); }
   protected toggleNotesSheet(): void { this.showNotesSheet.update(v => !v); }
 }
