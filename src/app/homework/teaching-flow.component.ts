@@ -492,7 +492,7 @@ interface JudgeFeedback {
     }
     .tf-solve-section-label { font-size: 13px; font-weight: 700; color: #475569; margin: 0; }
     .tf-solve-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
-    .tf-solve-step { font-size: 14px; color: #1e293b; line-height: 1.65; }
+    .tf-solve-step { font-size: 14px; color: #1e293b; line-height: 1.65; white-space: pre-wrap; }
     .tf-understand-card {
       background: #fefce8; border: 1.5px solid #fde68a; border-radius: 12px;
       padding: 14px; display: flex; flex-direction: column; gap: 6px;
