@@ -74,7 +74,8 @@ interface SelectedImage {
               </div>
               <div class="spinner-wrapper">
                 <div class="spinner"></div>
-                <p class="analyzing-text">กำลังอ่านโจทย์{{ images().length > 1 ? ' (' + images().length + ' รูป)' : '' }}...</p>
+                <p class="analyzing-text">{{ analyzingMsg() }}{{ images().length > 1 ? ' (' + images().length + ' รูป)' : '' }}</p>
+                <p class="analyzing-sub">ใช้เวลาสักครู่ รออีกนิดนะ · {{ elapsed() }} วินาที</p>
               </div>
             </div>
           }
@@ -388,7 +389,8 @@ interface SelectedImage {
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .analyzing-text { font-size: 15px; color: #64748b; margin: 0; }
+    .analyzing-text { font-size: 15px; color: #334155; font-weight: 600; margin: 0; text-align: center; }
+    .analyzing-sub { font-size: 13px; color: #94a3b8; margin: 0; text-align: center; }
 
     /* Result zone */
     .result-zone {
@@ -621,6 +623,26 @@ export class HomeworkUploadComponent implements OnDestroy {
   protected historyList         = signal<HomeworkRead[]>([]);
   protected historyLoading      = signal(false);
 
+  protected elapsed             = signal(0);
+  protected analyzingMsg        = signal('📖 กำลังอ่านโจทย์...');
+  private analyzingTimer?: ReturnType<typeof setInterval>;
+
+  // อ่านโจทย์ใช้เวลา ~35s (typhoon OCR + จัดเรียง) → ข้อความเปลี่ยนตามจังหวะ กันรู้สึกค้าง
+  private startAnalyzingTimer(): void {
+    this.elapsed.set(0);
+    this.analyzingMsg.set('📖 กำลังอ่านโจทย์...');
+    this.analyzingTimer = setInterval(() => {
+      const s = this.elapsed() + 1;
+      this.elapsed.set(s);
+      if (s === 8)  this.analyzingMsg.set('✏️ กำลังจัดเรียงโจทย์ให้เป็นข้อๆ...');
+      if (s === 20) this.analyzingMsg.set('⏳ อีกนิดนะ ใกล้เสร็จแล้ว...');
+    }, 1000);
+  }
+
+  private stopAnalyzingTimer(): void {
+    if (this.analyzingTimer) { clearInterval(this.analyzingTimer); this.analyzingTimer = undefined; }
+  }
+
   addFiles(event: Event): void {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
@@ -646,6 +668,7 @@ export class HomeworkUploadComponent implements OnDestroy {
     if (!imgs.length) return;
 
     this.state.set('analyzing');
+    this.startAnalyzingTimer();
     try {
       const result = await this.homeworkService.analyze(imgs.map(i => i.file));
       this.result.set(result);
@@ -658,6 +681,8 @@ export class HomeworkUploadComponent implements OnDestroy {
         message: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
         problems: [],
       });
+    } finally {
+      this.stopAnalyzingTimer();
     }
     this.state.set('result');
   }
@@ -717,6 +742,7 @@ export class HomeworkUploadComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopAnalyzingTimer();
     this.images().forEach(i => URL.revokeObjectURL(i.url));
   }
 }
