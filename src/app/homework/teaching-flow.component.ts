@@ -592,7 +592,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
     this.state.set('loading');
     this.tipInterval = setInterval(() => {
       this.tipIndex.update(i => (i + 1) % this.tips.length);
-    }, 4000);
+    }, 7000);
     try {
       const res = await this.teaching.solve(
         this.problem.problemText,
