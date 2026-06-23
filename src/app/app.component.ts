@@ -4,7 +4,6 @@ import { FreeTalkComponent } from './free-talk/free-talk.component';
 import { ProjectBrainTutorComponent } from './project-brain/project-brain-tutor.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
 import { AdminExportComponent } from './admin/admin-export.component';
-import { FirstTimeGuideComponent } from './first-time-guide/first-time-guide.component';
 import { AboutComponent } from './about/about.component';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { OnboardingService } from './onboarding/onboarding.service';
@@ -28,7 +27,6 @@ import { VoiceService } from './voice.service';
   imports: [
     FreeTalkComponent,
     ProjectBrainTutorComponent,
-    FirstTimeGuideComponent,
     AboutComponent,
     OnboardingComponent,
     ChatComponent,
