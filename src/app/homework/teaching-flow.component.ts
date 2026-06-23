@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, SimpleChanges, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProblemItem } from './homework.service';
 import { TeachingService, TeachingStep, NotesResponse, ConfirmFigureResponse } from './teaching.service';
@@ -53,6 +53,9 @@ interface JudgeFeedback {
           <div class="tf-loading">
             <div class="spinner"></div>
             <p class="tf-loading-text">{{ loadingText() }}</p>
+            @if (solveLoading()) {
+              <p class="tf-loading-tip">{{ tips[tipIndex()] }}</p>
+            }
           </div>
         }
 
@@ -485,6 +488,12 @@ interface JudgeFeedback {
     .tf-mode-btn-desc  { font-size: 12px; color: #64748b; line-height: 1.4; }
 
     /* Solve */
+    .tf-loading-tip {
+      font-size: 13px; color: #475569;
+      max-width: 280px; text-align: center;
+      line-height: 1.6; margin: 0;
+    }
+
     .tf-solve { display: flex; flex-direction: column; gap: 14px; width: 100%; }
     .tf-solve-section {
       background: white; border: 1px solid #e2e8f0; border-radius: 12px;
@@ -502,7 +511,7 @@ interface JudgeFeedback {
     .tf-solve-actions { display: flex; flex-direction: column; gap: 8px; }
   `]
 })
-export class TeachingFlowComponent implements OnInit, OnChanges {
+export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) problem!: ProblemItem;
   @Input() onRestart?: () => void;
   @Input() onNextProblem?: () => void;
@@ -535,12 +544,28 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
   protected studentNote  = '';
   private sessionId = '';
 
+  protected readonly tips = [
+    '💡 บวกเลขทุกหลัก — ถ้าผลรวมหาร 3 ลงตัว เลขนั้นก็หาร 3 ลงตัว (729 → 7+2+9=18 ✓)',
+    '💡 รากที่สาม: จับกลุ่มทีละ 3 ตัวเหมือนกัน แล้วดึงออกมาได้ 1 ตัว',
+    '💡 จำไว้: 2³=8 · 3³=27 · 4³=64 · 5³=125 · 6³=216 · 7³=343 · 8³=512 · 9³=729',
+    '💡 เลขคู่ → หาร 2 ได้เสมอ · เลขลงท้าย 0 หรือ 5 → หาร 5 ได้เสมอ',
+    '💡 ∛−n = −(∛n) — รากที่สามของเลขลบมีคำตอบจริง (ต่างจากรากที่สอง)',
+    '💡 ตรวจสอบคำตอบ: ถ้า ∛n = a → ลอง a×a×a ดูว่าได้ n ไหม',
+    '💡 บวกเลขทุกหลัก — ถ้าหาร 9 ลงตัว เลขนั้นหาร 9 ลงตัวด้วย (1+2+6=9 → 126 ÷ 9 ✓)',
+  ];
+  protected tipIndex = signal(0);
+  private tipInterval: ReturnType<typeof setInterval> | null = null;
+
   protected showHintLadder(): boolean {
     const v = this.judgeFeedback()?.verdict;
     return v === 'partial' || v === 'wrong';
   }
 
   ngOnInit(): void { this.state.set('mode-select'); }
+
+  ngOnDestroy(): void {
+    if (this.tipInterval) { clearInterval(this.tipInterval); this.tipInterval = null; }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['problem'] && !changes['problem'].firstChange) {
@@ -563,7 +588,11 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
     if (this.solveLoading()) return;
     this.solveLoading.set(true);
     this.loadingText.set('AI กำลังเตรียมวิธีทำ...');
+    this.tipIndex.set(0);
     this.state.set('loading');
+    this.tipInterval = setInterval(() => {
+      this.tipIndex.update(i => (i + 1) % this.tips.length);
+    }, 4000);
     try {
       const res = await this.teaching.solve(
         this.problem.problemText,
@@ -582,6 +611,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges {
       this.state.set('error');
     } finally {
       this.solveLoading.set(false);
+      if (this.tipInterval) { clearInterval(this.tipInterval); this.tipInterval = null; }
     }
   }
 
