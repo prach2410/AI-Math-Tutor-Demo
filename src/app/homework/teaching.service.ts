@@ -45,6 +45,7 @@ export interface SolveResponse {
   sessionId: string;
   solutionSteps: string[];
   understandingStep: string;
+  keyStepIndices: number[];
 }
 
 export interface ExplainResponse {

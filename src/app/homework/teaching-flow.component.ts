@@ -254,16 +254,18 @@ interface JudgeFeedback {
                 @for (step of solutionSteps(); track $index) {
                   <li class="tf-solve-step">
                     {{ step }}
-                    <div class="tf-explain-row">
-                      <button class="tf-explain-btn" (click)="toggleExplain($index, step)">
-                        {{ explainState()[$index]?.open ? '🔍 ซ่อน ▲' : '🔍 อธิบายเพิ่ม' }}
-                      </button>
-                    </div>
-                    @if (explainState()[$index]?.loading) {
-                      <p class="tf-explain-loading">กำลังอธิบาย...</p>
-                    }
-                    @if (explainState()[$index]?.open && explainState()[$index]?.text) {
-                      <div class="tf-explain-card">{{ explainState()[$index]!.text }}</div>
+                    @if (isKeyStep($index)) {
+                      <div class="tf-explain-row">
+                        <button class="tf-explain-btn" (click)="toggleExplain($index, step)">
+                          {{ explainState()[$index]?.open ? '🔍 ซ่อน ▲' : '🔍 อธิบายเพิ่ม' }}
+                        </button>
+                      </div>
+                      @if (explainState()[$index]?.loading) {
+                        <p class="tf-explain-loading">กำลังอธิบาย...</p>
+                      }
+                      @if (explainState()[$index]?.open && explainState()[$index]?.text) {
+                        <div class="tf-explain-card">{{ explainState()[$index]!.text }}</div>
+                      }
                     }
                   </li>
                 }
@@ -571,6 +573,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
   protected solveLoading       = signal(false);
   protected loadingText        = signal('AI กำลังวางแผนการสอน...');
   protected explainState       = signal<Record<number, { loading: boolean; text: string; open: boolean }>>({});
+  protected keyStepIndices     = signal<number[]>([]);
 
   protected answer       = '';
   protected studentNote  = '';
@@ -608,6 +611,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
       this.solutionSteps.set([]);
       this.understandingStep.set('');
       this.explainState.set({});
+      this.keyStepIndices.set([]);
       this.state.set('mode-select');
     }
   }
@@ -638,6 +642,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
       this.sessionId = res.sessionId;
       this.solutionSteps.set(res.solutionSteps);
       this.understandingStep.set(res.understandingStep);
+      this.keyStepIndices.set(res.keyStepIndices ?? []);
       this.state.set('solve');
     } catch {
       this.errorMsg.set('ไม่สามารถโหลดวิธีทำได้ กรุณาลองใหม่');
@@ -776,6 +781,16 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
     } finally {
       this.notesLoading.set(false);
     }
+  }
+
+  protected isKeyStep(i: number): boolean {
+    const keys = this.keyStepIndices();
+    if (keys.length > 0) return keys.includes(i + 1);
+    // fallback: โชว์เฉพาะขั้น "เทคนิคสังเกต" ถ้ามี ไม่อย่างนั้นโชว์ทุกขั้น
+    const steps = this.solutionSteps();
+    const hasTechnique = steps.some(s => s.startsWith('💡 เทคนิคสังเกต'));
+    if (hasTechnique) return steps[i]?.startsWith('💡 เทคนิคสังเกต') ?? false;
+    return true;
   }
 
   protected async toggleExplain(i: number, stepText: string): Promise<void> {
