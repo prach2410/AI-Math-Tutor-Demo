@@ -252,7 +252,20 @@ interface JudgeFeedback {
               <p class="tf-solve-section-label">📋 วิธีทำทีละขั้น</p>
               <ol class="tf-solve-steps">
                 @for (step of solutionSteps(); track $index) {
-                  <li class="tf-solve-step">{{ step }}</li>
+                  <li class="tf-solve-step">
+                    {{ step }}
+                    <div class="tf-explain-row">
+                      <button class="tf-explain-btn" (click)="toggleExplain($index, step)">
+                        {{ explainState()[$index]?.open ? '🔍 ซ่อน ▲' : '🔍 อธิบายเพิ่ม' }}
+                      </button>
+                    </div>
+                    @if (explainState()[$index]?.loading) {
+                      <p class="tf-explain-loading">กำลังอธิบาย...</p>
+                    }
+                    @if (explainState()[$index]?.open && explainState()[$index]?.text) {
+                      <div class="tf-explain-card">{{ explainState()[$index]!.text }}</div>
+                    }
+                  </li>
                 }
               </ol>
             </div>
@@ -509,6 +522,24 @@ interface JudgeFeedback {
     .tf-understand-label { font-size: 13px; font-weight: 700; color: #92400e; margin: 0; }
     .tf-understand-text  { font-size: 14px; color: #1e293b; margin: 0; line-height: 1.65; }
     .tf-solve-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Explain per-step */
+    .tf-explain-row { margin-top: 6px; }
+    .tf-explain-btn {
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 6px; padding: 4px 10px;
+      cursor: pointer; font-size: 12px; font-family: inherit;
+      color: #1d4ed8; font-weight: 500;
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .tf-explain-btn:hover { background: #dbeafe; border-color: #93c5fd; }
+    .tf-explain-loading { font-size: 12px; color: #64748b; margin: 4px 0 0; }
+    .tf-explain-card {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 10px 12px; margin-top: 6px;
+      font-size: 13px; color: #1e293b; line-height: 1.65;
+      white-space: pre-wrap;
+    }
   `]
 })
 export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
@@ -539,6 +570,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
   protected understandingStep  = signal('');
   protected solveLoading       = signal(false);
   protected loadingText        = signal('AI กำลังวางแผนการสอน...');
+  protected explainState       = signal<Record<number, { loading: boolean; text: string; open: boolean }>>({});
 
   protected answer       = '';
   protected studentNote  = '';
@@ -575,6 +607,7 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
       this.judgeFeedback.set(null);
       this.solutionSteps.set([]);
       this.understandingStep.set('');
+      this.explainState.set({});
       this.state.set('mode-select');
     }
   }
@@ -742,6 +775,24 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
       // fail silently — notes are a nice-to-have
     } finally {
       this.notesLoading.set(false);
+    }
+  }
+
+  protected async toggleExplain(i: number, stepText: string): Promise<void> {
+    const current = this.explainState()[i];
+    if (current?.text) {
+      this.explainState.update(s => ({ ...s, [i]: { ...s[i], open: !s[i].open } }));
+      return;
+    }
+    this.explainState.update(s => ({ ...s, [i]: { loading: true, text: '', open: false } }));
+    try {
+      const fullSolution = this.solutionSteps().join('\n');
+      const res = await this.teaching.explain(
+        this.problem.problemText, this.problem.topic, stepText, fullSolution
+      );
+      this.explainState.update(s => ({ ...s, [i]: { loading: false, text: res.explanation, open: true } }));
+    } catch {
+      this.explainState.update(s => ({ ...s, [i]: { loading: false, text: 'ไม่สามารถอธิบายเพิ่มได้ กรุณาลองใหม่', open: true } }));
     }
   }
 

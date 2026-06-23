@@ -47,6 +47,10 @@ export interface SolveResponse {
   understandingStep: string;
 }
 
+export interface ExplainResponse {
+  explanation: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TeachingService {
   private http = inject(HttpClient);
@@ -88,6 +92,13 @@ export class TeachingService {
     return firstValueFrom(
       this.http.post<SolveResponse>('/api/teaching/solve',
         { problemText, latex, topic, visionModel, analysisStartedAt, analysisEndedAt })
+    );
+  }
+
+  explain(problemText: string, topic: string, stepText: string, fullSolution: string): Promise<ExplainResponse> {
+    return firstValueFrom(
+      this.http.post<ExplainResponse>('/api/teaching/explain',
+        { problemText, topic, stepText, fullSolution })
     );
   }
 }
