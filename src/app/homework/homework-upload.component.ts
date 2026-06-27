@@ -101,8 +101,10 @@ interface SelectedImage {
                       }
                       @for (item of group.items; track item.p.index; let j = $index) {
                         <button class="problem-list-item" [class.problem-list-sub]="group.groupTitle" (click)="confirmProblem(item.i)">
-                          <span class="pli-num">{{ j + 1 }}</span>
-                          <span class="pli-text">{{ item.p.subText || item.p.problemText }}</span>
+                          <div class="pli-row">
+                            <span class="pli-num">{{ j + 1 }})</span>
+                            <span class="pli-text">{{ item.p.subText || item.p.problemText }}</span>
+                          </div>
                           @if (item.p.topic && !group.groupTitle) {
                             <span class="pli-chip">{{ item.p.topic }}</span>
                           }
@@ -480,7 +482,8 @@ interface SelectedImage {
     .problem-list-sub { margin-left: 12px; border-color: #f1f5f9; background: #f8fafc; }
     .problem-list-sub:hover { border-color: #93c5fd; background: #eff6ff; }
 
-    .pli-num  { font-size: 11px; font-weight: 700; color: #2563eb; letter-spacing: 0.03em; }
+    .pli-row  { display: flex; align-items: baseline; gap: 6px; }
+    .pli-num  { font-size: 12px; font-weight: 700; color: #2563eb; white-space: nowrap; flex-shrink: 0; }
     .pli-text {
       font-size: 14px; color: #1e293b; line-height: 1.5;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
