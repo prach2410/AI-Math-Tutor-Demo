@@ -89,17 +89,25 @@ interface SelectedImage {
               </div>
               @if (result()?.readable && result()!.problems.length > 0) {
                 @if (result()!.problems.length > 1) {
-                  <!-- Multiple problems: show selectable list -->
+                  <!-- Multiple problems: show grouped list -->
                   <p class="count-badge">พบ {{ result()!.problems.length }} ข้อ — เลือกข้อที่จะทำ</p>
                   <div class="problem-list">
-                    @for (p of result()!.problems; track p.index; let i = $index) {
-                      <button class="problem-list-item" (click)="confirmProblem(i)">
-                        <span class="pli-num">ข้อ {{ p.index }}</span>
-                        <span class="pli-text">{{ p.problemText }}</span>
-                        @if (p.topic) {
-                          <span class="pli-chip">{{ p.topic }}</span>
-                        }
-                      </button>
+                    @for (group of groupedProblems(); track group.groupIndex) {
+                      @if (group.groupTitle) {
+                        <div class="group-header">
+                          <span class="group-num">ข้อ {{ group.groupIndex }}</span>
+                          <span class="group-title">{{ group.groupTitle }}</span>
+                        </div>
+                      }
+                      @for (item of group.items; track item.p.index; let j = $index) {
+                        <button class="problem-list-item" [class.problem-list-sub]="group.groupTitle" (click)="confirmProblem(item.i)">
+                          <span class="pli-num">{{ j + 1 }}</span>
+                          <span class="pli-text">{{ item.p.subText || item.p.problemText }}</span>
+                          @if (item.p.topic && !group.groupTitle) {
+                            <span class="pli-chip">{{ item.p.topic }}</span>
+                          }
+                        </button>
+                      }
                     }
                   </div>
                   <button class="btn btn-retake" style="width:100%" (click)="retake()">🔄 ถ่ายใหม่</button>
@@ -449,16 +457,30 @@ interface SelectedImage {
     .confirm-row { display: flex; gap: 10px; }
 
     /* Problem list (multi-problem result) */
-    .problem-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .problem-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+
+    .group-header {
+      display: flex; align-items: baseline; gap: 8px;
+      padding: 10px 4px 4px;
+      border-bottom: 1.5px solid #e2e8f0;
+      margin-top: 8px;
+    }
+    .group-header:first-child { margin-top: 0; }
+    .group-num  { font-size: 12px; font-weight: 800; color: #1d4ed8; white-space: nowrap; }
+    .group-title { font-size: 13px; font-weight: 600; color: #334155; line-height: 1.4; }
+
     .problem-list-item {
       display: flex; flex-direction: column; gap: 4px; text-align: left;
-      padding: 12px 14px; border-radius: 12px; border: 1.5px solid #e2e8f0;
+      padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e2e8f0;
       background: white; cursor: pointer; font-family: inherit;
       transition: border-color 0.15s, background 0.12s;
     }
     .problem-list-item:hover { border-color: #2563eb; background: #eff6ff; }
     .problem-list-item:active { transform: scale(0.98); }
-    .pli-num  { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; }
+    .problem-list-sub { margin-left: 12px; border-color: #f1f5f9; background: #f8fafc; }
+    .problem-list-sub:hover { border-color: #93c5fd; background: #eff6ff; }
+
+    .pli-num  { font-size: 11px; font-weight: 700; color: #2563eb; letter-spacing: 0.03em; }
     .pli-text {
       font-size: 14px; color: #1e293b; line-height: 1.5;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -685,6 +707,21 @@ export class HomeworkUploadComponent implements OnDestroy {
       this.stopAnalyzingTimer();
     }
     this.state.set('result');
+  }
+
+  protected groupedProblems() {
+    const problems = this.result()?.problems ?? [];
+    const hasGroups = problems.some(p => (p.groupIndex ?? 0) > 0);
+    if (!hasGroups) {
+      return [{ groupIndex: 0, groupTitle: '', items: problems.map((p, i) => ({ p, i })) }];
+    }
+    const map = new Map<number, { groupIndex: number; groupTitle: string; items: { p: typeof problems[0]; i: number }[] }>();
+    problems.forEach((p, i) => {
+      const gi = p.groupIndex ?? 0;
+      if (!map.has(gi)) map.set(gi, { groupIndex: gi, groupTitle: p.groupTitle ?? '', items: [] });
+      map.get(gi)!.items.push({ p, i });
+    });
+    return Array.from(map.values()).sort((a, b) => a.groupIndex - b.groupIndex);
   }
 
   protected confirmProblem(index: number): void {

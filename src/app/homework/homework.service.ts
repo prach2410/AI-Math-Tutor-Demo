@@ -8,6 +8,9 @@ export interface ProblemItem {
   latex: string;
   topic: string;
   hasFigure: boolean;
+  groupIndex?: number;
+  groupTitle?: string;
+  subText?: string;
 }
 
 export interface HomeworkAnalysisResult {
