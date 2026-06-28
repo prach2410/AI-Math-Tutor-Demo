@@ -1,0 +1,56 @@
+{
+  "projectRoot": "D:/_AI-Math-Tutor-Demo/AI-Math-Tutor-Demo",
+  "batchFiles": [
+    {"path": "src/app/device/device.service.ts", "language": "typescript", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "src/app/free-talk/free-talk.component.ts", "language": "typescript", "sizeLines": 337, "fileCategory": "code"},
+    {"path": "src/app/free-talk/free-talk.service.ts", "language": "typescript", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "src/app/learning-feedback/learning-feedback.component.ts", "language": "typescript", "sizeLines": 106, "fileCategory": "code"},
+    {"path": "src/app/learning-reflection/learning-reflection.component.ts", "language": "typescript", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "src/app/parent-feedback/parent-feedback.component.ts", "language": "typescript", "sizeLines": 266, "fileCategory": "code"},
+    {"path": "src/app/parent-summary/parent-summary.component.ts", "language": "typescript", "sizeLines": 114, "fileCategory": "code"},
+    {"path": "src/app/project-brain/project-brain-tutor.component.ts", "language": "typescript", "sizeLines": 1116, "fileCategory": "code"},
+    {"path": "src/app/project-brain/project-brain-tutor.service.ts", "language": "typescript", "sizeLines": 218, "fileCategory": "code"},
+    {"path": "src/app/student-note/student-note.component.ts", "language": "typescript", "sizeLines": 103, "fileCategory": "code"},
+    {"path": "src/app/tutor.service.ts", "language": "typescript", "sizeLines": 644, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/app/device/device.service.ts": [],
+    "src/app/free-talk/free-talk.component.ts": [
+      "src/app/free-talk/free-talk.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/free-talk/free-talk.service.ts": [
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-feedback/learning-feedback.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-reflection/learning-reflection.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/parent-feedback/parent-feedback.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/parent-summary/parent-summary.component.ts": [
+      "src/app/parent-feedback/parent-feedback.component.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/project-brain/project-brain-tutor.component.ts": [
+      "src/app/project-brain/project-brain-tutor.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/project-brain/project-brain-tutor.service.ts": [
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/student-note/student-note.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/tutor.service.ts": [
+      "src/app/device/device.service.ts",
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts"
+    ]
+  }
+}

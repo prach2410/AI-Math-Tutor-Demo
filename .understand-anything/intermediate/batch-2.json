@@ -1,0 +1,476 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/about/about.component.ts",
+      "type": "file",
+      "name": "about.component.ts",
+      "filePath": "src/app/about/about.component.ts",
+      "summary": "คอมโพเนนต์ modal สำหรับแสดงข้อมูลเกี่ยวกับแอปพลิเคชัน ควบคุมการเปิด/ปิดผ่าน Angular signal และรองรับการคลิก overlay เพื่อปิด modal",
+      "tags": ["component", "modal", "ui", "standalone"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/about/about.component.ts:AboutComponent",
+      "type": "class",
+      "name": "AboutComponent",
+      "filePath": "src/app/about/about.component.ts",
+      "lineRange": [318, 329],
+      "summary": "standalone Angular component ที่จัดการสถานะการแสดงผล modal About ด้วย signal พร้อม method open, close และ onOverlayClick",
+      "tags": ["component", "modal", "signal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/admin/admin-export.component.ts",
+      "type": "file",
+      "name": "admin-export.component.ts",
+      "filePath": "src/app/admin/admin-export.component.ts",
+      "summary": "คอมโพเนนต์ admin สำหรับดู ดาวน์โหลด และลบข้อมูลการเรียนรู้และการบ้าน จัดกลุ่มตามสัปดาห์ผ่าน HttpClient โดยตรง",
+      "tags": ["admin", "data-export", "component", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/admin/admin-export.component.ts:AdminExportComponent",
+      "type": "class",
+      "name": "AdminExportComponent",
+      "filePath": "src/app/admin/admin-export.component.ts",
+      "lineRange": [407, 570],
+      "summary": "Angular component ขนาดใหญ่สำหรับ admin จัดการข้อมูล learning session และ homework แบบ weekly view พร้อมฟีเจอร์ดาวน์โหลด ลบ และ mark downloaded",
+      "tags": ["admin", "data-export", "api-handler", "signal"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "type": "file",
+      "name": "discovery-batches.component.ts",
+      "filePath": "src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "summary": "คอมโพเนนต์ admin สำหรับบริหาร Project Brain discovery batches ครบวงจร ตั้งแต่การนำเข้า ส่งออก จัดการ prompt วิเคราะห์ และ mark review",
+      "tags": ["admin", "component", "api-handler", "project-brain"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/admin/discovery-batches/discovery-batches.component.ts:DiscoveryBatchesComponent",
+      "type": "class",
+      "name": "DiscoveryBatchesComponent",
+      "filePath": "src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "lineRange": [727, 1040],
+      "summary": "Angular component ขนาดใหญ่มากสำหรับจัดการ discovery batch workflow ของ Project Brain รองรับการอัปโหลดไฟล์ JSON, copy prompt, import/export data และบันทึก notes",
+      "tags": ["admin", "api-handler", "project-brain", "signal"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/app.component.ts",
+      "type": "file",
+      "name": "app.component.ts",
+      "filePath": "src/app/app.component.ts",
+      "summary": "root component หลักของแอปพลิเคชัน ควบคุม layout การนำทาง และสถานะ global โดย inject TutorService, OnboardingService และ VoiceService พร้อม import component ทุกตัว",
+      "tags": ["entry-point", "component", "root", "navigation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/app.component.ts:AppComponent",
+      "type": "class",
+      "name": "AppComponent",
+      "filePath": "src/app/app.component.ts",
+      "lineRange": [739, 820],
+      "summary": "root Angular component ที่เชื่อม TutorService, OnboardingService และ VoiceService เข้าด้วยกัน จัดการ routing เสมือน (goHome, goLearn), โหมด homework, Project Brain dialog และ About modal",
+      "tags": ["root", "component", "navigation", "signal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/feedback-collection/feedback-collection.component.ts",
+      "type": "file",
+      "name": "feedback-collection.component.ts",
+      "filePath": "src/app/feedback-collection/feedback-collection.component.ts",
+      "summary": "คอมโพเนนต์สำหรับรวบรวม feedback จากผู้ใช้ผ่าน embedded Google Form แบบ collapsible พร้อม animation",
+      "tags": ["component", "feedback", "ui", "standalone"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/feedback-collection/feedback-collection.component.ts:FeedbackCollectionComponent",
+      "type": "class",
+      "name": "FeedbackCollectionComponent",
+      "filePath": "src/app/feedback-collection/feedback-collection.component.ts",
+      "lineRange": [111, 115],
+      "summary": "standalone Angular component ที่แสดง Google Form สำหรับเก็บ feedback ผู้ใช้ รองรับการยุบ/ขยายผ่าน signal",
+      "tags": ["component", "feedback", "signal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/learning-journal/daily-logs.component.ts",
+      "type": "file",
+      "name": "daily-logs.component.ts",
+      "filePath": "src/app/learning-journal/daily-logs.component.ts",
+      "summary": "คอมโพเนนต์แสดง timeline บันทึกการเรียนรู้รายวัน ดึงข้อมูลผ่าน LearningRecordsService และแสดงผลแบบจัดกลุ่มตามวันที่",
+      "tags": ["component", "learning-journal", "data-display", "standalone"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/learning-journal/daily-logs.component.ts:DailyLogsComponent",
+      "type": "class",
+      "name": "DailyLogsComponent",
+      "filePath": "src/app/learning-journal/daily-logs.component.ts",
+      "lineRange": [181, 218],
+      "summary": "Angular component ที่โหลดและแสดง timeline ของบันทึกการเรียนรู้รายวัน โดย inject LearningRecordsService และ TutorService พร้อม helper สำหรับ format วันที่และตัดข้อความ",
+      "tags": ["component", "learning-journal", "signal"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/learning-journal/learning-records.service.ts",
+      "type": "file",
+      "name": "learning-records.service.ts",
+      "filePath": "src/app/learning-journal/learning-records.service.ts",
+      "summary": "service ขนาดเล็กสำหรับดึงข้อมูล timeline การเรียนรู้จาก backend API ผ่าน HTTP โดยรวมข้อมูล learning session, homework read และ homework session",
+      "tags": ["service", "api-handler", "learning-journal", "http"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/app/learning-journal/learning-records.service.ts:LearningRecordsService",
+      "type": "class",
+      "name": "LearningRecordsService",
+      "filePath": "src/app/learning-journal/learning-records.service.ts",
+      "lineRange": [20, 28],
+      "summary": "Angular injectable service ที่ expose method getTimeline() สำหรับดึง unified timeline ของกิจกรรมการเรียนรู้ทั้งหมดจาก backend",
+      "tags": ["service", "api-handler", "http"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/real-world/real-world.component.ts",
+      "type": "file",
+      "name": "real-world.component.ts",
+      "filePath": "src/app/real-world/real-world.component.ts",
+      "summary": "คอมโพเนนต์แสดงตัวอย่างการประยุกต์ใช้คณิตศาสตร์ในชีวิตจริง ดึงข้อมูลจาก TutorService และรองรับการยุบ/ขยาย panel แบบ collapsible",
+      "tags": ["component", "ui", "standalone", "tutor-integration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/real-world/real-world.component.ts:RealWorldComponent",
+      "type": "class",
+      "name": "RealWorldComponent",
+      "filePath": "src/app/real-world/real-world.component.ts",
+      "lineRange": [115, 119],
+      "summary": "standalone Angular component ที่แสดงตัวอย่างชีวิตจริงของแนวคิดคณิตศาสตร์จาก TutorService รองรับการ toggle collapse ด้วย signal",
+      "tags": ["component", "signal", "tutor-integration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/main.ts",
+      "type": "file",
+      "name": "main.ts",
+      "filePath": "src/main.ts",
+      "summary": "จุดเริ่มต้นของ Angular application บูทสแตรป AppComponent ด้วย bootstrapApplication เพื่อเริ่มต้นแอปพลิเคชันทั้งหมด",
+      "tags": ["entry-point", "bootstrap"],
+      "complexity": "simple",
+      "languageNotes": "ใช้ standalone bootstrapApplication แทน NgModule ตามแนวทาง Angular 17+"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/app/about/about.component.ts",
+      "target": "class:src/app/about/about.component.ts:AboutComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/about/about.component.ts",
+      "target": "class:src/app/about/about.component.ts:AboutComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/admin/admin-export.component.ts",
+      "target": "class:src/app/admin/admin-export.component.ts:AdminExportComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/admin/admin-export.component.ts",
+      "target": "class:src/app/admin/admin-export.component.ts:AdminExportComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "target": "class:src/app/admin/discovery-batches/discovery-batches.component.ts:DiscoveryBatchesComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "target": "class:src/app/admin/discovery-batches/discovery-batches.component.ts:DiscoveryBatchesComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "class:src/app/app.component.ts:AppComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "class:src/app/app.component.ts:AppComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/feedback-collection/feedback-collection.component.ts",
+      "target": "class:src/app/feedback-collection/feedback-collection.component.ts:FeedbackCollectionComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/feedback-collection/feedback-collection.component.ts",
+      "target": "class:src/app/feedback-collection/feedback-collection.component.ts:FeedbackCollectionComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-journal/daily-logs.component.ts",
+      "target": "class:src/app/learning-journal/daily-logs.component.ts:DailyLogsComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-journal/daily-logs.component.ts",
+      "target": "class:src/app/learning-journal/daily-logs.component.ts:DailyLogsComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-records.service.ts",
+      "target": "class:src/app/learning-journal/learning-records.service.ts:LearningRecordsService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-records.service.ts",
+      "target": "class:src/app/learning-journal/learning-records.service.ts:LearningRecordsService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/real-world/real-world.component.ts",
+      "target": "class:src/app/real-world/real-world.component.ts:RealWorldComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/real-world/real-world.component.ts",
+      "target": "class:src/app/real-world/real-world.component.ts:RealWorldComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/about/about.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/admin/admin-export.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/chat/chat.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/feedback-collection/feedback-collection.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/free-talk/free-talk.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/homework/homework-upload.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/learning-feedback/learning-feedback.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/learning-journal/daily-logs.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/learning-reflection/learning-reflection.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/onboarding/onboarding.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/onboarding/onboarding.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/parent-summary/parent-summary.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/real-world/real-world.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/student-note/student-note.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/app.component.ts",
+      "target": "file:src/app/voice.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/learning-journal/daily-logs.component.ts",
+      "target": "file:src/app/learning-journal/learning-records.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/learning-journal/daily-logs.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/real-world/real-world.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/main.ts",
+      "target": "file:src/app/app.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:src/app/app.component.ts:AppComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/app.component.ts:AppComponent",
+      "target": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/real-world/real-world.component.ts:RealWorldComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/learning-journal/daily-logs.component.ts:DailyLogsComponent",
+      "target": "class:src/app/learning-journal/learning-records.service.ts:LearningRecordsService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

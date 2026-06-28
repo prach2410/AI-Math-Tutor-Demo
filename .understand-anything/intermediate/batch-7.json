@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "config:.claude/launch.json",
+      "type": "config",
+      "name": "launch.json",
+      "filePath": ".claude/launch.json",
+      "summary": "กำหนดค่า launch configuration สำหรับ Claude Code เพื่อรัน frontend ผ่าน `node server.js` บน port 8080",
+      "tags": ["configuration", "development", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.claude/skills/grill-me/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".claude/skills/grill-me/SKILL.md",
+      "summary": "คำจำกัดความของ skill `grill-me` ที่สั่งให้ AI สัมภาษณ์ผู้ใช้เชิงลึกเกี่ยวกับแผนหรือ design ทีละคำถามจนเข้าใจตรงกัน",
+      "tags": ["documentation", "development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "กำหนด pattern ที่ให้ understand-anything ข้ามไม่วิเคราะห์ โดยเฉพาะไดเร็กทอรี `Demo-Vault/` พร้อม template patterns สำหรับ test files ที่ยังไม่ได้เปิดใช้",
+      "tags": ["configuration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.understand-anything/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".understand-anything/config.json",
+      "summary": "กำหนด `outputLanguage` เป็น `th` เพื่อให้ understand-anything tool สร้าง knowledge graph ด้วยภาษาไทย",
+      "tags": ["configuration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/FileContentIndex/4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx",
+      "type": "file",
+      "name": "4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx",
+      "filePath": ".vs/AI-Math-Tutor-Demo/FileContentIndex/4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx",
+      "summary": "ไฟล์ index binary ที่ Visual Studio สร้างขึ้นอัตโนมัติสำหรับ file content search ภายใน IDE ไม่ใช่ source code",
+      "tags": ["infrastructure", "configuration"],
+      "complexity": "complex",
+      "languageNotes": "ไฟล์ .vsidx เป็น binary index ของ Visual Studio — ไม่ควรแก้ไขด้วยมือ และอยู่นอก version control"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/FileContentIndex/625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx",
+      "type": "file",
+      "name": "625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx",
+      "filePath": ".vs/AI-Math-Tutor-Demo/FileContentIndex/625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx",
+      "summary": "ไฟล์ index binary ที่ Visual Studio สร้างขึ้นอัตโนมัติสำหรับ file content search — ไฟล์ว่าง (0 bytes หรือ header เท่านั้น)",
+      "tags": ["infrastructure", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/FileContentIndex/83b68772-701a-49a4-9e95-5301a91e469c.vsidx",
+      "type": "file",
+      "name": "83b68772-701a-49a4-9e95-5301a91e469c.vsidx",
+      "filePath": ".vs/AI-Math-Tutor-Demo/FileContentIndex/83b68772-701a-49a4-9e95-5301a91e469c.vsidx",
+      "summary": "ไฟล์ index binary ที่ Visual Studio สร้างขึ้นอัตโนมัติสำหรับ file content search — ไฟล์ว่าง",
+      "tags": ["infrastructure", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/FileContentIndex/8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx",
+      "type": "file",
+      "name": "8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx",
+      "filePath": ".vs/AI-Math-Tutor-Demo/FileContentIndex/8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx",
+      "summary": "ไฟล์ index binary ที่ Visual Studio สร้างขึ้นอัตโนมัติสำหรับ file content search — ไฟล์ว่าง",
+      "tags": ["infrastructure", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/FileContentIndex/bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx",
+      "type": "file",
+      "name": "bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx",
+      "filePath": ".vs/AI-Math-Tutor-Demo/FileContentIndex/bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx",
+      "summary": "ไฟล์ index binary ที่ Visual Studio สร้างขึ้นอัตโนมัติสำหรับ file content search มีข้อมูล 192 บรรทัด",
+      "tags": ["infrastructure", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:.vs/AI-Math-Tutor-Demo/v17/.wsuo",
+      "type": "file",
+      "name": ".wsuo",
+      "filePath": ".vs/AI-Math-Tutor-Demo/v17/.wsuo",
+      "summary": "ไฟล์ user options binary ของ Visual Studio workspace เก็บ preferences เฉพาะผู้ใช้เช่น ตำแหน่ง tab และ breakpoints",
+      "tags": ["configuration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.vs/slnx.sqlite",
+      "type": "file",
+      "name": "slnx.sqlite",
+      "filePath": ".vs/slnx.sqlite",
+      "summary": "ฐานข้อมูล SQLite ที่ Visual Studio ใช้เก็บ metadata ของ solution เช่น project references และ build state — สร้างและจัดการโดย IDE อัตโนมัติ",
+      "tags": ["configuration", "infrastructure"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:.vs/VSWorkspaceState.json",
+      "type": "config",
+      "name": "VSWorkspaceState.json",
+      "filePath": ".vs/VSWorkspaceState.json",
+      "summary": "บันทึกสถานะ workspace ของ Visual Studio เช่น nodes ที่ขยายใน Solution Explorer และ preview mode",
+      "tags": ["configuration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server.js",
+      "type": "file",
+      "name": "server.js",
+      "filePath": "server.js",
+      "summary": "Express.js production server ที่ serve Angular static files จาก `dist/frontend/browser/` และ proxy request ที่ขึ้นต้นด้วย `/api` ไปยัง Railway backend โดยใช้ port จาก environment variable",
+      "tags": ["entry-point", "middleware", "deployment"],
+      "complexity": "simple",
+      "languageNotes": "ใช้ `http-proxy-middleware` สำหรับ reverse proxy และรองรับ SPA routing ด้วย catch-all route ที่ return `index.html`"
+    },
+    {
+      "id": "file:src/app/first-time-guide/first-time-guide.component.ts",
+      "type": "file",
+      "name": "first-time-guide.component.ts",
+      "filePath": "src/app/first-time-guide/first-time-guide.component.ts",
+      "summary": "Angular standalone component ที่แสดง modal คำแนะนำสำหรับผู้ใช้ครั้งแรก โดยตรวจสอบ localStorage เพื่อไม่แสดงซ้ำ และส่ง event `dismissed` เมื่อปิด",
+      "tags": ["component", "entry-point", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/first-time-guide/first-time-guide.component.ts:FirstTimeGuideComponent",
+      "type": "class",
+      "name": "FirstTimeGuideComponent",
+      "filePath": "src/app/first-time-guide/first-time-guide.component.ts",
+      "lineRange": [311, 340],
+      "summary": "Angular component ที่ควบคุม modal คำแนะนำผู้ใช้ใหม่ — ใช้ signal `visible` เพื่อ toggle การแสดงผล และบันทึกสถานะ `seen` ลง localStorage",
+      "tags": ["component", "event-handler", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "type": "file",
+      "name": "learning-journal-upload.component.ts",
+      "filePath": "src/app/learning-journal/learning-journal-upload.component.ts",
+      "summary": "Angular standalone component ที่จัดการ flow การอัปโหลดรูปภาพสมุด/กระดาน ส่งไปวิเคราะห์ผ่าน `LearningJournalService` แสดงผล AI analysis และให้นักเรียนเลือก reflection",
+      "tags": ["component", "api-handler", "event-handler"],
+      "complexity": "complex",
+      "languageNotes": "ใช้ Angular signals (`signal()`, `.update()`, `.set()`) สำหรับ state management และ `URL.createObjectURL` / `revokeObjectURL` เพื่อจัดการ memory ของ image preview"
+    },
+    {
+      "id": "class:src/app/learning-journal/learning-journal-upload.component.ts:LearningJournalUploadComponent",
+      "type": "class",
+      "name": "LearningJournalUploadComponent",
+      "filePath": "src/app/learning-journal/learning-journal-upload.component.ts",
+      "lineRange": [378, 458],
+      "summary": "Component class ที่ implement state machine 4 ขั้น (idle → collecting → analyzing → result) สำหรับ workflow การอัปโหลดและวิเคราะห์ภาพ learning journal",
+      "tags": ["component", "api-handler", "validation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/learning-journal/learning-journal.service.ts",
+      "type": "file",
+      "name": "learning-journal.service.ts",
+      "filePath": "src/app/learning-journal/learning-journal.service.ts",
+      "summary": "Angular service ที่ให้บริการเรียก API 2 endpoint: วิเคราะห์รูปภาพ learning journal ผ่าน multipart form upload และบันทึก reflection ของนักเรียน",
+      "tags": ["service", "api-handler", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/app/learning-journal/learning-journal.service.ts:LearningJournalService",
+      "type": "class",
+      "name": "LearningJournalService",
+      "filePath": "src/app/learning-journal/learning-journal.service.ts",
+      "lineRange": [19, 35],
+      "summary": "Injectable service ที่ wrap HTTP calls ไปยัง `/api/learning-journal/analyze` (POST multipart) และ `/api/learning-records/:id/reflection` (PATCH) พร้อม interface `LearningJournalAnalysis`",
+      "tags": ["service", "api-handler", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "src/index.html",
+      "summary": "HTML entry point ของ Angular app กำหนด lang=th, title ภาษาไทย และ load ฟอนต์ Sarabun จาก Google Fonts สำหรับ UI ภาษาไทย",
+      "tags": ["entry-point", "markup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/styles.css",
+      "type": "file",
+      "name": "styles.css",
+      "filePath": "src/styles.css",
+      "summary": "Global CSS ที่กำหนด CSS custom properties สำหรับ color system (primary, surface, bubble colors) และตั้งค่า base typography ด้วยฟอนต์ Sarabun สำหรับทั้ง app",
+      "tags": ["configuration", "markup"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.claude/launch.json",
+      "target": "file:server.js",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "target": "file:src/app/learning-journal/learning-journal.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/first-time-guide/first-time-guide.component.ts",
+      "target": "class:src/app/first-time-guide/first-time-guide.component.ts:FirstTimeGuideComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/first-time-guide/first-time-guide.component.ts",
+      "target": "class:src/app/first-time-guide/first-time-guide.component.ts:FirstTimeGuideComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "target": "class:src/app/learning-journal/learning-journal-upload.component.ts:LearningJournalUploadComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal-upload.component.ts",
+      "target": "class:src/app/learning-journal/learning-journal-upload.component.ts:LearningJournalUploadComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal.service.ts",
+      "target": "class:src/app/learning-journal/learning-journal.service.ts:LearningJournalService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-journal/learning-journal.service.ts",
+      "target": "class:src/app/learning-journal/learning-journal.service.ts:LearningJournalService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/learning-journal/learning-journal-upload.component.ts:LearningJournalUploadComponent",
+      "target": "class:src/app/learning-journal/learning-journal.service.ts:LearningJournalService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

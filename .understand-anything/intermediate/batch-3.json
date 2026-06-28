@@ -1,0 +1,397 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/chat/chat.component.ts",
+      "type": "file",
+      "name": "chat.component.ts",
+      "filePath": "src/app/chat/chat.component.ts",
+      "summary": "Component หลักสำหรับการโต้ตอบระหว่างนักเรียนกับ AI tutor ผ่าน chat รองรับทั้ง text และ voice mode ควบคุมการส่งข้อความ การสลับ interaction mode การจัดการ microphone และ auto-scroll",
+      "tags": ["component", "chat", "voice", "event-handler", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "type": "file",
+      "name": "lesson-complete.component.ts",
+      "filePath": "src/app/lesson-complete/lesson-complete.component.ts",
+      "summary": "Component แสดงผลหลังจบบทเรียน จัดการ reflection form ของนักเรียน การแสดง feedback และ parent summary พร้อมตัวเลือกสำหรับเรียนต่อหรือกลับหน้าหลัก",
+      "tags": ["component", "feedback", "event-handler", "reflection"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/models/learning.model.ts",
+      "type": "file",
+      "name": "learning.model.ts",
+      "filePath": "src/app/models/learning.model.ts",
+      "summary": "กำหนด TypeScript interfaces และ types ทั้งหมดสำหรับการสื่อสารกับ backend API ครอบคลุม request/response ของบทเรียน, session, reflection และ parent feedback",
+      "tags": ["type-definition", "data-model", "api-schema"],
+      "complexity": "moderate",
+      "languageNotes": "ไฟล์นี้ใช้ TypeScript interfaces เท่านั้น ไม่มี class หรือ function เป็น pure type-definition barrel ที่ re-export ทุก type สำหรับทั้งโปรเจกต์"
+    },
+    {
+      "id": "file:src/app/onboarding/onboarding.component.ts",
+      "type": "file",
+      "name": "onboarding.component.ts",
+      "filePath": "src/app/onboarding/onboarding.component.ts",
+      "summary": "Component ควบคุมขั้นตอน onboarding ของนักเรียนใหม่ ทำงานร่วมกับ OnboardingService เพื่อแสดง chat แบบ step-by-step และรับ input จากนักเรียน",
+      "tags": ["component", "onboarding", "chat", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/onboarding/onboarding.service.ts",
+      "type": "file",
+      "name": "onboarding.service.ts",
+      "filePath": "src/app/onboarding/onboarding.service.ts",
+      "summary": "Service จัดการ state machine สำหรับ onboarding flow ควบคุม 6+ ขั้นตอน ตั้งแต่การถามชื่อนักเรียน การเลือก interaction mode จนถึงการเริ่มบทเรียนหรือ free talk",
+      "tags": ["service", "onboarding", "state-management", "singleton"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "file",
+      "name": "student-profile.service.ts",
+      "filePath": "src/app/student-profile/student-profile.service.ts",
+      "summary": "Service เก็บข้อมูลโปรไฟล์นักเรียน ได้แก่ ชื่อแสดงผลและ student ID (UUID) โดยใช้ localStorage สำหรับ persistence และ Angular signals สำหรับ reactive state",
+      "tags": ["service", "student-profile", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/voice.service.ts",
+      "type": "file",
+      "name": "voice.service.ts",
+      "filePath": "src/app/voice.service.ts",
+      "summary": "Service ห่อหุ้ม Web Speech API สำหรับการฟังเสียงนักเรียนและการอ่านข้อความ AI เป็นเสียง พร้อมการตรวจจับ network error และการทำความสะอาด text ก่อนอ่าน",
+      "tags": ["service", "voice", "speech", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "type": "class",
+      "name": "ChatComponent",
+      "filePath": "src/app/chat/chat.component.ts",
+      "lineRange": [731, 844],
+      "summary": "Angular standalone component จัดการ chat UI ทั้งหมด รองรับ text/voice mode สลับกันได้ มี auto-scroll, mic toggle และการจัดการชื่อนักเรียนครั้งแรก",
+      "tags": ["component", "chat", "voice", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "type": "class",
+      "name": "LessonCompleteComponent",
+      "filePath": "src/app/lesson-complete/lesson-complete.component.ts",
+      "lineRange": [454, 566],
+      "summary": "Angular standalone component ที่แสดงหน้าจบบทเรียน รวม reflection form, การ log event, การนำทางไปบทเรียนถัดไป และการ restart ผ่าน onboarding",
+      "tags": ["component", "feedback", "event-handler", "reflection"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/onboarding/onboarding.component.ts:OnboardingComponent",
+      "type": "class",
+      "name": "OnboardingComponent",
+      "filePath": "src/app/onboarding/onboarding.component.ts",
+      "lineRange": [605, 666],
+      "summary": "Angular standalone component แสดง chat UI สำหรับ onboarding flow รับ input นักเรียนและส่งต่อ OnboardingService รองรับ skip และการเริ่มบทเรียนหรือ free talk",
+      "tags": ["component", "onboarding", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "class",
+      "name": "OnboardingService",
+      "filePath": "src/app/onboarding/onboarding.service.ts",
+      "lineRange": [19, 335],
+      "summary": "Angular service ที่ implement state machine สำหรับ onboarding มี 18 methods ควบคุม flow ตั้งแต่ step0 (ทักทาย) ถึง step5 (เลือก mode) โดยใช้ localStorage บันทึก completion state",
+      "tags": ["service", "onboarding", "state-management", "singleton"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "class",
+      "name": "StudentProfileService",
+      "filePath": "src/app/student-profile/student-profile.service.ts",
+      "lineRange": [7, 27],
+      "summary": "Angular service เก็บ displayName และ studentId ของนักเรียน โดย studentId สร้างด้วย crypto.randomUUID() และเก็บไว้ใน localStorage",
+      "tags": ["service", "student-profile", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/app/voice.service.ts:VoiceService",
+      "type": "class",
+      "name": "VoiceService",
+      "filePath": "src/app/voice.service.ts",
+      "lineRange": [22, 102],
+      "summary": "Angular service จัดการ Web Speech API ทั้ง SpeechRecognition (ฟังเสียง) และ SpeechSynthesis (อ่านเสียง) พร้อม cleanForSpeech ที่แปลง emoji และ English fragments เป็นภาษาไทย",
+      "tags": ["service", "voice", "speech", "utility"],
+      "complexity": "moderate",
+      "languageNotes": "cleanForSpeech แปลง emoji ออกและแทนที่ English phrases เช่น 'Keep Going!' → 'ไปต่อได้เลย' ก่อนส่งให้ Speech Synthesis เพื่อให้เสียงอ่านออกมาเป็นภาษาไทยได้ถูกต้อง"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "file:src/app/models/learning.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "file:src/app/voice.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "file:src/app/onboarding/onboarding.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "file:src/app/voice.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.component.ts",
+      "target": "file:src/app/onboarding/onboarding.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.component.ts",
+      "target": "file:src/app/voice.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.service.ts",
+      "target": "file:src/app/models/learning.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.service.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.service.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.component.ts",
+      "target": "class:src/app/onboarding/onboarding.component.ts:OnboardingComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.service.ts",
+      "target": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/student-profile/student-profile.service.ts",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/voice.service.ts",
+      "target": "class:src/app/voice.service.ts:VoiceService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/chat/chat.component.ts",
+      "target": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/lesson-complete/lesson-complete.component.ts",
+      "target": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.component.ts",
+      "target": "class:src/app/onboarding/onboarding.component.ts:OnboardingComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/onboarding/onboarding.service.ts",
+      "target": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/student-profile/student-profile.service.ts",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/voice.service.ts",
+      "target": "class:src/app/voice.service.ts:VoiceService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "target": "class:src/app/voice.service.ts:VoiceService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/chat/chat.component.ts:ChatComponent",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "target": "class:src/app/voice.service.ts:VoiceService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "target": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/lesson-complete/lesson-complete.component.ts:LessonCompleteComponent",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/onboarding/onboarding.component.ts:OnboardingComponent",
+      "target": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/onboarding/onboarding.component.ts:OnboardingComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/onboarding/onboarding.service.ts:OnboardingService",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

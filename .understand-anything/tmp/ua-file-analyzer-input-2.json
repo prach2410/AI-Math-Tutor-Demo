@@ -1,0 +1,53 @@
+{
+  "projectRoot": "D:/_AI-Math-Tutor-Demo/AI-Math-Tutor-Demo",
+  "batchFiles": [
+    {"path": "src/app/about/about.component.ts", "language": "typescript", "sizeLines": 329, "fileCategory": "code"},
+    {"path": "src/app/admin/admin-export.component.ts", "language": "typescript", "sizeLines": 570, "fileCategory": "code"},
+    {"path": "src/app/admin/discovery-batches/discovery-batches.component.ts", "language": "typescript", "sizeLines": 1040, "fileCategory": "code"},
+    {"path": "src/app/app.component.ts", "language": "typescript", "sizeLines": 820, "fileCategory": "code"},
+    {"path": "src/app/feedback-collection/feedback-collection.component.ts", "language": "typescript", "sizeLines": 115, "fileCategory": "code"},
+    {"path": "src/app/learning-journal/daily-logs.component.ts", "language": "typescript", "sizeLines": 218, "fileCategory": "code"},
+    {"path": "src/app/learning-journal/learning-records.service.ts", "language": "typescript", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "src/app/real-world/real-world.component.ts", "language": "typescript", "sizeLines": 119, "fileCategory": "code"},
+    {"path": "src/main.ts", "language": "typescript", "sizeLines": 7, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/app/about/about.component.ts": [],
+    "src/app/admin/admin-export.component.ts": [],
+    "src/app/admin/discovery-batches/discovery-batches.component.ts": [],
+    "src/app/app.component.ts": [
+      "src/app/about/about.component.ts",
+      "src/app/admin/admin-export.component.ts",
+      "src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "src/app/chat/chat.component.ts",
+      "src/app/feedback-collection/feedback-collection.component.ts",
+      "src/app/free-talk/free-talk.component.ts",
+      "src/app/homework/homework-upload.component.ts",
+      "src/app/learning-feedback/learning-feedback.component.ts",
+      "src/app/learning-journal/daily-logs.component.ts",
+      "src/app/learning-journal/learning-journal-upload.component.ts",
+      "src/app/learning-reflection/learning-reflection.component.ts",
+      "src/app/lesson-complete/lesson-complete.component.ts",
+      "src/app/onboarding/onboarding.component.ts",
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/parent-summary/parent-summary.component.ts",
+      "src/app/project-brain/project-brain-tutor.component.ts",
+      "src/app/real-world/real-world.component.ts",
+      "src/app/student-note/student-note.component.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/feedback-collection/feedback-collection.component.ts": [],
+    "src/app/learning-journal/daily-logs.component.ts": [
+      "src/app/learning-journal/learning-records.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-journal/learning-records.service.ts": [],
+    "src/app/real-world/real-world.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/main.ts": [
+      "src/app/app.component.ts"
+    ]
+  }
+}

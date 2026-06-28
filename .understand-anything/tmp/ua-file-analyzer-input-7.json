@@ -1,0 +1,46 @@
+{
+  "projectRoot": "D:/_AI-Math-Tutor-Demo/AI-Math-Tutor-Demo",
+  "batchFiles": [
+    {"path": ".claude/launch.json", "language": "json", "sizeLines": 11, "fileCategory": "config"},
+    {"path": ".claude/skills/grill-me/SKILL.md", "language": "markdown", "sizeLines": 10, "fileCategory": "docs"},
+    {"path": ".understand-anything/.understandignore", "language": "unknown", "sizeLines": 37, "fileCategory": "code"},
+    {"path": ".understand-anything/config.json", "language": "json", "sizeLines": 1, "fileCategory": "config"},
+    {"path": ".vs/AI-Math-Tutor-Demo/FileContentIndex/4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx", "language": "vsidx", "sizeLines": 1241, "fileCategory": "code"},
+    {"path": ".vs/AI-Math-Tutor-Demo/FileContentIndex/625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx", "language": "vsidx", "sizeLines": 0, "fileCategory": "code"},
+    {"path": ".vs/AI-Math-Tutor-Demo/FileContentIndex/83b68772-701a-49a4-9e95-5301a91e469c.vsidx", "language": "vsidx", "sizeLines": 0, "fileCategory": "code"},
+    {"path": ".vs/AI-Math-Tutor-Demo/FileContentIndex/8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx", "language": "vsidx", "sizeLines": 0, "fileCategory": "code"},
+    {"path": ".vs/AI-Math-Tutor-Demo/FileContentIndex/bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx", "language": "vsidx", "sizeLines": 192, "fileCategory": "code"},
+    {"path": ".vs/AI-Math-Tutor-Demo/v17/.wsuo", "language": "unknown", "sizeLines": 9, "fileCategory": "code"},
+    {"path": ".vs/slnx.sqlite", "language": "sqlite", "sizeLines": 285, "fileCategory": "code"},
+    {"path": ".vs/VSWorkspaceState.json", "language": "json", "sizeLines": 5, "fileCategory": "config"},
+    {"path": "server.js", "language": "javascript", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "src/app/first-time-guide/first-time-guide.component.ts", "language": "typescript", "sizeLines": 340, "fileCategory": "code"},
+    {"path": "src/app/learning-journal/learning-journal-upload.component.ts", "language": "typescript", "sizeLines": 458, "fileCategory": "code"},
+    {"path": "src/app/learning-journal/learning-journal.service.ts", "language": "typescript", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "src/index.html", "language": "html", "sizeLines": 14, "fileCategory": "markup"},
+    {"path": "src/styles.css", "language": "css", "sizeLines": 35, "fileCategory": "markup"}
+  ],
+  "batchImportData": {
+    ".claude/launch.json": [],
+    ".claude/skills/grill-me/SKILL.md": [],
+    ".understand-anything/.understandignore": [],
+    ".understand-anything/config.json": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/83b68772-701a-49a4-9e95-5301a91e469c.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/v17/.wsuo": [],
+    ".vs/slnx.sqlite": [],
+    ".vs/VSWorkspaceState.json": [],
+    "server.js": [],
+    "src/app/first-time-guide/first-time-guide.component.ts": [],
+    "src/app/learning-journal/learning-journal-upload.component.ts": [
+      "src/app/learning-journal/learning-journal.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-journal/learning-journal.service.ts": [],
+    "src/index.html": [],
+    "src/styles.css": []
+  }
+}

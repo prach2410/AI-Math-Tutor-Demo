@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 interface LearningRecord {
   id: string;
@@ -28,6 +29,7 @@ interface HomeworkRead {
   analysisStartedAt?: string;
   analysisEndedAt?: string;
   taught?: boolean;
+  studentName?: string;
 }
 
 interface HomeworkSession {
@@ -42,6 +44,7 @@ interface HomeworkSession {
   visionModel?: string;
   analysisStartedAt?: string;
   analysisEndedAt?: string;
+  studentName?: string;
 }
 
 interface DayGroup {
@@ -64,6 +67,7 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
 @Component({
   selector: 'app-admin-export',
   standalone: true,
+  imports: [FormsModule],
   template: `
     <div class="admin-wrap">
       <div class="admin-container">
@@ -76,6 +80,17 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
             <button class="nav-btn" (click)="nextWeek()">▶</button>
             <button class="today-btn" (click)="goToday()">สัปดาห์นี้</button>
           </div>
+          @if (studentNames().length > 0) {
+            <div class="student-filter">
+              <span class="filter-label">👦 ดูของ:</span>
+              <select class="filter-select" [(ngModel)]="studentFilterValue">
+                <option value="">ทุกคน</option>
+                @for (name of studentNames(); track name) {
+                  <option [value]="name">{{ name }}</option>
+                }
+              </select>
+            </div>
+          }
         </header>
 
         @if (loading()) {
@@ -138,6 +153,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                               @if (r.visionModel) { ⚡ {{ r.visionModel }} · {{ hrDuration(r) }}s · }{{ formatTime(r.createdAt) }}
                             </span>
                           </div>
+                          @if (r.studentName) {
+                            <span class="sname-chip">👦 {{ r.studentName }}</span>
+                          }
                           <span class="taught-chip" [class.taught]="r.taught">
                             {{ r.taught ? '✅ สอนแล้ว' : '⏳ ยังไม่สอน' }}
                           </span>
@@ -160,6 +178,9 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                               @if (s.visionModel) { ⚡ {{ s.visionModel }} · {{ hwDuration(s) }}s · }{{ formatTime(s.createdAt) }}
                             </span>
                           </div>
+                          @if (s.studentName) {
+                            <span class="sname-chip">👦 {{ s.studentName }}</span>
+                          }
                           <span class="status-chip" [class.done]="s.status === 'done'">
                             {{ s.status === 'done' ? '✅ เสร็จ' : '🔄 กำลังทำ' }}
                           </span>
@@ -357,6 +378,39 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       background: #dcfce7;
       color: #166534;
     }
+    .sname-chip {
+      font-size: 11px;
+      background: #ede9fe;
+      color: #5b21b6;
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+    .student-filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      white-space: nowrap;
+    }
+    .filter-select {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      outline: none;
+    }
+    .filter-select option { background: #1e3a8a; color: white; }
 
     .dl-btn {
       background: white;
@@ -412,7 +466,28 @@ export class AdminExportComponent implements OnInit {
   weekEnd   = signal('');
   loading   = signal(false);
   error     = signal('');
-  dayGroups = signal<DayGroup[]>([]);
+
+  private rawLr = signal<LearningRecord[]>([]);
+  private rawHr = signal<HomeworkRead[]>([]);
+  private rawHw = signal<HomeworkSession[]>([]);
+  private studentFilter = signal('');
+
+  get studentFilterValue(): string { return this.studentFilter(); }
+  set studentFilterValue(v: string) { this.studentFilter.set(v); }
+
+  studentNames = computed(() => {
+    const names = new Set<string>();
+    for (const r of this.rawHr()) if (r.studentName) names.add(r.studentName);
+    for (const s of this.rawHw()) if (s.studentName) names.add(s.studentName);
+    return [...names].sort();
+  });
+
+  dayGroups = computed(() => {
+    const filter = this.studentFilter();
+    const hr = filter ? this.rawHr().filter(r => r.studentName === filter) : this.rawHr();
+    const hw = filter ? this.rawHw().filter(s => s.studentName === filter) : this.rawHw();
+    return this.groupByDate(this.rawLr(), hr, hw);
+  });
 
   weekLabel = computed(() => {
     const s = this.weekStart();
@@ -433,13 +508,16 @@ export class AdminExportComponent implements OnInit {
   async load() {
     this.loading.set(true);
     this.error.set('');
+    this.studentFilter.set('');
     try {
       const data = await firstValueFrom(
         this.http.get<ApiResponse>(`/api/admin/sessions?weekOf=${this.weekOf()}`)
       );
       this.weekStart.set(data.weekStart);
       this.weekEnd.set(data.weekEnd);
-      this.dayGroups.set(this.groupByDate(data.learningRecords, data.homeworkReads ?? [], data.homeworkSessions));
+      this.rawLr.set(data.learningRecords);
+      this.rawHr.set(data.homeworkReads ?? []);
+      this.rawHw.set(data.homeworkSessions);
     } catch {
       this.error.set('โหลดข้อมูลไม่ได้ กรุณาลองใหม่');
     } finally {
@@ -508,41 +586,28 @@ export class AdminExportComponent implements OnInit {
   async deleteLearning(id: string): Promise<void> {
     if (!confirm('ลบรายการนี้?')) return;
     await firstValueFrom(this.http.delete(`/api/admin/learning-record/${id}`));
-    this.dayGroups.update(days => days
-      .map(d => ({ ...d, learningRecords: d.learningRecords.filter(r => r.id !== id) }))
-      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
-    );
+    this.rawLr.update(items => items.filter(r => r.id !== id));
   }
 
   async deleteHomeworkRead(id: number): Promise<void> {
     if (!confirm('ลบรายการนี้?')) return;
     await firstValueFrom(this.http.delete(`/api/admin/homework-read/${id}`));
-    this.dayGroups.update(days => days
-      .map(d => ({ ...d, homeworkReads: d.homeworkReads.filter(r => r.id !== id) }))
-      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
-    );
+    this.rawHr.update(items => items.filter(r => r.id !== id));
   }
 
   async deleteHomeworkSession(id: string): Promise<void> {
     if (!confirm('ลบรายการนี้?')) return;
     await firstValueFrom(this.http.delete(`/api/admin/homework-session/${id}`));
-    this.dayGroups.update(days => days
-      .map(d => ({ ...d, homeworkSessions: d.homeworkSessions.filter(s => s.id !== id) }))
-      .filter(d => d.learningRecords.length + d.homeworkReads.length + d.homeworkSessions.length > 0)
-    );
+    this.rawHw.update(items => items.filter(s => s.id !== id));
   }
 
   private markDownloaded(type: 'learning' | 'homework', id: string): void {
     const now = new Date().toISOString();
-    this.dayGroups.update(days => days.map(day => ({
-      ...day,
-      learningRecords: type === 'learning'
-        ? day.learningRecords.map(r => r.id === id ? { ...r, downloadedAt: now } : r)
-        : day.learningRecords,
-      homeworkSessions: type === 'homework'
-        ? day.homeworkSessions.map(s => s.id === id ? { ...s, downloadedAt: now } : s)
-        : day.homeworkSessions,
-    })));
+    if (type === 'learning') {
+      this.rawLr.update(items => items.map(r => r.id === id ? { ...r, downloadedAt: now } : r));
+    } else {
+      this.rawHw.update(items => items.map(s => s.id === id ? { ...s, downloadedAt: now } : s));
+    }
   }
 
   private groupByDate(lrs: LearningRecord[], hrs: HomeworkRead[], hws: HomeworkSession[]): DayGroup[] {

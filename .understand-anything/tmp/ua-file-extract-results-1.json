@@ -1,0 +1,2503 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 11,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/app/device/device.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 14,
+      "classes": [
+        {
+          "name": "DeviceService",
+          "startLine": 6,
+          "endLine": 18,
+          "methods": [
+            "loadOrCreateDeviceId"
+          ],
+          "properties": [
+            "_deviceId",
+            "deviceId"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DeviceService",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "loadOrCreateDeviceId",
+          "callee": "localStorage.getItem",
+          "lineNumber": 12
+        },
+        {
+          "caller": "loadOrCreateDeviceId",
+          "callee": "crypto.randomUUID",
+          "lineNumber": 14
+        },
+        {
+          "caller": "loadOrCreateDeviceId",
+          "callee": "localStorage.setItem",
+          "lineNumber": 15
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/free-talk/free-talk.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 337,
+      "nonEmptyLines": 301,
+      "classes": [
+        {
+          "name": "FreeTalkComponent",
+          "startLine": 290,
+          "endLine": 337,
+          "methods": [
+            "constructor",
+            "ngOnInit",
+            "ngAfterViewChecked",
+            "send",
+            "returnToLesson",
+            "scrollToBottom"
+          ],
+          "properties": [
+            "msgEl",
+            "inputEl",
+            "duringLesson",
+            "ft",
+            "tutor",
+            "inputText"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FreeTalkComponent",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 301
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.ft.messages",
+          "lineNumber": 302
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 303
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.ft.loading",
+          "lineNumber": 304
+        },
+        {
+          "caller": "constructor",
+          "callee": "setTimeout",
+          "lineNumber": 305
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.inputEl?.nativeElement.focus",
+          "lineNumber": 305
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.ft.start",
+          "lineNumber": 311
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.tutor.trackFreeTalkDuringLesson",
+          "lineNumber": 313
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "setTimeout",
+          "lineNumber": 315
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.inputEl?.nativeElement.focus",
+          "lineNumber": 315
+        },
+        {
+          "caller": "ngAfterViewChecked",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 319
+        },
+        {
+          "caller": "send",
+          "callee": "this.inputText.trim",
+          "lineNumber": 323
+        },
+        {
+          "caller": "send",
+          "callee": "this.ft.send",
+          "lineNumber": 326
+        },
+        {
+          "caller": "returnToLesson",
+          "callee": "this.tutor.exitFreeTalk",
+          "lineNumber": 330
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/free-talk/free-talk.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 67,
+      "classes": [
+        {
+          "name": "FreeTalkService",
+          "startLine": 25,
+          "endLine": 82,
+          "methods": [
+            "start",
+            "send"
+          ],
+          "properties": [
+            "http",
+            "tutor",
+            "profile",
+            "_messages",
+            "_loading",
+            "_suggestLesson",
+            "messages",
+            "loading",
+            "suggestLesson"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FreeTalkService",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "start",
+          "callee": "this._messages.set",
+          "lineNumber": 39
+        },
+        {
+          "caller": "start",
+          "callee": "this._suggestLesson.set",
+          "lineNumber": 40
+        },
+        {
+          "caller": "start",
+          "callee": "this.profile.displayName",
+          "lineNumber": 42
+        },
+        {
+          "caller": "start",
+          "callee": "this._messages.set",
+          "lineNumber": 49
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading",
+          "lineNumber": 53
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 53
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 55
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 56
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading.set",
+          "lineNumber": 57
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages().slice",
+          "lineNumber": 61
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages",
+          "lineNumber": 61
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 62
+        },
+        {
+          "caller": "send",
+          "callee": "this.profile.displayName",
+          "lineNumber": 63
+        },
+        {
+          "caller": "send",
+          "callee": "firstValueFrom",
+          "lineNumber": 67
+        },
+        {
+          "caller": "send",
+          "callee": "this.http.post",
+          "lineNumber": 68
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 71
+        },
+        {
+          "caller": "send",
+          "callee": "this._suggestLesson.set",
+          "lineNumber": 72
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 74
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading.set",
+          "lineNumber": 79
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/learning-feedback/learning-feedback.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 106,
+      "nonEmptyLines": 96,
+      "classes": [
+        {
+          "name": "LearningFeedbackComponent",
+          "startLine": 102,
+          "endLine": 106,
+          "methods": [
+            "toggle"
+          ],
+          "properties": [
+            "tutor",
+            "collapsed"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LearningFeedbackComponent",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed.update",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/learning-reflection/learning-reflection.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 72,
+      "classes": [
+        {
+          "name": "LearningReflectionComponent",
+          "startLine": 78,
+          "endLine": 80,
+          "methods": [],
+          "properties": [
+            "tutor"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LearningReflectionComponent",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/parent-feedback/parent-feedback.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 266,
+      "nonEmptyLines": 241,
+      "classes": [
+        {
+          "name": "ParentFeedbackComponent",
+          "startLine": 215,
+          "endLine": 266,
+          "methods": [
+            "selectUnderstanding",
+            "toggleValuable",
+            "onFeedbackStarted",
+            "submit"
+          ],
+          "properties": [
+            "tutor",
+            "submitted",
+            "feedbackStartedLogged",
+            "form",
+            "understandingOptions",
+            "valuableOptions"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ParentFeedbackComponent",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "selectUnderstanding",
+          "callee": "this.onFeedbackStarted",
+          "lineNumber": 242
+        },
+        {
+          "caller": "toggleValuable",
+          "callee": "this.onFeedbackStarted",
+          "lineNumber": 247
+        },
+        {
+          "caller": "onFeedbackStarted",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 253
+        },
+        {
+          "caller": "submit",
+          "callee": "this.submitted.set",
+          "lineNumber": 259
+        },
+        {
+          "caller": "submit",
+          "callee": "this.tutor.submitParentFeedback",
+          "lineNumber": 260
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/parent-summary/parent-summary.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 114,
+      "nonEmptyLines": 104,
+      "classes": [
+        {
+          "name": "ParentSummaryComponent",
+          "startLine": 101,
+          "endLine": 114,
+          "methods": [
+            "toggle"
+          ],
+          "properties": [
+            "tutorService",
+            "collapsed",
+            "openEventLogged"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ParentSummaryComponent",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed",
+          "lineNumber": 107
+        },
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed.update",
+          "lineNumber": 108
+        },
+        {
+          "caller": "toggle",
+          "callee": "this.tutorService.logEvent",
+          "lineNumber": 111
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/project-brain/project-brain-tutor.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1116,
+      "nonEmptyLines": 1001,
+      "classes": [
+        {
+          "name": "ProjectBrainTutorComponent",
+          "startLine": 993,
+          "endLine": 1116,
+          "methods": [
+            "phaseLabel",
+            "currentTopicLabel",
+            "constructor",
+            "ngOnInit",
+            "ngAfterViewChecked",
+            "_loadTopics",
+            "_loadPortalStatus",
+            "selectTopic",
+            "backToTopics",
+            "send",
+            "sendReadiness",
+            "requestSummary",
+            "exit",
+            "scrollToBottom"
+          ],
+          "properties": [
+            "msgEl",
+            "inputEl",
+            "pb",
+            "tutor",
+            "http",
+            "inputText",
+            "view",
+            "portalTab",
+            "topics",
+            "topicsLoading",
+            "selectedTopic",
+            "portalStatus",
+            "portalStatusError",
+            "showReadinessButtons"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectBrainTutorComponent",
+          "line": 38,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "phaseLabel",
+          "callee": "this.pb.phase",
+          "lineNumber": 1020
+        },
+        {
+          "caller": "currentTopicLabel",
+          "callee": "this.selectedTopic",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "currentTopicLabel",
+          "callee": "this.selectedTopic",
+          "lineNumber": 1025
+        },
+        {
+          "caller": "currentTopicLabel",
+          "callee": "this.selectedTopic",
+          "lineNumber": 1025
+        },
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 1030
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.pb.messages",
+          "lineNumber": 1031
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 1032
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.pb.loading",
+          "lineNumber": 1033
+        },
+        {
+          "caller": "constructor",
+          "callee": "setTimeout",
+          "lineNumber": 1034
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.inputEl?.nativeElement.focus",
+          "lineNumber": 1034
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this._loadTopics",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this._loadPortalStatus",
+          "lineNumber": 1041
+        },
+        {
+          "caller": "ngAfterViewChecked",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 1045
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "this.topicsLoading.set",
+          "lineNumber": 1049
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "firstValueFrom",
+          "lineNumber": 1051
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "this.http.get",
+          "lineNumber": 1052
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "this.topics.set",
+          "lineNumber": 1054
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "this.topics.set",
+          "lineNumber": 1057
+        },
+        {
+          "caller": "_loadTopics",
+          "callee": "this.topicsLoading.set",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "_loadPortalStatus",
+          "callee": "this.http.get<PortalStatus>('/api/portal/status').subscribe",
+          "lineNumber": 1070
+        },
+        {
+          "caller": "_loadPortalStatus",
+          "callee": "this.http.get",
+          "lineNumber": 1070
+        },
+        {
+          "caller": "_loadPortalStatus",
+          "callee": "this.portalStatus.set",
+          "lineNumber": 1071
+        },
+        {
+          "caller": "_loadPortalStatus",
+          "callee": "this.portalStatusError.set",
+          "lineNumber": 1072
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.topics().find",
+          "lineNumber": 1077
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.topics",
+          "lineNumber": 1077
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.selectedTopic.set",
+          "lineNumber": 1078
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.view.set",
+          "lineNumber": 1079
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.pb.start",
+          "lineNumber": 1080
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "setTimeout",
+          "lineNumber": 1081
+        },
+        {
+          "caller": "selectTopic",
+          "callee": "this.inputEl?.nativeElement.focus",
+          "lineNumber": 1081
+        },
+        {
+          "caller": "backToTopics",
+          "callee": "this.pb.saveEvidence",
+          "lineNumber": 1085
+        },
+        {
+          "caller": "backToTopics",
+          "callee": "this.selectedTopic.set",
+          "lineNumber": 1086
+        },
+        {
+          "caller": "backToTopics",
+          "callee": "this.view.set",
+          "lineNumber": 1087
+        },
+        {
+          "caller": "backToTopics",
+          "callee": "this.portalTab.set",
+          "lineNumber": 1088
+        },
+        {
+          "caller": "send",
+          "callee": "this.inputText.trim",
+          "lineNumber": 1092
+        },
+        {
+          "caller": "send",
+          "callee": "this.pb.send",
+          "lineNumber": 1095
+        },
+        {
+          "caller": "sendReadiness",
+          "callee": "this.pb.send",
+          "lineNumber": 1099
+        },
+        {
+          "caller": "requestSummary",
+          "callee": "this.pb.saveEvidence",
+          "lineNumber": 1103
+        },
+        {
+          "caller": "requestSummary",
+          "callee": "this.pb.requestSummary",
+          "lineNumber": 1104
+        },
+        {
+          "caller": "exit",
+          "callee": "this.pb.saveEvidence",
+          "lineNumber": 1108
+        },
+        {
+          "caller": "exit",
+          "callee": "this.tutor.exitProjectBrainMode",
+          "lineNumber": 1109
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/project-brain/project-brain-tutor.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 184,
+      "classes": [
+        {
+          "name": "ProjectBrainTutorService",
+          "startLine": 48,
+          "endLine": 218,
+          "methods": [
+            "start",
+            "_loadOpening",
+            "_formatPriorSummary",
+            "send",
+            "requestSummary",
+            "saveEvidence"
+          ],
+          "properties": [
+            "http",
+            "tutor",
+            "profile",
+            "_messages",
+            "_loading",
+            "_phase",
+            "_suggestSummary",
+            "_evidence",
+            "_pbSessionId",
+            "_topicId",
+            "messages",
+            "loading",
+            "phase",
+            "suggestSummary",
+            "evidence",
+            "pbSessionId",
+            "topicId"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectBrainTutorService",
+          "line": 47,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "start",
+          "callee": "this._messages.set",
+          "lineNumber": 70
+        },
+        {
+          "caller": "start",
+          "callee": "this._phase.set",
+          "lineNumber": 71
+        },
+        {
+          "caller": "start",
+          "callee": "this._suggestSummary.set",
+          "lineNumber": 72
+        },
+        {
+          "caller": "start",
+          "callee": "this._evidence.set",
+          "lineNumber": 73
+        },
+        {
+          "caller": "start",
+          "callee": "this._pbSessionId.set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "start",
+          "callee": "crypto.randomUUID",
+          "lineNumber": 74
+        },
+        {
+          "caller": "start",
+          "callee": "this._topicId.set",
+          "lineNumber": 75
+        },
+        {
+          "caller": "start",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 77
+        },
+        {
+          "caller": "start",
+          "callee": "this._loadOpening",
+          "lineNumber": 78
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._loading.set",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this.profile.studentId",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "firstValueFrom",
+          "lineNumber": 89
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this.http.get",
+          "lineNumber": 90
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "encodeURIComponent",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._formatPriorSummary",
+          "lineNumber": 94
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "firstValueFrom",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this.http.post",
+          "lineNumber": 105
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this.profile.displayName",
+          "lineNumber": 109
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._topicId",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._messages.set",
+          "lineNumber": 115
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._phase.set",
+          "lineNumber": 116
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._messages.set",
+          "lineNumber": 118
+        },
+        {
+          "caller": "_loadOpening",
+          "callee": "this._loading.set",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "JSON.parse",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "lines.push",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "summary.strongEvidence.slice(0, 3).forEach",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "summary.strongEvidence.slice",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "lines.push",
+          "lineNumber": 135
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "lines.push",
+          "lineNumber": 138
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "summary.openQuestions.slice(0, 2).forEach",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "summary.openQuestions.slice",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "lines.push",
+          "lineNumber": 139
+        },
+        {
+          "caller": "_formatPriorSummary",
+          "callee": "lines.join",
+          "lineNumber": 143
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading",
+          "lineNumber": 147
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 147
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 149
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 150
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading.set",
+          "lineNumber": 151
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 153
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages()\n        .slice(0, -1)\n        .map",
+          "lineNumber": 156
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages()\n        .slice",
+          "lineNumber": 156
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages",
+          "lineNumber": 156
+        },
+        {
+          "caller": "send",
+          "callee": "text.trim",
+          "lineNumber": 162
+        },
+        {
+          "caller": "send",
+          "callee": "this._phase",
+          "lineNumber": 163
+        },
+        {
+          "caller": "send",
+          "callee": "this.profile.displayName",
+          "lineNumber": 164
+        },
+        {
+          "caller": "send",
+          "callee": "this._topicId",
+          "lineNumber": 165
+        },
+        {
+          "caller": "send",
+          "callee": "firstValueFrom",
+          "lineNumber": 168
+        },
+        {
+          "caller": "send",
+          "callee": "this.http.post",
+          "lineNumber": 169
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 172
+        },
+        {
+          "caller": "send",
+          "callee": "this._evidence.update",
+          "lineNumber": 175
+        },
+        {
+          "caller": "send",
+          "callee": "this._phase",
+          "lineNumber": 179
+        },
+        {
+          "caller": "send",
+          "callee": "this._phase.set",
+          "lineNumber": 180
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 181
+        },
+        {
+          "caller": "send",
+          "callee": "this._suggestSummary.set",
+          "lineNumber": 184
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 186
+        },
+        {
+          "caller": "send",
+          "callee": "this._messages.update",
+          "lineNumber": 189
+        },
+        {
+          "caller": "send",
+          "callee": "this._loading.set",
+          "lineNumber": 194
+        },
+        {
+          "caller": "requestSummary",
+          "callee": "this.send",
+          "lineNumber": 199
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this._evidence",
+          "lineNumber": 203
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this._pbSessionId",
+          "lineNumber": 204
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this.profile.studentId",
+          "lineNumber": 208
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this._topicId",
+          "lineNumber": 209
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this.http.post(`/api/project-brain/sessions/${sessionId}/evidence`, body)\n      .subscribe",
+          "lineNumber": 213
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this.http.post",
+          "lineNumber": 213
+        },
+        {
+          "caller": "saveEvidence",
+          "callee": "this.tutor.addProjectBrainEvent",
+          "lineNumber": 216
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/student-note/student-note.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 103,
+      "nonEmptyLines": 94,
+      "classes": [
+        {
+          "name": "StudentNoteComponent",
+          "startLine": 99,
+          "endLine": 103,
+          "methods": [
+            "toggle"
+          ],
+          "properties": [
+            "tutorService",
+            "collapsed"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "StudentNoteComponent",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed.update",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/tutor.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 644,
+      "nonEmptyLines": 580,
+      "classes": [
+        {
+          "name": "TutorService",
+          "startLine": 40,
+          "endLine": 644,
+          "methods": [
+            "selectScenario",
+            "sendMessage",
+            "requestAssist",
+            "submitReadiness",
+            "setInteractionMode",
+            "logEvent",
+            "submitTechniqueFeedback",
+            "autoSkipTechniqueFeedback",
+            "submitParentFeedback",
+            "submitReflection",
+            "applyResponse",
+            "init",
+            "enterFreeTalk",
+            "trackFreeTalkDuringLesson",
+            "enterProjectBrainMode",
+            "_cancelEmptySession",
+            "exitProjectBrainMode",
+            "enterHomeworkMode",
+            "exitHomeworkMode",
+            "enterLearningJournalMode",
+            "exitLearningJournalMode",
+            "enterDailyLogsMode",
+            "exitDailyLogsMode",
+            "resetToHome",
+            "addProjectBrainEvent",
+            "exitFreeTalk",
+            "isFollowUpQuestion",
+            "addEvent",
+            "addSessionMessage",
+            "createSession",
+            "resetInactivityTimer",
+            "registerAbandonListener",
+            "clearAbandonListener",
+            "completeSession"
+          ],
+          "properties": [
+            "http",
+            "studentProfile",
+            "device",
+            "_scenario",
+            "_messages",
+            "_studentNote",
+            "_parentSummary",
+            "_loading",
+            "_currentStep",
+            "_totalSteps",
+            "_finished",
+            "_realWorldUses",
+            "_reflection",
+            "_studentFeedback",
+            "_parentCoaching",
+            "_phase",
+            "_passiveGrill",
+            "_pendingQuestion",
+            "_wrongCount",
+            "_hintCount",
+            "_guidedCount",
+            "_exampleCount",
+            "_voiceMessageCount",
+            "_textMessageCount",
+            "_sessionId",
+            "_sessionStartedAt",
+            "_sessionEvents",
+            "_sessionMessages",
+            "_parentFeedbackSubmitted",
+            "_interactionMode",
+            "_reasonForChoice",
+            "_inFreeTalk",
+            "_inProjectBrainMode",
+            "_inHomeworkMode",
+            "_inLearningJournalMode",
+            "_inDailyLogsMode",
+            "_pendingTechniqueFeedback",
+            "_inactivityTimer",
+            "_abandonListener",
+            "INACTIVE_MS",
+            "scenario",
+            "messages",
+            "studentNote",
+            "parentSummary",
+            "loading",
+            "currentStep",
+            "totalSteps",
+            "finished",
+            "realWorldUses",
+            "reflection",
+            "studentFeedback",
+            "parentCoaching",
+            "phase",
+            "scenarios",
+            "sessionId",
+            "parentFeedbackSubmitted",
+            "interactionMode",
+            "reasonForChoice",
+            "inFreeTalk",
+            "inProjectBrainMode",
+            "inHomeworkMode",
+            "inLearningJournalMode",
+            "inDailyLogsMode",
+            "pendingTechniqueFeedback"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SCENARIOS",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "TutorService",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "selectScenario",
+          "callee": "SCENARIOS.find",
+          "lineNumber": 111
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._scenario.set",
+          "lineNumber": 114
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._messages.set",
+          "lineNumber": 115
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._studentNote.set",
+          "lineNumber": 116
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._parentSummary.set",
+          "lineNumber": 117
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._finished.set",
+          "lineNumber": 118
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._realWorldUses.set",
+          "lineNumber": 119
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._reflection.set",
+          "lineNumber": 120
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._studentFeedback.set",
+          "lineNumber": 121
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._parentCoaching.set",
+          "lineNumber": 122
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._pendingTechniqueFeedback.set",
+          "lineNumber": 123
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._phase.set",
+          "lineNumber": 124
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 125
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._pendingQuestion.set",
+          "lineNumber": 126
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._loading.set",
+          "lineNumber": 133
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "crypto.randomUUID",
+          "lineNumber": 136
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._sessionId.set",
+          "lineNumber": 138
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._sessionStartedAt.set",
+          "lineNumber": 139
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._parentFeedbackSubmitted.set",
+          "lineNumber": 142
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._interactionMode.set",
+          "lineNumber": 143
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._reasonForChoice.set",
+          "lineNumber": 144
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.addEvent",
+          "lineNumber": 145
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.createSession(newSessionId, meta.title, now).catch",
+          "lineNumber": 148
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.createSession",
+          "lineNumber": 148
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.resetInactivityTimer",
+          "lineNumber": 151
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.registerAbandonListener",
+          "lineNumber": 152
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 155
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "encodeURIComponent",
+          "lineNumber": 156
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "firstValueFrom",
+          "lineNumber": 157
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.http.get",
+          "lineNumber": 158
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._currentStep.set",
+          "lineNumber": 160
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._totalSteps.set",
+          "lineNumber": 161
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._realWorldUses.set",
+          "lineNumber": 162
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.addEvent",
+          "lineNumber": 163
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 165
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._pendingQuestion.set",
+          "lineNumber": 166
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._messages.set",
+          "lineNumber": 168
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 169
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._phase.set",
+          "lineNumber": 170
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._phase.set",
+          "lineNumber": 172
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 173
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._messages.set",
+          "lineNumber": 175
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 176
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._messages.set",
+          "lineNumber": 183
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 184
+        },
+        {
+          "caller": "selectScenario",
+          "callee": "this._loading.set",
+          "lineNumber": 186
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._finished",
+          "lineNumber": 191
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._interactionMode",
+          "lineNumber": 193
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addEvent",
+          "lineNumber": 196
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._messages.update",
+          "lineNumber": 201
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 202
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addEvent",
+          "lineNumber": 203
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.autoSkipTechniqueFeedback",
+          "lineNumber": 204
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.isFollowUpQuestion",
+          "lineNumber": 205
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addEvent",
+          "lineNumber": 206
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "text.trim",
+          "lineNumber": 206
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.resetInactivityTimer",
+          "lineNumber": 208
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._loading.set",
+          "lineNumber": 209
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._scenario",
+          "lineNumber": 212
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._currentStep",
+          "lineNumber": 213
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 218
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "firstValueFrom",
+          "lineNumber": 222
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.http.post",
+          "lineNumber": 223
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addEvent",
+          "lineNumber": 225
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.applyResponse",
+          "lineNumber": 226
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._messages.update",
+          "lineNumber": 229
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 230
+        },
+        {
+          "caller": "sendMessage",
+          "callee": "this._loading.set",
+          "lineNumber": 232
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._finished",
+          "lineNumber": 237
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._loading",
+          "lineNumber": 237
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._loading.set",
+          "lineNumber": 238
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.addEvent",
+          "lineNumber": 245
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.resetInactivityTimer",
+          "lineNumber": 246
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 249
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "encodeURIComponent",
+          "lineNumber": 250
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "firstValueFrom",
+          "lineNumber": 251
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.http.get",
+          "lineNumber": 252
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._scenario",
+          "lineNumber": 253
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._currentStep",
+          "lineNumber": 253
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._messages.update",
+          "lineNumber": 262
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 264
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._messages.update",
+          "lineNumber": 270
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 271
+        },
+        {
+          "caller": "requestAssist",
+          "callee": "this._loading.set",
+          "lineNumber": 273
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this.addEvent",
+          "lineNumber": 278
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._messages.update",
+          "lineNumber": 281
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 282
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._passiveGrill",
+          "lineNumber": 283
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._messages.update",
+          "lineNumber": 289
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 290
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._messages.update",
+          "lineNumber": 294
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 295
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._pendingQuestion",
+          "lineNumber": 296
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._phase.set",
+          "lineNumber": 298
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 299
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._messages.update",
+          "lineNumber": 301
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 302
+        },
+        {
+          "caller": "submitReadiness",
+          "callee": "this._pendingQuestion.set",
+          "lineNumber": 303
+        },
+        {
+          "caller": "setInteractionMode",
+          "callee": "this._interactionMode.set",
+          "lineNumber": 309
+        },
+        {
+          "caller": "setInteractionMode",
+          "callee": "this._reasonForChoice.set",
+          "lineNumber": 310
+        },
+        {
+          "caller": "setInteractionMode",
+          "callee": "this.addEvent",
+          "lineNumber": 311
+        },
+        {
+          "caller": "logEvent",
+          "callee": "this.addEvent",
+          "lineNumber": 315
+        },
+        {
+          "caller": "submitTechniqueFeedback",
+          "callee": "this._pendingTechniqueFeedback",
+          "lineNumber": 319
+        },
+        {
+          "caller": "submitTechniqueFeedback",
+          "callee": "this.addEvent",
+          "lineNumber": 321
+        },
+        {
+          "caller": "submitTechniqueFeedback",
+          "callee": "this._pendingTechniqueFeedback.set",
+          "lineNumber": 322
+        },
+        {
+          "caller": "autoSkipTechniqueFeedback",
+          "callee": "this._pendingTechniqueFeedback",
+          "lineNumber": 326
+        },
+        {
+          "caller": "autoSkipTechniqueFeedback",
+          "callee": "this.addEvent",
+          "lineNumber": 328
+        },
+        {
+          "caller": "autoSkipTechniqueFeedback",
+          "callee": "this._pendingTechniqueFeedback.set",
+          "lineNumber": 329
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "this._parentFeedbackSubmitted",
+          "lineNumber": 333
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "this.addEvent",
+          "lineNumber": 334
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "this._parentFeedbackSubmitted.set",
+          "lineNumber": 335
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "this._sessionId",
+          "lineNumber": 337
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "firstValueFrom",
+          "lineNumber": 341
+        },
+        {
+          "caller": "submitParentFeedback",
+          "callee": "this.http.post",
+          "lineNumber": 342
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this._sessionId",
+          "lineNumber": 350
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "firstValueFrom",
+          "lineNumber": 353
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.http.post",
+          "lineNumber": 354
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 365
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 366
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 373
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 374
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 377
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 378
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addEvent",
+          "lineNumber": 386
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._pendingTechniqueFeedback.set",
+          "lineNumber": 387
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._currentStep",
+          "lineNumber": 387
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addEvent",
+          "lineNumber": 391
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._currentStep.set",
+          "lineNumber": 392
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addEvent",
+          "lineNumber": 393
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 395
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._pendingQuestion.set",
+          "lineNumber": 396
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 398
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 399
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._phase.set",
+          "lineNumber": 400
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 403
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 404
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._phase.set",
+          "lineNumber": 405
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._passiveGrill.set",
+          "lineNumber": 406
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 408
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 409
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._messages.update",
+          "lineNumber": 413
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addSessionMessage",
+          "lineNumber": 414
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._studentNote.set",
+          "lineNumber": 417
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._parentSummary.set",
+          "lineNumber": 418
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._reflection.set",
+          "lineNumber": 419
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._studentFeedback.set",
+          "lineNumber": 420
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._parentCoaching.set",
+          "lineNumber": 421
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addEvent",
+          "lineNumber": 424
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this._finished.set",
+          "lineNumber": 425
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.addEvent",
+          "lineNumber": 426
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.clearAbandonListener",
+          "lineNumber": 427
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.completeSession().catch",
+          "lineNumber": 428
+        },
+        {
+          "caller": "applyResponse",
+          "callee": "this.completeSession",
+          "lineNumber": 428
+        },
+        {
+          "caller": "init",
+          "callee": "this._inFreeTalk.set",
+          "lineNumber": 433
+        },
+        {
+          "caller": "init",
+          "callee": "this.selectScenario",
+          "lineNumber": 434
+        },
+        {
+          "caller": "enterFreeTalk",
+          "callee": "this._inFreeTalk.set",
+          "lineNumber": 438
+        },
+        {
+          "caller": "enterFreeTalk",
+          "callee": "this.addEvent",
+          "lineNumber": 439
+        },
+        {
+          "caller": "trackFreeTalkDuringLesson",
+          "callee": "this.addEvent",
+          "lineNumber": 443
+        },
+        {
+          "caller": "enterProjectBrainMode",
+          "callee": "this._cancelEmptySession",
+          "lineNumber": 447
+        },
+        {
+          "caller": "enterProjectBrainMode",
+          "callee": "this._inProjectBrainMode.set",
+          "lineNumber": 448
+        },
+        {
+          "caller": "enterProjectBrainMode",
+          "callee": "this.addEvent",
+          "lineNumber": 449
+        },
+        {
+          "caller": "_cancelEmptySession",
+          "callee": "this._sessionId",
+          "lineNumber": 453
+        },
+        {
+          "caller": "_cancelEmptySession",
+          "callee": "this._sessionMessages.some",
+          "lineNumber": 455
+        },
+        {
+          "caller": "_cancelEmptySession",
+          "callee": "this.http.delete(`${SESSION_API}/${sessionId}`).subscribe",
+          "lineNumber": 457
+        },
+        {
+          "caller": "_cancelEmptySession",
+          "callee": "this.http.delete",
+          "lineNumber": 457
+        },
+        {
+          "caller": "_cancelEmptySession",
+          "callee": "this._sessionId.set",
+          "lineNumber": 458
+        },
+        {
+          "caller": "exitProjectBrainMode",
+          "callee": "this._inProjectBrainMode.set",
+          "lineNumber": 464
+        },
+        {
+          "caller": "exitProjectBrainMode",
+          "callee": "this.addEvent",
+          "lineNumber": 465
+        },
+        {
+          "caller": "enterHomeworkMode",
+          "callee": "this._inHomeworkMode.set",
+          "lineNumber": 469
+        },
+        {
+          "caller": "enterHomeworkMode",
+          "callee": "this.addEvent",
+          "lineNumber": 470
+        },
+        {
+          "caller": "exitHomeworkMode",
+          "callee": "this._inHomeworkMode.set",
+          "lineNumber": 474
+        },
+        {
+          "caller": "exitHomeworkMode",
+          "callee": "this.addEvent",
+          "lineNumber": 475
+        },
+        {
+          "caller": "enterLearningJournalMode",
+          "callee": "this._inLearningJournalMode.set",
+          "lineNumber": 479
+        },
+        {
+          "caller": "enterLearningJournalMode",
+          "callee": "this.addEvent",
+          "lineNumber": 480
+        },
+        {
+          "caller": "exitLearningJournalMode",
+          "callee": "this._inLearningJournalMode.set",
+          "lineNumber": 484
+        },
+        {
+          "caller": "exitLearningJournalMode",
+          "callee": "this.addEvent",
+          "lineNumber": 485
+        },
+        {
+          "caller": "enterDailyLogsMode",
+          "callee": "this._inDailyLogsMode.set",
+          "lineNumber": 489
+        },
+        {
+          "caller": "exitDailyLogsMode",
+          "callee": "this._inDailyLogsMode.set",
+          "lineNumber": 493
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this._inHomeworkMode.set",
+          "lineNumber": 497
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this._inLearningJournalMode.set",
+          "lineNumber": 498
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this._inDailyLogsMode.set",
+          "lineNumber": 499
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this._inFreeTalk.set",
+          "lineNumber": 500
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this._interactionMode.set",
+          "lineNumber": 501
+        },
+        {
+          "caller": "resetToHome",
+          "callee": "this.addEvent",
+          "lineNumber": 502
+        },
+        {
+          "caller": "addProjectBrainEvent",
+          "callee": "this.addEvent",
+          "lineNumber": 506
+        },
+        {
+          "caller": "exitFreeTalk",
+          "callee": "this._messages",
+          "lineNumber": 510
+        },
+        {
+          "caller": "exitFreeTalk",
+          "callee": "this._inFreeTalk.set",
+          "lineNumber": 511
+        },
+        {
+          "caller": "exitFreeTalk",
+          "callee": "this.addEvent",
+          "lineNumber": 512
+        },
+        {
+          "caller": "exitFreeTalk",
+          "callee": "this.selectScenario",
+          "lineNumber": 514
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "text.trim",
+          "lineNumber": 519
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "t.endsWith",
+          "lineNumber": 520
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "t.endsWith",
+          "lineNumber": 520
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "patterns.some",
+          "lineNumber": 522
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "t.toLowerCase().includes",
+          "lineNumber": 522
+        },
+        {
+          "caller": "isFollowUpQuestion",
+          "callee": "t.toLowerCase",
+          "lineNumber": 522
+        },
+        {
+          "caller": "addEvent",
+          "callee": "this._sessionEvents.push",
+          "lineNumber": 526
+        },
+        {
+          "caller": "addEvent",
+          "callee": "new Date().toISOString",
+          "lineNumber": 526
+        },
+        {
+          "caller": "addSessionMessage",
+          "callee": "new Date().toISOString",
+          "lineNumber": 549
+        },
+        {
+          "caller": "addSessionMessage",
+          "callee": "this._sessionMessages.push",
+          "lineNumber": 551
+        },
+        {
+          "caller": "createSession",
+          "callee": "startedAt.toISOString",
+          "lineNumber": 559
+        },
+        {
+          "caller": "createSession",
+          "callee": "this.studentProfile.studentId",
+          "lineNumber": 560
+        },
+        {
+          "caller": "createSession",
+          "callee": "this.device.deviceId",
+          "lineNumber": 561
+        },
+        {
+          "caller": "createSession",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 562
+        },
+        {
+          "caller": "createSession",
+          "callee": "firstValueFrom",
+          "lineNumber": 564
+        },
+        {
+          "caller": "createSession",
+          "callee": "this.http.post",
+          "lineNumber": 564
+        },
+        {
+          "caller": "resetInactivityTimer",
+          "callee": "clearTimeout",
+          "lineNumber": 568
+        },
+        {
+          "caller": "resetInactivityTimer",
+          "callee": "this._finished",
+          "lineNumber": 569
+        },
+        {
+          "caller": "resetInactivityTimer",
+          "callee": "setTimeout",
+          "lineNumber": 570
+        },
+        {
+          "caller": "resetInactivityTimer",
+          "callee": "this.addEvent",
+          "lineNumber": 571
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this.clearAbandonListener",
+          "lineNumber": 576
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this._finished",
+          "lineNumber": 578
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this.addEvent",
+          "lineNumber": 579
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this._sessionId",
+          "lineNumber": 580
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this._sessionStartedAt",
+          "lineNumber": 582
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "Math.round",
+          "lineNumber": 585
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "now.getTime",
+          "lineNumber": 585
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "startedAt.getTime",
+          "lineNumber": 585
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "JSON.stringify",
+          "lineNumber": 587
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "now.toISOString",
+          "lineNumber": 588
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this._interactionMode",
+          "lineNumber": 600
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "this._reasonForChoice",
+          "lineNumber": 601
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "navigator.sendBeacon",
+          "lineNumber": 603
+        },
+        {
+          "caller": "registerAbandonListener",
+          "callee": "window.addEventListener",
+          "lineNumber": 605
+        },
+        {
+          "caller": "clearAbandonListener",
+          "callee": "window.removeEventListener",
+          "lineNumber": 610
+        },
+        {
+          "caller": "completeSession",
+          "callee": "this._sessionId",
+          "lineNumber": 616
+        },
+        {
+          "caller": "completeSession",
+          "callee": "this._sessionStartedAt",
+          "lineNumber": 617
+        },
+        {
+          "caller": "completeSession",
+          "callee": "Math.round",
+          "lineNumber": 621
+        },
+        {
+          "caller": "completeSession",
+          "callee": "now.getTime",
+          "lineNumber": 621
+        },
+        {
+          "caller": "completeSession",
+          "callee": "startedAt.getTime",
+          "lineNumber": 621
+        },
+        {
+          "caller": "completeSession",
+          "callee": "now.toISOString",
+          "lineNumber": 624
+        },
+        {
+          "caller": "completeSession",
+          "callee": "this._interactionMode",
+          "lineNumber": 636
+        },
+        {
+          "caller": "completeSession",
+          "callee": "this._reasonForChoice",
+          "lineNumber": 637
+        },
+        {
+          "caller": "completeSession",
+          "callee": "firstValueFrom",
+          "lineNumber": 640
+        },
+        {
+          "caller": "completeSession",
+          "callee": "this.http.post",
+          "lineNumber": 641
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

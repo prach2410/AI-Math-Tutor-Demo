@@ -1,0 +1,568 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/device/device.service.ts",
+      "type": "file",
+      "name": "device.service.ts",
+      "filePath": "src/app/device/device.service.ts",
+      "summary": "บริการสร้างและคงไว้ซึ่ง Device ID ใน localStorage สำหรับระบุตัวตนอุปกรณ์ผู้ใช้โดยไม่ต้องล็อกอิน ใช้ crypto.randomUUID เพื่อสร้าง ID ใหม่เมื่อไม่พบข้อมูลเดิม",
+      "tags": ["service", "utility", "singleton"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/app/device/device.service.ts:DeviceService",
+      "type": "class",
+      "name": "DeviceService",
+      "filePath": "src/app/device/device.service.ts",
+      "lineRange": [6, 18],
+      "summary": "Injectable service จัดการ Device ID แบบ persistent ใน localStorage เพื่อระบุตัวตนอุปกรณ์ระหว่าง session",
+      "tags": ["service", "singleton", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/free-talk/free-talk.component.ts",
+      "type": "file",
+      "name": "free-talk.component.ts",
+      "filePath": "src/app/free-talk/free-talk.component.ts",
+      "summary": "คอมโพเนนต์ UI สำหรับโหมด free-talk ให้นักเรียนสนทนากับ AI อย่างอิสระ รองรับทั้งโหมดอิสระและโหมดระหว่างบทเรียนพร้อม auto-scroll และ focus management",
+      "tags": ["component", "chat", "ui", "event-handler"],
+      "complexity": "complex",
+      "languageNotes": "ใช้ Angular effect() ใน constructor เพื่อ react ต่อ signal changes และ ViewChild สำหรับ DOM manipulation"
+    },
+    {
+      "id": "class:src/app/free-talk/free-talk.component.ts:FreeTalkComponent",
+      "type": "class",
+      "name": "FreeTalkComponent",
+      "filePath": "src/app/free-talk/free-talk.component.ts",
+      "lineRange": [290, 337],
+      "summary": "Angular standalone component สำหรับหน้าจอสนทนา free-talk มี lifecycle hooks สำหรับ auto-scroll, focus, และเชื่อมต่อกับ FreeTalkService และ TutorService",
+      "tags": ["component", "chat", "ui", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/free-talk/free-talk.service.ts",
+      "type": "file",
+      "name": "free-talk.service.ts",
+      "filePath": "src/app/free-talk/free-talk.service.ts",
+      "summary": "บริการจัดการ state และโฟลว์การสนทนา free-talk โดยส่งข้อความไปยัง API และรักษาประวัติ chat ผ่าน Angular signals",
+      "tags": ["service", "api-handler", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "type": "class",
+      "name": "FreeTalkService",
+      "filePath": "src/app/free-talk/free-talk.service.ts",
+      "lineRange": [25, 82],
+      "summary": "Injectable service จัดการการส่ง/รับข้อความใน free-talk mode ผ่าน HTTP API เก็บ messages, loading, และ suggestLesson เป็น Angular signals",
+      "tags": ["service", "api-handler", "chat"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/learning-feedback/learning-feedback.component.ts",
+      "type": "file",
+      "name": "learning-feedback.component.ts",
+      "filePath": "src/app/learning-feedback/learning-feedback.component.ts",
+      "summary": "คอมโพเนนต์แสดงผลตอบรับการเรียนรู้แบบ collapsible ใช้ข้อมูลจาก TutorService เพื่อแสดงคำแนะนำและ feedback ที่ AI สร้างขึ้น",
+      "tags": ["component", "feedback", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/learning-feedback/learning-feedback.component.ts:LearningFeedbackComponent",
+      "type": "class",
+      "name": "LearningFeedbackComponent",
+      "filePath": "src/app/learning-feedback/learning-feedback.component.ts",
+      "lineRange": [102, 106],
+      "summary": "Angular standalone component แสดง feedback การเรียนรู้แบบพับ/ขยายได้ inject TutorService เพื่ออ่านข้อมูล feedback",
+      "tags": ["component", "feedback", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/learning-reflection/learning-reflection.component.ts",
+      "type": "file",
+      "name": "learning-reflection.component.ts",
+      "filePath": "src/app/learning-reflection/learning-reflection.component.ts",
+      "summary": "คอมโพเนนต์แสดง reflection ที่ AI สรุปไว้สำหรับนักเรียนหลังจบบทเรียน อ่านข้อมูลโดยตรงจาก TutorService signal",
+      "tags": ["component", "reflection", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/learning-reflection/learning-reflection.component.ts:LearningReflectionComponent",
+      "type": "class",
+      "name": "LearningReflectionComponent",
+      "filePath": "src/app/learning-reflection/learning-reflection.component.ts",
+      "lineRange": [78, 80],
+      "summary": "Angular standalone component แสดง reflection ของนักเรียนที่ AI สร้างขึ้น inject TutorService สำหรับอ่าน reflection signal",
+      "tags": ["component", "reflection", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "type": "file",
+      "name": "parent-feedback.component.ts",
+      "filePath": "src/app/parent-feedback/parent-feedback.component.ts",
+      "summary": "ฟอร์มสำหรับผู้ปกครองประเมินผลบทเรียนโดยเลือกระดับความเข้าใจและจุดที่มีคุณค่า พร้อมส่งข้อมูลกลับไปยัง backend ผ่าน TutorService",
+      "tags": ["component", "form", "feedback", "parent"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/parent-feedback/parent-feedback.component.ts:ParentFeedbackComponent",
+      "type": "class",
+      "name": "ParentFeedbackComponent",
+      "filePath": "src/app/parent-feedback/parent-feedback.component.ts",
+      "lineRange": [215, 266],
+      "summary": "Angular standalone component ฟอร์มผู้ปกครอง มีการ log event เมื่อเริ่มกรอก และส่ง parent feedback ผ่าน TutorService.submitParentFeedback",
+      "tags": ["component", "form", "feedback", "parent"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/parent-summary/parent-summary.component.ts",
+      "type": "file",
+      "name": "parent-summary.component.ts",
+      "filePath": "src/app/parent-summary/parent-summary.component.ts",
+      "summary": "คอมโพเนนต์แสดงสรุปบทเรียนสำหรับผู้ปกครองแบบ collapsible โดยบันทึก event การเปิดดูผ่าน TutorService.logEvent",
+      "tags": ["component", "parent", "summary", "ui"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/parent-summary/parent-summary.component.ts:ParentSummaryComponent",
+      "type": "class",
+      "name": "ParentSummaryComponent",
+      "filePath": "src/app/parent-summary/parent-summary.component.ts",
+      "lineRange": [101, 114],
+      "summary": "Angular standalone component แสดงสรุปบทเรียนสำหรับผู้ปกครองพับ/ขยายได้ inject TutorService สำหรับอ่านข้อมูลและ log event",
+      "tags": ["component", "parent", "summary"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "type": "file",
+      "name": "project-brain-tutor.component.ts",
+      "filePath": "src/app/project-brain/project-brain-tutor.component.ts",
+      "summary": "คอมโพเนนต์ UI หลักสำหรับโหมด Project Brain มี view เลือกหัวข้อและ Socratic chat ขนาดใหญ่ รองรับ portal status panel และ readiness flow",
+      "tags": ["component", "chat", "ui", "complex"],
+      "complexity": "complex",
+      "languageNotes": "ไฟล์ขนาด 1,116 บรรทัดประกอบด้วย inline template และ styles จำนวนมาก รวมถึง component class ที่บรรทัด 993"
+    },
+    {
+      "id": "class:src/app/project-brain/project-brain-tutor.component.ts:ProjectBrainTutorComponent",
+      "type": "class",
+      "name": "ProjectBrainTutorComponent",
+      "filePath": "src/app/project-brain/project-brain-tutor.component.ts",
+      "lineRange": [993, 1116],
+      "summary": "Angular standalone component ขนาดใหญ่สำหรับโหมด Project Brain จัดการ view transitions ระหว่าง topic list และ chat พร้อม portal status loading และ scrollToBottom",
+      "tags": ["component", "chat", "complex", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "type": "file",
+      "name": "project-brain-tutor.service.ts",
+      "filePath": "src/app/project-brain/project-brain-tutor.service.ts",
+      "summary": "บริการจัดการ state และ logic ทั้งหมดของโหมด Project Brain รวมถึงการโหลด opening message, multi-phase conversation, บันทึก evidence, และ session management",
+      "tags": ["service", "api-handler", "chat", "session"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "type": "class",
+      "name": "ProjectBrainTutorService",
+      "filePath": "src/app/project-brain/project-brain-tutor.service.ts",
+      "lineRange": [48, 218],
+      "summary": "Injectable service จัดการ multi-phase Socratic conversation ใน Project Brain โหลด opening prompt จาก API, บันทึก evidence หลังทุก response, และ persist session",
+      "tags": ["service", "api-handler", "session", "chat"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/student-note/student-note.component.ts",
+      "type": "file",
+      "name": "student-note.component.ts",
+      "filePath": "src/app/student-note/student-note.component.ts",
+      "summary": "คอมโพเนนต์แสดงบันทึกย่อของนักเรียนที่ AI สรุปไว้แบบ collapsible อ่านข้อมูลจาก TutorService signal",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/student-note/student-note.component.ts:StudentNoteComponent",
+      "type": "class",
+      "name": "StudentNoteComponent",
+      "filePath": "src/app/student-note/student-note.component.ts",
+      "lineRange": [99, 103],
+      "summary": "Angular standalone component แสดงบันทึกนักเรียนพับ/ขยายได้ inject TutorService สำหรับอ่าน studentNote signal",
+      "tags": ["component", "ui", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/app/tutor.service.ts",
+      "type": "file",
+      "name": "tutor.service.ts",
+      "filePath": "src/app/tutor.service.ts",
+      "summary": "service กลางของแอปที่จัดการ state บทเรียนทั้งหมดด้วย Angular signals ตั้งแต่การเลือก scenario จนถึงการส่ง session สมบูรณ์ และรองรับโหมดต่างๆ เช่น free-talk, homework, project brain",
+      "tags": ["service", "singleton", "state-management", "api-handler"],
+      "complexity": "complex",
+      "languageNotes": "ไฟล์ขนาด 644 บรรทัดที่เป็น single service ถือ state ทั้งหมดของแอปด้วย Angular signals และจัดการ inactivity timer, beacon API สำหรับ abandon detection"
+    },
+    {
+      "id": "class:src/app/tutor.service.ts:TutorService",
+      "type": "class",
+      "name": "TutorService",
+      "filePath": "src/app/tutor.service.ts",
+      "lineRange": [40, 644],
+      "summary": "Injectable service หลักของแอปมี 34 methods จัดการ lesson lifecycle ทั้งหมด รวมถึง session creation, event logging, mode switching (free-talk/homework/project brain/daily-logs), และ session completion",
+      "tags": ["service", "singleton", "state-management", "complex"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/app/device/device.service.ts",
+      "target": "class:src/app/device/device.service.ts:DeviceService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/device/device.service.ts",
+      "target": "class:src/app/device/device.service.ts:DeviceService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.component.ts",
+      "target": "class:src/app/free-talk/free-talk.component.ts:FreeTalkComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.component.ts",
+      "target": "class:src/app/free-talk/free-talk.component.ts:FreeTalkComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.service.ts",
+      "target": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.service.ts",
+      "target": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-feedback/learning-feedback.component.ts",
+      "target": "class:src/app/learning-feedback/learning-feedback.component.ts:LearningFeedbackComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-feedback/learning-feedback.component.ts",
+      "target": "class:src/app/learning-feedback/learning-feedback.component.ts:LearningFeedbackComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/learning-reflection/learning-reflection.component.ts",
+      "target": "class:src/app/learning-reflection/learning-reflection.component.ts:LearningReflectionComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/learning-reflection/learning-reflection.component.ts",
+      "target": "class:src/app/learning-reflection/learning-reflection.component.ts:LearningReflectionComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "target": "class:src/app/parent-feedback/parent-feedback.component.ts:ParentFeedbackComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "target": "class:src/app/parent-feedback/parent-feedback.component.ts:ParentFeedbackComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/parent-summary/parent-summary.component.ts",
+      "target": "class:src/app/parent-summary/parent-summary.component.ts:ParentSummaryComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/parent-summary/parent-summary.component.ts",
+      "target": "class:src/app/parent-summary/parent-summary.component.ts:ParentSummaryComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "target": "class:src/app/project-brain/project-brain-tutor.component.ts:ProjectBrainTutorComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "target": "class:src/app/project-brain/project-brain-tutor.component.ts:ProjectBrainTutorComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "target": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "target": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/student-note/student-note.component.ts",
+      "target": "class:src/app/student-note/student-note.component.ts:StudentNoteComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/student-note/student-note.component.ts",
+      "target": "class:src/app/student-note/student-note.component.ts:StudentNoteComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/tutor.service.ts",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/tutor.service.ts",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.component.ts",
+      "target": "file:src/app/free-talk/free-talk.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.service.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/free-talk/free-talk.service.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/learning-feedback/learning-feedback.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/learning-reflection/learning-reflection.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/parent-summary/parent-summary.component.ts",
+      "target": "file:src/app/parent-feedback/parent-feedback.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/parent-summary/parent-summary.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "target": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/project-brain/project-brain-tutor.service.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/student-note/student-note.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/tutor.service.ts",
+      "target": "file:src/app/device/device.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/tutor.service.ts",
+      "target": "file:src/app/models/learning.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/tutor.service.ts",
+      "target": "file:src/app/student-profile/student-profile.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:src/app/free-talk/free-talk.component.ts:FreeTalkComponent",
+      "target": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/free-talk/free-talk.component.ts:FreeTalkComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/free-talk/free-talk.service.ts:FreeTalkService",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/parent-feedback/parent-feedback.component.ts:ParentFeedbackComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/parent-summary/parent-summary.component.ts:ParentSummaryComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/project-brain/project-brain-tutor.component.ts:ProjectBrainTutorComponent",
+      "target": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/project-brain/project-brain-tutor.component.ts:ProjectBrainTutorComponent",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "target": "class:src/app/tutor.service.ts:TutorService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/project-brain/project-brain-tutor.service.ts:ProjectBrainTutorService",
+      "target": "class:src/app/student-profile/student-profile.service.ts:StudentProfileService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/tutor.service.ts:TutorService",
+      "target": "class:src/app/device/device.service.ts:DeviceService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

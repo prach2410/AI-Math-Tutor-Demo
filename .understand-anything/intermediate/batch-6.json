@@ -1,0 +1,117 @@
+{
+  "nodes": [
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "เอกสารคำแนะนำสำหรับ Claude Code ที่ครอบคลุม commands สำหรับ run/build/test, โครงสร้างและ endpoints ของ backend ASP.NET Core, architecture ของ Angular 20 frontend (standalone components + signals), และ layout ของแอป 3 คอลัมน์",
+      "tags": ["documentation", "development", "architecture", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:angular.json",
+      "type": "config",
+      "name": "angular.json",
+      "filePath": "angular.json",
+      "summary": "กำหนดค่า Angular CLI workspace สำหรับ project 'frontend' โดยตั้ง standalone component เป็น default, กำหนด build output ที่ dist/frontend, ใช้ src/main.ts เป็น browser entry point, และปิด analytics",
+      "tags": ["configuration", "build-system", "angular"],
+      "complexity": "moderate",
+      "languageNotes": "ใช้ Angular application builder (@angular-devkit/build-angular:application) ซึ่งเป็น builder ใหม่แทน browser builder เดิม รองรับ esbuild โดยตรง"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "กำหนด dependencies ของ Angular 20 frontend ได้แก่ Angular core packages, Express server สำหรับ serve static files บน production, และ http-proxy-middleware สำหรับ reverse proxy ไปยัง backend API",
+      "tags": ["configuration", "build-system", "dependencies"],
+      "complexity": "simple",
+      "languageNotes": "script 'start' รัน 'node server.js' (Express) ไม่ใช่ 'ng serve' แสดงว่า production ใช้ Express เป็น static file server พร้อม proxy ไปยัง backend"
+    },
+    {
+      "id": "config:railway.toml",
+      "type": "config",
+      "name": "railway.toml",
+      "filePath": "railway.toml",
+      "summary": "กำหนดค่า deployment บน Railway platform โดย build phase ติดตั้ง dependencies และ build Angular app ส่วน deploy phase รัน Express server พร้อม restart policy แบบ on_failure",
+      "tags": ["deployment", "configuration", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "กำหนดค่า TypeScript compiler สำหรับ Angular project ด้วย strict mode เต็มรูปแบบ (strict, noImplicitOverride, noImplicitReturns), target ES2022, moduleResolution แบบ bundler, และ Angular-specific options รวมถึง strictTemplates",
+      "tags": ["configuration", "typescript", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "ใช้ moduleResolution: 'bundler' ซึ่งเป็น mode ใหม่ที่เหมาะกับ esbuild/Vite/Webpack รองรับ package exports field และไม่ต้องการ file extension ใน import"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:angular.json",
+      "target": "config:tsconfig.json",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:angular.json",
+      "target": "file:src/main.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:angular.json",
+      "target": "file:src/styles.css",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/main.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "config:angular.json",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:railway.toml",
+      "target": "file:src/main.ts",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/app/services/tutor.service.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/app/models/learning.model.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/app/app.component.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

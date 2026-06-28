@@ -1,0 +1,196 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/homework/homework-upload.component.ts",
+      "type": "file",
+      "name": "homework-upload.component.ts",
+      "filePath": "src/app/homework/homework-upload.component.ts",
+      "summary": "คอมโพเนนต์ Angular สำหรับอัปโหลดและวิเคราะห์ภาพการบ้านด้วย Vision AI ครอบคลุม flow ตั้งแต่การเลือกรูปภาพ การส่งวิเคราะห์ การแสดงโจทย์ที่แยกออกมา ไปจนถึงการดูประวัติผลการวิเคราะห์ก่อนหน้า",
+      "tags": ["component", "api-handler", "event-handler", "file-upload", "angular"],
+      "complexity": "complex",
+      "languageNotes": "ใช้ Angular signals จัดการ state หลายขั้นตอน (idle → uploading → analyzing → results → history) และ ngOnDestroy ทำ cleanup URL objects เพื่อป้องกัน memory leak"
+    },
+    {
+      "id": "class:src/app/homework/homework-upload.component.ts:HomeworkUploadComponent",
+      "type": "class",
+      "name": "HomeworkUploadComponent",
+      "filePath": "src/app/homework/homework-upload.component.ts",
+      "lineRange": [637, 788],
+      "summary": "คลาสหลักของคอมโพเนนต์อัปโหลดการบ้าน จัดการ state เครื่อง (state machine) สำหรับ flow การวิเคราะห์รูปภาพ รวมถึง timer แสดงความคืบหน้า การจัดกลุ่มโจทย์ และการดึงประวัติ",
+      "tags": ["component", "event-handler", "angular", "state-machine"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/homework/homework.service.ts",
+      "type": "file",
+      "name": "homework.service.ts",
+      "filePath": "src/app/homework/homework.service.ts",
+      "summary": "Service สำหรับเรียก HTTP API ของ backend ในส่วนการจัดการการบ้าน รองรับการส่งรูปภาพ multipart เพื่อวิเคราะห์และดึงประวัติผลการวิเคราะห์",
+      "tags": ["service", "api-handler", "http-client", "angular"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:src/app/homework/homework.service.ts:HomeworkService",
+      "type": "class",
+      "name": "HomeworkService",
+      "filePath": "src/app/homework/homework.service.ts",
+      "lineRange": [37, 53],
+      "summary": "Angular injectable service ที่ wrap HTTP calls สำหรับ homework API ประกอบด้วย analyze (ส่งรูปภาพ multipart/form-data) และ listReads (ดึงประวัติ)",
+      "tags": ["service", "api-handler", "http-client", "angular"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/app/homework/teaching-flow.component.ts",
+      "type": "file",
+      "name": "teaching-flow.component.ts",
+      "filePath": "src/app/homework/teaching-flow.component.ts",
+      "summary": "คอมโพเนนต์ Angular ที่ควบคุมกระบวนการสอนแบบ interactive สำหรับโจทย์การบ้านแต่ละข้อ จัดการ flow ครบวงจรตั้งแต่เริ่มเซสชัน ยืนยัน figure การส่งคำตอบ ขอ hint ไปจนถึงการดูขั้นตอนแก้โจทย์และคำอธิบาย",
+      "tags": ["component", "api-handler", "event-handler", "teaching", "angular"],
+      "complexity": "complex",
+      "languageNotes": "ใช้ Angular signals ร่วมกับ ngOnChanges เพื่อ reset state เมื่อได้รับโจทย์ใหม่ และมี tip rotation interval ที่ต้อง cleanup ใน ngOnDestroy"
+    },
+    {
+      "id": "class:src/app/homework/teaching-flow.component.ts:TeachingFlowComponent",
+      "type": "class",
+      "name": "TeachingFlowComponent",
+      "filePath": "src/app/homework/teaching-flow.component.ts",
+      "lineRange": [547, 816],
+      "summary": "คลาสหลักของ teaching flow component ครอบคลุม lifecycle เต็ม (OnInit, OnDestroy, OnChanges) และ 16 methods สำหรับจัดการ interactive teaching session ร่วมกับ TeachingService",
+      "tags": ["component", "event-handler", "angular", "state-machine"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/app/homework/teaching.service.ts",
+      "type": "file",
+      "name": "teaching.service.ts",
+      "filePath": "src/app/homework/teaching.service.ts",
+      "summary": "Service สำหรับเรียก HTTP API ของ backend ในทุกขั้นตอนของ teaching session ครอบคลุม start, answer, hint, confirmFigure, notes, solve, และ explain",
+      "tags": ["service", "api-handler", "http-client", "angular"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:src/app/homework/teaching.service.ts:TeachingService",
+      "type": "class",
+      "name": "TeachingService",
+      "filePath": "src/app/homework/teaching.service.ts",
+      "lineRange": [56, 105],
+      "summary": "Angular injectable service ที่ wrap HTTP calls สำหรับ teaching API ทั้งหมด 7 endpoints ใช้ firstValueFrom เพื่อแปลง Observable เป็น Promise ในทุก method",
+      "tags": ["service", "api-handler", "http-client", "angular"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/app/homework/homework-upload.component.ts",
+      "target": "file:src/app/homework/homework.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/homework/homework-upload.component.ts",
+      "target": "file:src/app/homework/teaching-flow.component.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/homework/homework-upload.component.ts",
+      "target": "file:src/app/tutor.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/homework/teaching-flow.component.ts",
+      "target": "file:src/app/homework/homework.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/homework/teaching-flow.component.ts",
+      "target": "file:src/app/homework/teaching.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/homework/homework-upload.component.ts",
+      "target": "class:src/app/homework/homework-upload.component.ts:HomeworkUploadComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/homework/homework-upload.component.ts",
+      "target": "class:src/app/homework/homework-upload.component.ts:HomeworkUploadComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/homework/homework.service.ts",
+      "target": "class:src/app/homework/homework.service.ts:HomeworkService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/homework/homework.service.ts",
+      "target": "class:src/app/homework/homework.service.ts:HomeworkService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/homework/teaching-flow.component.ts",
+      "target": "class:src/app/homework/teaching-flow.component.ts:TeachingFlowComponent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/homework/teaching-flow.component.ts",
+      "target": "class:src/app/homework/teaching-flow.component.ts:TeachingFlowComponent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/homework/teaching.service.ts",
+      "target": "class:src/app/homework/teaching.service.ts:TeachingService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/homework/teaching.service.ts",
+      "target": "class:src/app/homework/teaching.service.ts:TeachingService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/homework/homework-upload.component.ts:HomeworkUploadComponent",
+      "target": "class:src/app/homework/homework.service.ts:HomeworkService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:src/app/homework/homework-upload.component.ts:HomeworkUploadComponent",
+      "target": "class:src/app/homework/teaching-flow.component.ts:TeachingFlowComponent",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:src/app/homework/teaching-flow.component.ts:TeachingFlowComponent",
+      "target": "class:src/app/homework/teaching.service.ts:TeachingService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

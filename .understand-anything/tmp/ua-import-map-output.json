@@ -1,0 +1,151 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 57,
+    "filesWithImports": 21,
+    "totalEdges": 63
+  },
+  "importMap": {
+    ".claude/launch.json": [],
+    ".claude/skills/grill-me/SKILL.md": [],
+    ".claude/skills/project-brain/CHANGELOG.md": [],
+    ".claude/skills/project-brain/SESSION_SUMMARY.md": [],
+    ".claude/skills/project-brain/SKILL.md": [],
+    ".understand-anything/.understandignore": [],
+    ".understand-anything/config.json": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/4c82e645-abd5-4905-b043-8efae5ef24ad.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/625d1fc0-af2f-4c5b-a3fc-713262daf524.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/83b68772-701a-49a4-9e95-5301a91e469c.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/8b54c9b2-1e3f-4b88-acc3-63ff97cde27a.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/FileContentIndex/bb183951-cc7a-4d6b-8686-09d173ff39e9.vsidx": [],
+    ".vs/AI-Math-Tutor-Demo/v17/.wsuo": [],
+    ".vs/slnx.sqlite": [],
+    ".vs/VSWorkspaceState.json": [],
+    "angular.json": [],
+    "CLAUDE.md": [],
+    "package.json": [],
+    "railway.toml": [],
+    "server.js": [],
+    "src/app/about/about.component.ts": [],
+    "src/app/admin/admin-export.component.ts": [],
+    "src/app/admin/discovery-batches/discovery-batches.component.ts": [],
+    "src/app/app.component.ts": [
+      "src/app/about/about.component.ts",
+      "src/app/admin/admin-export.component.ts",
+      "src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "src/app/chat/chat.component.ts",
+      "src/app/feedback-collection/feedback-collection.component.ts",
+      "src/app/free-talk/free-talk.component.ts",
+      "src/app/homework/homework-upload.component.ts",
+      "src/app/learning-feedback/learning-feedback.component.ts",
+      "src/app/learning-journal/daily-logs.component.ts",
+      "src/app/learning-journal/learning-journal-upload.component.ts",
+      "src/app/learning-reflection/learning-reflection.component.ts",
+      "src/app/lesson-complete/lesson-complete.component.ts",
+      "src/app/onboarding/onboarding.component.ts",
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/parent-summary/parent-summary.component.ts",
+      "src/app/project-brain/project-brain-tutor.component.ts",
+      "src/app/real-world/real-world.component.ts",
+      "src/app/student-note/student-note.component.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/chat/chat.component.ts": [
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/device/device.service.ts": [],
+    "src/app/feedback-collection/feedback-collection.component.ts": [],
+    "src/app/first-time-guide/first-time-guide.component.ts": [],
+    "src/app/free-talk/free-talk.component.ts": [
+      "src/app/free-talk/free-talk.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/free-talk/free-talk.service.ts": [
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/homework/homework-upload.component.ts": [
+      "src/app/homework/homework.service.ts",
+      "src/app/homework/teaching-flow.component.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/homework/homework.service.ts": [],
+    "src/app/homework/teaching-flow.component.ts": [
+      "src/app/homework/homework.service.ts",
+      "src/app/homework/teaching.service.ts"
+    ],
+    "src/app/homework/teaching.service.ts": [],
+    "src/app/learning-feedback/learning-feedback.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-journal/daily-logs.component.ts": [
+      "src/app/learning-journal/learning-records.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-journal/learning-journal-upload.component.ts": [
+      "src/app/learning-journal/learning-journal.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/learning-journal/learning-journal.service.ts": [],
+    "src/app/learning-journal/learning-records.service.ts": [],
+    "src/app/learning-reflection/learning-reflection.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/lesson-complete/lesson-complete.component.ts": [
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/parent-feedback/parent-feedback.component.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/models/learning.model.ts": [],
+    "src/app/onboarding/onboarding.component.ts": [
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/onboarding/onboarding.service.ts": [
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/parent-feedback/parent-feedback.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/parent-summary/parent-summary.component.ts": [
+      "src/app/parent-feedback/parent-feedback.component.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/project-brain/project-brain-tutor.component.ts": [
+      "src/app/project-brain/project-brain-tutor.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/project-brain/project-brain-tutor.service.ts": [
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/real-world/real-world.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/student-note/student-note.component.ts": [
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/student-profile/student-profile.service.ts": [],
+    "src/app/tutor.service.ts": [
+      "src/app/device/device.service.ts",
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts"
+    ],
+    "src/app/voice.service.ts": [],
+    "src/index.html": [],
+    "src/main.ts": [
+      "src/app/app.component.ts"
+    ],
+    "src/styles.css": [],
+    "tsconfig.json": []
+  }
+}

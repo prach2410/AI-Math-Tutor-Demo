@@ -1,0 +1,1798 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 9,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/app/about/about.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 329,
+      "nonEmptyLines": 298,
+      "classes": [
+        {
+          "name": "AboutComponent",
+          "startLine": 318,
+          "endLine": 329,
+          "methods": [
+            "open",
+            "close",
+            "onOverlayClick"
+          ],
+          "properties": [
+            "visible"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AboutComponent",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "open",
+          "callee": "this.visible.set",
+          "lineNumber": 321
+        },
+        {
+          "caller": "close",
+          "callee": "this.visible.set",
+          "lineNumber": 322
+        },
+        {
+          "caller": "onOverlayClick",
+          "callee": "(event.target as HTMLElement).classList.contains",
+          "lineNumber": 325
+        },
+        {
+          "caller": "onOverlayClick",
+          "callee": "this.close",
+          "lineNumber": 326
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/admin/admin-export.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 570,
+      "nonEmptyLines": 532,
+      "classes": [
+        {
+          "name": "AdminExportComponent",
+          "startLine": 407,
+          "endLine": 570,
+          "methods": [
+            "ngOnInit",
+            "prevWeek",
+            "nextWeek",
+            "goToday",
+            "load",
+            "formatDay",
+            "downloadLearning",
+            "downloadHomework",
+            "reflectionEmoji",
+            "fmtDl",
+            "formatTime",
+            "hwDuration",
+            "hrDuration",
+            "analysisDuration",
+            "deleteLearning",
+            "deleteHomeworkRead",
+            "deleteHomeworkSession",
+            "markDownloaded",
+            "groupByDate",
+            "todayLocal",
+            "addDays"
+          ],
+          "properties": [
+            "http",
+            "weekOf",
+            "weekStart",
+            "weekEnd",
+            "loading",
+            "error",
+            "dayGroups",
+            "weekLabel"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AdminExportComponent",
+          "line": 64,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ngOnInit",
+          "callee": "this.load",
+          "lineNumber": 427
+        },
+        {
+          "caller": "prevWeek",
+          "callee": "this.weekOf.set",
+          "lineNumber": 429
+        },
+        {
+          "caller": "prevWeek",
+          "callee": "this.addDays",
+          "lineNumber": 429
+        },
+        {
+          "caller": "prevWeek",
+          "callee": "this.weekOf",
+          "lineNumber": 429
+        },
+        {
+          "caller": "prevWeek",
+          "callee": "this.load",
+          "lineNumber": 429
+        },
+        {
+          "caller": "nextWeek",
+          "callee": "this.weekOf.set",
+          "lineNumber": 430
+        },
+        {
+          "caller": "nextWeek",
+          "callee": "this.addDays",
+          "lineNumber": 430
+        },
+        {
+          "caller": "nextWeek",
+          "callee": "this.weekOf",
+          "lineNumber": 430
+        },
+        {
+          "caller": "nextWeek",
+          "callee": "this.load",
+          "lineNumber": 430
+        },
+        {
+          "caller": "goToday",
+          "callee": "this.weekOf.set",
+          "lineNumber": 431
+        },
+        {
+          "caller": "goToday",
+          "callee": "this.todayLocal",
+          "lineNumber": 431
+        },
+        {
+          "caller": "goToday",
+          "callee": "this.load",
+          "lineNumber": 431
+        },
+        {
+          "caller": "load",
+          "callee": "this.loading.set",
+          "lineNumber": 434
+        },
+        {
+          "caller": "load",
+          "callee": "this.error.set",
+          "lineNumber": 435
+        },
+        {
+          "caller": "load",
+          "callee": "firstValueFrom",
+          "lineNumber": 437
+        },
+        {
+          "caller": "load",
+          "callee": "this.http.get",
+          "lineNumber": 438
+        },
+        {
+          "caller": "load",
+          "callee": "this.weekOf",
+          "lineNumber": 438
+        },
+        {
+          "caller": "load",
+          "callee": "this.weekStart.set",
+          "lineNumber": 440
+        },
+        {
+          "caller": "load",
+          "callee": "this.weekEnd.set",
+          "lineNumber": 441
+        },
+        {
+          "caller": "load",
+          "callee": "this.dayGroups.set",
+          "lineNumber": 442
+        },
+        {
+          "caller": "load",
+          "callee": "this.groupByDate",
+          "lineNumber": 442
+        },
+        {
+          "caller": "load",
+          "callee": "this.error.set",
+          "lineNumber": 444
+        },
+        {
+          "caller": "load",
+          "callee": "this.loading.set",
+          "lineNumber": 446
+        },
+        {
+          "caller": "formatDay",
+          "callee": "dateStr.split('-').map",
+          "lineNumber": 451
+        },
+        {
+          "caller": "formatDay",
+          "callee": "dateStr.split",
+          "lineNumber": 451
+        },
+        {
+          "caller": "formatDay",
+          "callee": "new Date(y, m - 1, d).toLocaleDateString",
+          "lineNumber": 452
+        },
+        {
+          "caller": "downloadLearning",
+          "callee": "document.createElement",
+          "lineNumber": 456
+        },
+        {
+          "caller": "downloadLearning",
+          "callee": "a.click",
+          "lineNumber": 458
+        },
+        {
+          "caller": "downloadLearning",
+          "callee": "this.markDownloaded",
+          "lineNumber": 459
+        },
+        {
+          "caller": "downloadHomework",
+          "callee": "document.createElement",
+          "lineNumber": 463
+        },
+        {
+          "caller": "downloadHomework",
+          "callee": "a.click",
+          "lineNumber": 465
+        },
+        {
+          "caller": "downloadHomework",
+          "callee": "this.markDownloaded",
+          "lineNumber": 466
+        },
+        {
+          "caller": "fmtDl",
+          "callee": "d.toLocaleDateString",
+          "lineNumber": 482
+        },
+        {
+          "caller": "formatTime",
+          "callee": "new Date(iso).toLocaleTimeString",
+          "lineNumber": 487
+        },
+        {
+          "caller": "hwDuration",
+          "callee": "new Date(s.analysisEndedAt).getTime",
+          "lineNumber": 492
+        },
+        {
+          "caller": "hwDuration",
+          "callee": "new Date(s.analysisStartedAt).getTime",
+          "lineNumber": 492
+        },
+        {
+          "caller": "hwDuration",
+          "callee": "(ms / 1000).toFixed",
+          "lineNumber": 493
+        },
+        {
+          "caller": "hrDuration",
+          "callee": "new Date(r.analysisEndedAt).getTime",
+          "lineNumber": 498
+        },
+        {
+          "caller": "hrDuration",
+          "callee": "new Date(r.analysisStartedAt).getTime",
+          "lineNumber": 498
+        },
+        {
+          "caller": "hrDuration",
+          "callee": "(ms / 1000).toFixed",
+          "lineNumber": 499
+        },
+        {
+          "caller": "analysisDuration",
+          "callee": "new Date(r.analysisEndedAt).getTime",
+          "lineNumber": 504
+        },
+        {
+          "caller": "analysisDuration",
+          "callee": "new Date(r.analysisStartedAt).getTime",
+          "lineNumber": 504
+        },
+        {
+          "caller": "analysisDuration",
+          "callee": "(ms / 1000).toFixed",
+          "lineNumber": 505
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "confirm",
+          "lineNumber": 509
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "firstValueFrom",
+          "lineNumber": 510
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "this.http.delete",
+          "lineNumber": 510
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "this.dayGroups.update",
+          "lineNumber": 511
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "days\n      .map(d => ({ ...d, learningRecords: d.learningRecords.filter(r => r.id !== id) }))\n      .filter",
+          "lineNumber": 511
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "days\n      .map",
+          "lineNumber": 511
+        },
+        {
+          "caller": "deleteLearning",
+          "callee": "d.learningRecords.filter",
+          "lineNumber": 512
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "confirm",
+          "lineNumber": 518
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "firstValueFrom",
+          "lineNumber": 519
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "this.http.delete",
+          "lineNumber": 519
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "this.dayGroups.update",
+          "lineNumber": 520
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "days\n      .map(d => ({ ...d, homeworkReads: d.homeworkReads.filter(r => r.id !== id) }))\n      .filter",
+          "lineNumber": 520
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "days\n      .map",
+          "lineNumber": 520
+        },
+        {
+          "caller": "deleteHomeworkRead",
+          "callee": "d.homeworkReads.filter",
+          "lineNumber": 521
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "confirm",
+          "lineNumber": 527
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "firstValueFrom",
+          "lineNumber": 528
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "this.http.delete",
+          "lineNumber": 528
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "this.dayGroups.update",
+          "lineNumber": 529
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "days\n      .map(d => ({ ...d, homeworkSessions: d.homeworkSessions.filter(s => s.id !== id) }))\n      .filter",
+          "lineNumber": 529
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "days\n      .map",
+          "lineNumber": 529
+        },
+        {
+          "caller": "deleteHomeworkSession",
+          "callee": "d.homeworkSessions.filter",
+          "lineNumber": 530
+        },
+        {
+          "caller": "markDownloaded",
+          "callee": "new Date().toISOString",
+          "lineNumber": 536
+        },
+        {
+          "caller": "markDownloaded",
+          "callee": "this.dayGroups.update",
+          "lineNumber": 537
+        },
+        {
+          "caller": "markDownloaded",
+          "callee": "days.map",
+          "lineNumber": 537
+        },
+        {
+          "caller": "markDownloaded",
+          "callee": "day.learningRecords.map",
+          "lineNumber": 540
+        },
+        {
+          "caller": "markDownloaded",
+          "callee": "day.homeworkSessions.map",
+          "lineNumber": 543
+        },
+        {
+          "caller": "ensure",
+          "callee": "map.has",
+          "lineNumber": 551
+        },
+        {
+          "caller": "ensure",
+          "callee": "map.set",
+          "lineNumber": 551
+        },
+        {
+          "caller": "ensure",
+          "callee": "map.get",
+          "lineNumber": 552
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure(r.date).learningRecords.push",
+          "lineNumber": 554
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure",
+          "lineNumber": 554
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure(r.date).homeworkReads.push",
+          "lineNumber": 555
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure",
+          "lineNumber": 555
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure(s.date).homeworkSessions.push",
+          "lineNumber": 556
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "ensure",
+          "lineNumber": 556
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "[...map.values()].sort",
+          "lineNumber": 557
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "map.values",
+          "lineNumber": 557
+        },
+        {
+          "caller": "groupByDate",
+          "callee": "a.date.localeCompare",
+          "lineNumber": 557
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "now.getFullYear",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "String(now.getMonth()+1).padStart",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "String",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "now.getMonth",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "String(now.getDate()).padStart",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "String",
+          "lineNumber": 562
+        },
+        {
+          "caller": "todayLocal",
+          "callee": "now.getDate",
+          "lineNumber": 562
+        },
+        {
+          "caller": "addDays",
+          "callee": "dateStr.split('-').map",
+          "lineNumber": 566
+        },
+        {
+          "caller": "addDays",
+          "callee": "dateStr.split",
+          "lineNumber": 566
+        },
+        {
+          "caller": "addDays",
+          "callee": "dt.getFullYear",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "String(dt.getMonth()+1).padStart",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "String",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "dt.getMonth",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "String(dt.getDate()).padStart",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "String",
+          "lineNumber": 568
+        },
+        {
+          "caller": "addDays",
+          "callee": "dt.getDate",
+          "lineNumber": 568
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/admin/discovery-batches/discovery-batches.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1040,
+      "nonEmptyLines": 948,
+      "classes": [
+        {
+          "name": "DiscoveryBatchesComponent",
+          "startLine": 727,
+          "endLine": 1040,
+          "methods": [
+            "ngOnInit",
+            "onFileUpload",
+            "copyPromptWithUpload",
+            "importBatch",
+            "discoveryStatusLabel",
+            "analysisStatusLabel",
+            "importStatusLabel",
+            "clearUpload",
+            "togglePrompt",
+            "copyPrompt",
+            "copyPromptForBatch",
+            "copyToClipboard",
+            "toggleExport",
+            "downloadExport",
+            "downloadProjectBrainExport",
+            "deleteAllSessions",
+            "createBatch",
+            "downloadBatch",
+            "toggleNotes",
+            "saveNotes",
+            "markReviewed",
+            "getNoteValue",
+            "formatDate",
+            "loadUnreviewedCount",
+            "loadBatches"
+          ],
+          "properties": [
+            "http",
+            "unreviewedCount",
+            "batches",
+            "loading",
+            "creating",
+            "createError",
+            "editingBatchId",
+            "uploadedFileName",
+            "uploadedData",
+            "uploadError",
+            "copiedUpload",
+            "importing",
+            "importResult",
+            "showExport",
+            "exportLoading",
+            "exportJson",
+            "showPrompt",
+            "analysisPromptText",
+            "copied",
+            "copiedBatchId",
+            "noteDrafts",
+            "noteFields"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DiscoveryBatchesComponent",
+          "line": 60,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ngOnInit",
+          "callee": "Promise.all",
+          "lineNumber": 762
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.loadUnreviewedCount",
+          "lineNumber": 762
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.loadBatches",
+          "lineNumber": 762
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.loading.set",
+          "lineNumber": 763
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "this.uploadError.set",
+          "lineNumber": 767
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "file.name.endsWith",
+          "lineNumber": 770
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "this.uploadError.set",
+          "lineNumber": 771
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "JSON.parse",
+          "lineNumber": 777
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "this.uploadedData.set",
+          "lineNumber": 778
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "this.uploadedFileName.set",
+          "lineNumber": 779
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "this.uploadError.set",
+          "lineNumber": 781
+        },
+        {
+          "caller": "onFileUpload",
+          "callee": "reader.readAsText",
+          "lineNumber": 784
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.analysisPromptText",
+          "lineNumber": 788
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "firstValueFrom",
+          "lineNumber": 791
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.http.get",
+          "lineNumber": 792
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.analysisPromptText.set",
+          "lineNumber": 795
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "JSON.stringify",
+          "lineNumber": 798
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.uploadedData",
+          "lineNumber": 798
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.copyToClipboard",
+          "lineNumber": 799
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.copiedUpload.set",
+          "lineNumber": 800
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "setTimeout",
+          "lineNumber": 801
+        },
+        {
+          "caller": "copyPromptWithUpload",
+          "callee": "this.copiedUpload.set",
+          "lineNumber": 801
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.importing.set",
+          "lineNumber": 805
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.importResult.set",
+          "lineNumber": 806
+        },
+        {
+          "caller": "importBatch",
+          "callee": "JSON.stringify",
+          "lineNumber": 808
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.uploadedData",
+          "lineNumber": 808
+        },
+        {
+          "caller": "importBatch",
+          "callee": "firstValueFrom",
+          "lineNumber": 809
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.http.post",
+          "lineNumber": 810
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.importResult.set",
+          "lineNumber": 812
+        },
+        {
+          "caller": "importBatch",
+          "callee": "Promise.all",
+          "lineNumber": 813
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.loadUnreviewedCount",
+          "lineNumber": 813
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.loadBatches",
+          "lineNumber": 813
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.uploadError.set",
+          "lineNumber": 815
+        },
+        {
+          "caller": "importBatch",
+          "callee": "this.importing.set",
+          "lineNumber": 817
+        },
+        {
+          "caller": "clearUpload",
+          "callee": "this.uploadedFileName.set",
+          "lineNumber": 840
+        },
+        {
+          "caller": "clearUpload",
+          "callee": "this.uploadedData.set",
+          "lineNumber": 841
+        },
+        {
+          "caller": "clearUpload",
+          "callee": "this.uploadError.set",
+          "lineNumber": 842
+        },
+        {
+          "caller": "clearUpload",
+          "callee": "this.importResult.set",
+          "lineNumber": 843
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.showPrompt",
+          "lineNumber": 847
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.showPrompt.set",
+          "lineNumber": 847
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.showPrompt.set",
+          "lineNumber": 848
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.analysisPromptText",
+          "lineNumber": 849
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "firstValueFrom",
+          "lineNumber": 851
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.http.get",
+          "lineNumber": 852
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.analysisPromptText.set",
+          "lineNumber": 854
+        },
+        {
+          "caller": "togglePrompt",
+          "callee": "this.analysisPromptText.set",
+          "lineNumber": 856
+        },
+        {
+          "caller": "copyPrompt",
+          "callee": "this.copyToClipboard",
+          "lineNumber": 861
+        },
+        {
+          "caller": "copyPrompt",
+          "callee": "this.analysisPromptText",
+          "lineNumber": 861
+        },
+        {
+          "caller": "copyPrompt",
+          "callee": "this.copied.set",
+          "lineNumber": 862
+        },
+        {
+          "caller": "copyPrompt",
+          "callee": "setTimeout",
+          "lineNumber": 863
+        },
+        {
+          "caller": "copyPrompt",
+          "callee": "this.copied.set",
+          "lineNumber": 863
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.analysisPromptText",
+          "lineNumber": 867
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "firstValueFrom",
+          "lineNumber": 870
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.http.get",
+          "lineNumber": 871
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.analysisPromptText.set",
+          "lineNumber": 874
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "firstValueFrom",
+          "lineNumber": 877
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.http.get",
+          "lineNumber": 878
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "JSON.stringify",
+          "lineNumber": 880
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.copyToClipboard",
+          "lineNumber": 881
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.copiedBatchId.set",
+          "lineNumber": 882
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "setTimeout",
+          "lineNumber": 883
+        },
+        {
+          "caller": "copyPromptForBatch",
+          "callee": "this.copiedBatchId.set",
+          "lineNumber": 883
+        },
+        {
+          "caller": "copyToClipboard",
+          "callee": "navigator.clipboard.writeText",
+          "lineNumber": 887
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.showExport",
+          "lineNumber": 891
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.showExport.set",
+          "lineNumber": 892
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.showExport.set",
+          "lineNumber": 895
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.exportLoading.set",
+          "lineNumber": 896
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "firstValueFrom",
+          "lineNumber": 898
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.http.get",
+          "lineNumber": 898
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.exportJson.set",
+          "lineNumber": 899
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "JSON.stringify",
+          "lineNumber": 899
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.exportJson.set",
+          "lineNumber": 901
+        },
+        {
+          "caller": "toggleExport",
+          "callee": "this.exportLoading.set",
+          "lineNumber": 903
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "this.exportJson",
+          "lineNumber": 908
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "URL.createObjectURL",
+          "lineNumber": 909
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "document.createElement",
+          "lineNumber": 910
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "new Date().toISOString().slice",
+          "lineNumber": 912
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "new Date().toISOString",
+          "lineNumber": 912
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "a.click",
+          "lineNumber": 913
+        },
+        {
+          "caller": "downloadExport",
+          "callee": "URL.revokeObjectURL",
+          "lineNumber": 914
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "firstValueFrom",
+          "lineNumber": 919
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "this.http.get",
+          "lineNumber": 919
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "JSON.stringify",
+          "lineNumber": 920
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "URL.createObjectURL",
+          "lineNumber": 922
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "document.createElement",
+          "lineNumber": 923
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "new Date().toISOString().slice",
+          "lineNumber": 925
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "new Date().toISOString",
+          "lineNumber": 925
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "a.click",
+          "lineNumber": 926
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "URL.revokeObjectURL",
+          "lineNumber": 927
+        },
+        {
+          "caller": "downloadProjectBrainExport",
+          "callee": "alert",
+          "lineNumber": 929
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "confirm",
+          "lineNumber": 934
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "firstValueFrom",
+          "lineNumber": 936
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "this.http.delete",
+          "lineNumber": 937
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "Promise.all",
+          "lineNumber": 939
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "this.loadUnreviewedCount",
+          "lineNumber": 939
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "this.loadBatches",
+          "lineNumber": 939
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "alert",
+          "lineNumber": 940
+        },
+        {
+          "caller": "deleteAllSessions",
+          "callee": "alert",
+          "lineNumber": 942
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.creating.set",
+          "lineNumber": 947
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.createError.set",
+          "lineNumber": 948
+        },
+        {
+          "caller": "createBatch",
+          "callee": "firstValueFrom",
+          "lineNumber": 950
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.http.post",
+          "lineNumber": 950
+        },
+        {
+          "caller": "createBatch",
+          "callee": "Promise.all",
+          "lineNumber": 951
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.loadUnreviewedCount",
+          "lineNumber": 951
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.loadBatches",
+          "lineNumber": 951
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.createError.set",
+          "lineNumber": 953
+        },
+        {
+          "caller": "createBatch",
+          "callee": "this.creating.set",
+          "lineNumber": 955
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "firstValueFrom",
+          "lineNumber": 961
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "this.http.get",
+          "lineNumber": 961
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "JSON.stringify",
+          "lineNumber": 962
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "URL.createObjectURL",
+          "lineNumber": 963
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "document.createElement",
+          "lineNumber": 964
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "a.click",
+          "lineNumber": 967
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "URL.revokeObjectURL",
+          "lineNumber": 968
+        },
+        {
+          "caller": "downloadBatch",
+          "callee": "alert",
+          "lineNumber": 970
+        },
+        {
+          "caller": "toggleNotes",
+          "callee": "this.editingBatchId",
+          "lineNumber": 975
+        },
+        {
+          "caller": "toggleNotes",
+          "callee": "this.editingBatchId.set",
+          "lineNumber": 976
+        },
+        {
+          "caller": "toggleNotes",
+          "callee": "this.batches().find",
+          "lineNumber": 979
+        },
+        {
+          "caller": "toggleNotes",
+          "callee": "this.batches",
+          "lineNumber": 979
+        },
+        {
+          "caller": "toggleNotes",
+          "callee": "this.editingBatchId.set",
+          "lineNumber": 986
+        },
+        {
+          "caller": "saveNotes",
+          "callee": "firstValueFrom",
+          "lineNumber": 996
+        },
+        {
+          "caller": "saveNotes",
+          "callee": "this.http.put",
+          "lineNumber": 996
+        },
+        {
+          "caller": "saveNotes",
+          "callee": "this.loadBatches",
+          "lineNumber": 997
+        },
+        {
+          "caller": "saveNotes",
+          "callee": "alert",
+          "lineNumber": 999
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "confirm",
+          "lineNumber": 1004
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "firstValueFrom",
+          "lineNumber": 1006
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "this.http.post",
+          "lineNumber": 1006
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "this.editingBatchId.set",
+          "lineNumber": 1007
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "this.loadBatches",
+          "lineNumber": 1008
+        },
+        {
+          "caller": "markReviewed",
+          "callee": "alert",
+          "lineNumber": 1010
+        },
+        {
+          "caller": "formatDate",
+          "callee": "new Date(iso).toLocaleString",
+          "lineNumber": 1019
+        },
+        {
+          "caller": "loadUnreviewedCount",
+          "callee": "firstValueFrom",
+          "lineNumber": 1027
+        },
+        {
+          "caller": "loadUnreviewedCount",
+          "callee": "this.http.get",
+          "lineNumber": 1028
+        },
+        {
+          "caller": "loadUnreviewedCount",
+          "callee": "this.unreviewedCount.set",
+          "lineNumber": 1030
+        },
+        {
+          "caller": "loadBatches",
+          "callee": "firstValueFrom",
+          "lineNumber": 1036
+        },
+        {
+          "caller": "loadBatches",
+          "callee": "this.http.get",
+          "lineNumber": 1036
+        },
+        {
+          "caller": "loadBatches",
+          "callee": "this.batches.set",
+          "lineNumber": 1037
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/app.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 820,
+      "nonEmptyLines": 756,
+      "classes": [
+        {
+          "name": "AppComponent",
+          "startLine": 739,
+          "endLine": 820,
+          "methods": [
+            "ngOnInit",
+            "enterProjectBrain",
+            "confirmPbDialog",
+            "cancelPbDialog",
+            "toggleHomework",
+            "chooseMode",
+            "goHome",
+            "goLearn",
+            "openAbout",
+            "toggleNotesSheet"
+          ],
+          "properties": [
+            "tutor",
+            "onboarding",
+            "voice",
+            "adminRoute",
+            "showNotesSheet",
+            "PB_KEY",
+            "pbUnlocked",
+            "showPbDialog",
+            "pbError",
+            "pbPassword",
+            "aboutRef"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AppComponent",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ngOnInit",
+          "callee": "keys.forEach",
+          "lineNumber": 768
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "localStorage.removeItem",
+          "lineNumber": 768
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "window.location.replace",
+          "lineNumber": 769
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.tutor.init",
+          "lineNumber": 773
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "window.location.search.includes",
+          "lineNumber": 775
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.enterProjectBrain",
+          "lineNumber": 776
+        },
+        {
+          "caller": "enterProjectBrain",
+          "callee": "this.onboarding.skip",
+          "lineNumber": 782
+        },
+        {
+          "caller": "enterProjectBrain",
+          "callee": "this.tutor.enterProjectBrainMode",
+          "lineNumber": 783
+        },
+        {
+          "caller": "enterProjectBrain",
+          "callee": "this.pbError.set",
+          "lineNumber": 787
+        },
+        {
+          "caller": "enterProjectBrain",
+          "callee": "this.showPbDialog.set",
+          "lineNumber": 788
+        },
+        {
+          "caller": "confirmPbDialog",
+          "callee": "this.showPbDialog.set",
+          "lineNumber": 794
+        },
+        {
+          "caller": "confirmPbDialog",
+          "callee": "this.onboarding.skip",
+          "lineNumber": 795
+        },
+        {
+          "caller": "confirmPbDialog",
+          "callee": "this.tutor.enterProjectBrainMode",
+          "lineNumber": 796
+        },
+        {
+          "caller": "confirmPbDialog",
+          "callee": "this.pbError.set",
+          "lineNumber": 798
+        },
+        {
+          "caller": "cancelPbDialog",
+          "callee": "this.showPbDialog.set",
+          "lineNumber": 804
+        },
+        {
+          "caller": "cancelPbDialog",
+          "callee": "this.pbError.set",
+          "lineNumber": 805
+        },
+        {
+          "caller": "toggleHomework",
+          "callee": "this.tutor.inHomeworkMode",
+          "lineNumber": 809
+        },
+        {
+          "caller": "toggleHomework",
+          "callee": "this.tutor.exitHomeworkMode",
+          "lineNumber": 810
+        },
+        {
+          "caller": "toggleHomework",
+          "callee": "this.tutor.enterHomeworkMode",
+          "lineNumber": 812
+        },
+        {
+          "caller": "chooseMode",
+          "callee": "this.tutor.setInteractionMode",
+          "lineNumber": 815
+        },
+        {
+          "caller": "goHome",
+          "callee": "this.showNotesSheet.set",
+          "lineNumber": 816
+        },
+        {
+          "caller": "goHome",
+          "callee": "this.tutor.resetToHome",
+          "lineNumber": 816
+        },
+        {
+          "caller": "goLearn",
+          "callee": "this.showNotesSheet.set",
+          "lineNumber": 817
+        },
+        {
+          "caller": "goLearn",
+          "callee": "this.tutor.init",
+          "lineNumber": 817
+        },
+        {
+          "caller": "openAbout",
+          "callee": "this.aboutRef?.open",
+          "lineNumber": 818
+        },
+        {
+          "caller": "toggleNotesSheet",
+          "callee": "this.showNotesSheet.update",
+          "lineNumber": 819
+        }
+      ],
+      "metrics": {
+        "importCount": 20,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/feedback-collection/feedback-collection.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 115,
+      "nonEmptyLines": 103,
+      "classes": [
+        {
+          "name": "FeedbackCollectionComponent",
+          "startLine": 111,
+          "endLine": 115,
+          "methods": [
+            "toggle"
+          ],
+          "properties": [
+            "formUrl",
+            "collapsed"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FeedbackCollectionComponent",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed.update",
+          "lineNumber": 114
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/learning-journal/daily-logs.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 193,
+      "classes": [
+        {
+          "name": "DailyLogsComponent",
+          "startLine": 181,
+          "endLine": 218,
+          "methods": [
+            "ngOnInit",
+            "load",
+            "docType",
+            "formatDate",
+            "truncate"
+          ],
+          "properties": [
+            "tutor",
+            "recordsService",
+            "loading",
+            "error",
+            "groups"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DailyLogsComponent",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ngOnInit",
+          "callee": "this.load",
+          "lineNumber": 189
+        },
+        {
+          "caller": "load",
+          "callee": "this.loading.set",
+          "lineNumber": 192
+        },
+        {
+          "caller": "load",
+          "callee": "this.error.set",
+          "lineNumber": 193
+        },
+        {
+          "caller": "load",
+          "callee": "this.recordsService.getTimeline",
+          "lineNumber": 195
+        },
+        {
+          "caller": "load",
+          "callee": "this.groups.set",
+          "lineNumber": 196
+        },
+        {
+          "caller": "load",
+          "callee": "this.error.set",
+          "lineNumber": 198
+        },
+        {
+          "caller": "load",
+          "callee": "this.loading.set",
+          "lineNumber": 200
+        },
+        {
+          "caller": "formatDate",
+          "callee": "dateStr.split('-').map",
+          "lineNumber": 209
+        },
+        {
+          "caller": "formatDate",
+          "callee": "dateStr.split",
+          "lineNumber": 209
+        },
+        {
+          "caller": "formatDate",
+          "callee": "date.toLocaleDateString",
+          "lineNumber": 211
+        },
+        {
+          "caller": "truncate",
+          "callee": "text.slice",
+          "lineNumber": 215
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/learning-journal/learning-records.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 24,
+      "classes": [
+        {
+          "name": "LearningRecordsService",
+          "startLine": 20,
+          "endLine": 28,
+          "methods": [
+            "getTimeline"
+          ],
+          "properties": [
+            "http"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LearningRecordsService",
+          "line": 19,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getTimeline",
+          "callee": "firstValueFrom",
+          "lineNumber": 24
+        },
+        {
+          "caller": "getTimeline",
+          "callee": "this.http.get",
+          "lineNumber": 25
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/real-world/real-world.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 108,
+      "classes": [
+        {
+          "name": "RealWorldComponent",
+          "startLine": 115,
+          "endLine": 119,
+          "methods": [
+            "toggle"
+          ],
+          "properties": [
+            "tutor",
+            "collapsed"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RealWorldComponent",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toggle",
+          "callee": "this.collapsed.update",
+          "lineNumber": 118
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/main.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 7,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

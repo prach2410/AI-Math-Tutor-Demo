@@ -1,0 +1,1533 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/app/chat/chat.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 844,
+      "nonEmptyLines": 766,
+      "classes": [
+        {
+          "name": "ChatComponent",
+          "startLine": 731,
+          "endLine": 844,
+          "methods": [
+            "constructor",
+            "ngAfterViewInit",
+            "stepRange",
+            "send",
+            "switchMode",
+            "toggleMic",
+            "submitName",
+            "focusInput",
+            "ngAfterViewChecked",
+            "scrollToBottom"
+          ],
+          "properties": [
+            "container",
+            "inputEl",
+            "tutor",
+            "voice",
+            "studentProfile",
+            "inputText",
+            "nameText",
+            "_nameDone",
+            "askingName",
+            "hasUserMsg"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChatComponent",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 752
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.messages",
+          "lineNumber": 753
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 754
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.loading",
+          "lineNumber": 755
+        },
+        {
+          "caller": "constructor",
+          "callee": "setTimeout",
+          "lineNumber": 756
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.focusInput",
+          "lineNumber": 756
+        },
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 761
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.voice.transcript",
+          "lineNumber": 762
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.loading",
+          "lineNumber": 763
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.finished",
+          "lineNumber": 763
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.sendMessage",
+          "lineNumber": 764
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.voice.transcript.set",
+          "lineNumber": 765
+        },
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 770
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.voice.networkError",
+          "lineNumber": 771
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.setInteractionMode",
+          "lineNumber": 772
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.voice.networkError.set",
+          "lineNumber": 773
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 774
+        },
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 779
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.messages",
+          "lineNumber": 780
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.interactionMode",
+          "lineNumber": 781
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.tutor.loading",
+          "lineNumber": 783
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.voice.speak",
+          "lineNumber": 784
+        },
+        {
+          "caller": "ngAfterViewInit",
+          "callee": "this.focusInput",
+          "lineNumber": 790
+        },
+        {
+          "caller": "stepRange",
+          "callee": "Array.from",
+          "lineNumber": 794
+        },
+        {
+          "caller": "stepRange",
+          "callee": "this.tutor.totalSteps",
+          "lineNumber": 794
+        },
+        {
+          "caller": "send",
+          "callee": "this.inputText.trim",
+          "lineNumber": 798
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.loading",
+          "lineNumber": 799
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.finished",
+          "lineNumber": 799
+        },
+        {
+          "caller": "send",
+          "callee": "this.tutor.sendMessage",
+          "lineNumber": 801
+        },
+        {
+          "caller": "switchMode",
+          "callee": "this.tutor.interactionMode",
+          "lineNumber": 805
+        },
+        {
+          "caller": "switchMode",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 807
+        },
+        {
+          "caller": "switchMode",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 808
+        },
+        {
+          "caller": "switchMode",
+          "callee": "this.voice.cancelSpeech",
+          "lineNumber": 809
+        },
+        {
+          "caller": "switchMode",
+          "callee": "this.tutor.setInteractionMode",
+          "lineNumber": 810
+        },
+        {
+          "caller": "toggleMic",
+          "callee": "this.voice.isListening",
+          "lineNumber": 814
+        },
+        {
+          "caller": "toggleMic",
+          "callee": "this.voice.stopListening",
+          "lineNumber": 815
+        },
+        {
+          "caller": "toggleMic",
+          "callee": "this.voice.transcript.set",
+          "lineNumber": 817
+        },
+        {
+          "caller": "toggleMic",
+          "callee": "this.voice.error.set",
+          "lineNumber": 818
+        },
+        {
+          "caller": "toggleMic",
+          "callee": "this.voice.startListening",
+          "lineNumber": 819
+        },
+        {
+          "caller": "submitName",
+          "callee": "this.nameText.trim",
+          "lineNumber": 824
+        },
+        {
+          "caller": "submitName",
+          "callee": "this.studentProfile.setDisplayName",
+          "lineNumber": 825
+        },
+        {
+          "caller": "submitName",
+          "callee": "this._nameDone.set",
+          "lineNumber": 827
+        },
+        {
+          "caller": "submitName",
+          "callee": "setTimeout",
+          "lineNumber": 828
+        },
+        {
+          "caller": "submitName",
+          "callee": "this.focusInput",
+          "lineNumber": 828
+        },
+        {
+          "caller": "focusInput",
+          "callee": "window.matchMedia",
+          "lineNumber": 832
+        },
+        {
+          "caller": "focusInput",
+          "callee": "this.inputEl?.nativeElement?.focus",
+          "lineNumber": 833
+        },
+        {
+          "caller": "ngAfterViewChecked",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 837
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/lesson-complete/lesson-complete.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 566,
+      "nonEmptyLines": 510,
+      "functions": [
+        {
+          "name": "cleanText",
+          "startLine": 9,
+          "endLine": 14,
+          "params": [
+            "text"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "LessonCompleteComponent",
+          "startLine": 454,
+          "endLine": 566,
+          "methods": [
+            "ngOnInit",
+            "submitReason",
+            "submitAiRole",
+            "submitReflection",
+            "skipReflection",
+            "toggleParent",
+            "nextLesson",
+            "reviewAgain",
+            "goHome"
+          ],
+          "properties": [
+            "tutor",
+            "onboarding",
+            "studentProfile",
+            "voice",
+            "parentExpanded",
+            "reasonSubmitted",
+            "aiRoleSubmitted",
+            "reflectionSubmitted",
+            "reflectionSkipped",
+            "reflectionLearned",
+            "reflectionDifficult",
+            "reflectionRemember",
+            "aiRoleOptions",
+            "VOICE_REASONS",
+            "TEXT_REASONS",
+            "reasonOptions",
+            "cleanedFeedback",
+            "cleanedNote",
+            "cleanedParentSummary",
+            "goodPoints",
+            "nextPractice",
+            "parentOpenEventLogged"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LessonCompleteComponent",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "cleanText",
+          "callee": "text\n    .replace(/ระดับ\\s*:\\s*กำลังพัฒนา/g, '🌱 กำลังเติบโต')\n    .replace(/Keep Going!\\s*🚀/gi, 'หนูทำได้ดีมากแล้ว 🚀')\n    .replace",
+          "lineNumber": 10
+        },
+        {
+          "caller": "cleanText",
+          "callee": "text\n    .replace(/ระดับ\\s*:\\s*กำลังพัฒนา/g, '🌱 กำลังเติบโต')\n    .replace",
+          "lineNumber": 10
+        },
+        {
+          "caller": "cleanText",
+          "callee": "text\n    .replace",
+          "lineNumber": 10
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.tutor.interactionMode",
+          "lineNumber": 461
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 462
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "setTimeout",
+          "lineNumber": 466
+        },
+        {
+          "caller": "ngOnInit",
+          "callee": "this.voice.speak",
+          "lineNumber": 466
+        },
+        {
+          "caller": "submitReason",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 491
+        },
+        {
+          "caller": "submitReason",
+          "callee": "this.reasonSubmitted.set",
+          "lineNumber": 492
+        },
+        {
+          "caller": "submitAiRole",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 496
+        },
+        {
+          "caller": "submitAiRole",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 497
+        },
+        {
+          "caller": "submitAiRole",
+          "callee": "this.aiRoleSubmitted.set",
+          "lineNumber": 498
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 502
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.reflectionSubmitted.set",
+          "lineNumber": 503
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.tutor.submitReflection",
+          "lineNumber": 504
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.reflectionLearned.trim",
+          "lineNumber": 505
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.reflectionDifficult.trim",
+          "lineNumber": 506
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "this.reflectionRemember.trim",
+          "lineNumber": 507
+        },
+        {
+          "caller": "submitReflection",
+          "callee": "new Date().toISOString",
+          "lineNumber": 508
+        },
+        {
+          "caller": "skipReflection",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 513
+        },
+        {
+          "caller": "skipReflection",
+          "callee": "this.reflectionSkipped.set",
+          "lineNumber": 514
+        },
+        {
+          "caller": "toggleParent",
+          "callee": "this.parentExpanded",
+          "lineNumber": 544
+        },
+        {
+          "caller": "toggleParent",
+          "callee": "this.parentExpanded.update",
+          "lineNumber": 545
+        },
+        {
+          "caller": "toggleParent",
+          "callee": "this.tutor.logEvent",
+          "lineNumber": 548
+        },
+        {
+          "caller": "nextLesson",
+          "callee": "SCENARIOS.map",
+          "lineNumber": 553
+        },
+        {
+          "caller": "nextLesson",
+          "callee": "ids.indexOf",
+          "lineNumber": 554
+        },
+        {
+          "caller": "nextLesson",
+          "callee": "this.tutor.scenario",
+          "lineNumber": 554
+        },
+        {
+          "caller": "nextLesson",
+          "callee": "this.tutor.selectScenario",
+          "lineNumber": 556
+        },
+        {
+          "caller": "reviewAgain",
+          "callee": "this.tutor.selectScenario",
+          "lineNumber": 560
+        },
+        {
+          "caller": "reviewAgain",
+          "callee": "this.tutor.scenario",
+          "lineNumber": 560
+        },
+        {
+          "caller": "goHome",
+          "callee": "this.onboarding.restart",
+          "lineNumber": 564
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/models/learning.model.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 104,
+      "nonEmptyLines": 92,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/app/onboarding/onboarding.component.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 666,
+      "nonEmptyLines": 611,
+      "classes": [
+        {
+          "name": "OnboardingComponent",
+          "startLine": 605,
+          "endLine": 666,
+          "methods": [
+            "constructor",
+            "ngAfterViewInit",
+            "ngAfterViewChecked",
+            "send",
+            "skip",
+            "startLesson",
+            "scrollToBottom"
+          ],
+          "properties": [
+            "container",
+            "inputEl",
+            "ob",
+            "tutor",
+            "voice",
+            "injector",
+            "voiceSupported",
+            "inputText"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OnboardingComponent",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 617
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.ob.messages",
+          "lineNumber": 618
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 619
+        },
+        {
+          "caller": "constructor",
+          "callee": "effect",
+          "lineNumber": 621
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.ob.waiting",
+          "lineNumber": 622
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.ob.loading",
+          "lineNumber": 623
+        },
+        {
+          "caller": "constructor",
+          "callee": "window.matchMedia",
+          "lineNumber": 624
+        },
+        {
+          "caller": "constructor",
+          "callee": "setTimeout",
+          "lineNumber": 626
+        },
+        {
+          "caller": "constructor",
+          "callee": "this.inputEl?.nativeElement.focus",
+          "lineNumber": 626
+        },
+        {
+          "caller": "ngAfterViewChecked",
+          "callee": "this.scrollToBottom",
+          "lineNumber": 634
+        },
+        {
+          "caller": "send",
+          "callee": "this.ob.waiting",
+          "lineNumber": 639
+        },
+        {
+          "caller": "send",
+          "callee": "this.inputText.trim",
+          "lineNumber": 639
+        },
+        {
+          "caller": "send",
+          "callee": "this.inputText.trim",
+          "lineNumber": 640
+        },
+        {
+          "caller": "send",
+          "callee": "this.ob.handleAnswer",
+          "lineNumber": 642
+        },
+        {
+          "caller": "skip",
+          "callee": "this.ob.skip",
+          "lineNumber": 646
+        },
+        {
+          "caller": "skip",
+          "callee": "this.tutor.init",
+          "lineNumber": 647
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.tutor.interactionMode",
+          "lineNumber": 651
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.ob.goFreeTalk",
+          "lineNumber": 652
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.ob.complete",
+          "lineNumber": 653
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.tutor.enterFreeTalk",
+          "lineNumber": 655
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.tutor.init",
+          "lineNumber": 657
+        },
+        {
+          "caller": "startLesson",
+          "callee": "this.tutor.setInteractionMode",
+          "lineNumber": 658
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/onboarding/onboarding.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 335,
+      "nonEmptyLines": 300,
+      "classes": [
+        {
+          "name": "OnboardingService",
+          "startLine": 19,
+          "endLine": 335,
+          "methods": [
+            "init",
+            "skip",
+            "complete",
+            "restart",
+            "handleLearnOrTalkSelected",
+            "handleAnswer",
+            "handleHintClick",
+            "handleModeSelected",
+            "handleGuidedClick",
+            "handleFreeTalkDemoClick",
+            "startStep0",
+            "startStep1",
+            "startStep2",
+            "startStep3",
+            "startFreeTalkDemo",
+            "startModeIntro",
+            "startStep4",
+            "startStep5"
+          ],
+          "properties": [
+            "studentProfile",
+            "tutor",
+            "_active",
+            "_messages",
+            "_step",
+            "_waiting",
+            "_loading",
+            "_goFreeTalk",
+            "isActive",
+            "messages",
+            "step",
+            "waiting",
+            "loading",
+            "goFreeTalk"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OnboardingService",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "init",
+          "callee": "localStorage.getItem",
+          "lineNumber": 38
+        },
+        {
+          "caller": "init",
+          "callee": "this._active.set",
+          "lineNumber": 40
+        },
+        {
+          "caller": "init",
+          "callee": "this.startStep0",
+          "lineNumber": 41
+        },
+        {
+          "caller": "skip",
+          "callee": "localStorage.setItem",
+          "lineNumber": 45
+        },
+        {
+          "caller": "skip",
+          "callee": "this._active.set",
+          "lineNumber": 46
+        },
+        {
+          "caller": "complete",
+          "callee": "localStorage.setItem",
+          "lineNumber": 50
+        },
+        {
+          "caller": "complete",
+          "callee": "this._active.set",
+          "lineNumber": 51
+        },
+        {
+          "caller": "restart",
+          "callee": "localStorage.removeItem",
+          "lineNumber": 55
+        },
+        {
+          "caller": "restart",
+          "callee": "this._messages.set",
+          "lineNumber": 56
+        },
+        {
+          "caller": "restart",
+          "callee": "this._goFreeTalk.set",
+          "lineNumber": 57
+        },
+        {
+          "caller": "restart",
+          "callee": "this._active.set",
+          "lineNumber": 58
+        },
+        {
+          "caller": "restart",
+          "callee": "this.startStep0",
+          "lineNumber": 59
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 64
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 65
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "setTimeout",
+          "lineNumber": 66
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 67
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 74
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._goFreeTalk.set",
+          "lineNumber": 75
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._waiting.set",
+          "lineNumber": 76
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 79
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 80
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "setTimeout",
+          "lineNumber": 81
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 82
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 89
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "setTimeout",
+          "lineNumber": 90
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this.complete",
+          "lineNumber": 91
+        },
+        {
+          "caller": "handleLearnOrTalkSelected",
+          "callee": "this.tutor.init",
+          "lineNumber": 92
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._loading",
+          "lineNumber": 99
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._waiting",
+          "lineNumber": 102
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "text.trim",
+          "lineNumber": 103
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this.studentProfile.setDisplayName",
+          "lineNumber": 104
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._messages.update",
+          "lineNumber": 105
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._loading.set",
+          "lineNumber": 106
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "setTimeout",
+          "lineNumber": 110
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._messages.update",
+          "lineNumber": 111
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._loading.set",
+          "lineNumber": 112
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this.startStep1",
+          "lineNumber": 113
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._waiting",
+          "lineNumber": 118
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._messages.update",
+          "lineNumber": 120
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._loading.set",
+          "lineNumber": 121
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "setTimeout",
+          "lineNumber": 123
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._messages.update",
+          "lineNumber": 124
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this._loading.set",
+          "lineNumber": 131
+        },
+        {
+          "caller": "handleAnswer",
+          "callee": "this.startStep2",
+          "lineNumber": 132
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "this._waiting",
+          "lineNumber": 137
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "this._loading.set",
+          "lineNumber": 138
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "setTimeout",
+          "lineNumber": 140
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "this._messages.update",
+          "lineNumber": 141
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "this._loading.set",
+          "lineNumber": 149
+        },
+        {
+          "caller": "handleHintClick",
+          "callee": "this.startStep3",
+          "lineNumber": 150
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this.tutor.setInteractionMode",
+          "lineNumber": 155
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 156
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 160
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "setTimeout",
+          "lineNumber": 164
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this._messages.update",
+          "lineNumber": 165
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this._loading.set",
+          "lineNumber": 166
+        },
+        {
+          "caller": "handleModeSelected",
+          "callee": "this.startStep4",
+          "lineNumber": 167
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "this._waiting",
+          "lineNumber": 172
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "this._loading.set",
+          "lineNumber": 173
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "setTimeout",
+          "lineNumber": 175
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "this._messages.update",
+          "lineNumber": 176
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "this._loading.set",
+          "lineNumber": 184
+        },
+        {
+          "caller": "handleGuidedClick",
+          "callee": "this.startFreeTalkDemo",
+          "lineNumber": 185
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "this._waiting",
+          "lineNumber": 190
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "this._loading.set",
+          "lineNumber": 191
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "setTimeout",
+          "lineNumber": 193
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "this._messages.update",
+          "lineNumber": 194
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "this._loading.set",
+          "lineNumber": 202
+        },
+        {
+          "caller": "handleFreeTalkDemoClick",
+          "callee": "this.startModeIntro",
+          "lineNumber": 203
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this.studentProfile.displayName",
+          "lineNumber": 208
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this._messages.set",
+          "lineNumber": 210
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this.startStep1",
+          "lineNumber": 213
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this._step.set",
+          "lineNumber": 217
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this._waiting.set",
+          "lineNumber": 218
+        },
+        {
+          "caller": "startStep0",
+          "callee": "this._messages.set",
+          "lineNumber": 219
+        },
+        {
+          "caller": "startStep1",
+          "callee": "this._step.set",
+          "lineNumber": 228
+        },
+        {
+          "caller": "startStep1",
+          "callee": "this._waiting.set",
+          "lineNumber": 229
+        },
+        {
+          "caller": "startStep1",
+          "callee": "setTimeout",
+          "lineNumber": 230
+        },
+        {
+          "caller": "startStep1",
+          "callee": "this._messages.update",
+          "lineNumber": 231
+        },
+        {
+          "caller": "startStep2",
+          "callee": "this._step.set",
+          "lineNumber": 242
+        },
+        {
+          "caller": "startStep2",
+          "callee": "this._waiting.set",
+          "lineNumber": 243
+        },
+        {
+          "caller": "startStep2",
+          "callee": "setTimeout",
+          "lineNumber": 244
+        },
+        {
+          "caller": "startStep2",
+          "callee": "this._messages.update",
+          "lineNumber": 245
+        },
+        {
+          "caller": "startStep3",
+          "callee": "this._step.set",
+          "lineNumber": 256
+        },
+        {
+          "caller": "startStep3",
+          "callee": "this._waiting.set",
+          "lineNumber": 257
+        },
+        {
+          "caller": "startStep3",
+          "callee": "setTimeout",
+          "lineNumber": 258
+        },
+        {
+          "caller": "startStep3",
+          "callee": "this._messages.update",
+          "lineNumber": 259
+        },
+        {
+          "caller": "startFreeTalkDemo",
+          "callee": "setTimeout",
+          "lineNumber": 270
+        },
+        {
+          "caller": "startFreeTalkDemo",
+          "callee": "this._messages.update",
+          "lineNumber": 271
+        },
+        {
+          "caller": "startFreeTalkDemo",
+          "callee": "this._waiting.set",
+          "lineNumber": 275
+        },
+        {
+          "caller": "startModeIntro",
+          "callee": "setTimeout",
+          "lineNumber": 280
+        },
+        {
+          "caller": "startModeIntro",
+          "callee": "this._messages.update",
+          "lineNumber": 281
+        },
+        {
+          "caller": "startModeIntro",
+          "callee": "this._waiting.set",
+          "lineNumber": 285
+        },
+        {
+          "caller": "startStep4",
+          "callee": "this._step.set",
+          "lineNumber": 290
+        },
+        {
+          "caller": "startStep4",
+          "callee": "this._waiting.set",
+          "lineNumber": 291
+        },
+        {
+          "caller": "startStep4",
+          "callee": "setTimeout",
+          "lineNumber": 292
+        },
+        {
+          "caller": "startStep4",
+          "callee": "this._messages.update",
+          "lineNumber": 293
+        },
+        {
+          "caller": "startStep4",
+          "callee": "setTimeout",
+          "lineNumber": 300
+        },
+        {
+          "caller": "startStep4",
+          "callee": "this._messages.update",
+          "lineNumber": 301
+        },
+        {
+          "caller": "startStep4",
+          "callee": "this.startStep5",
+          "lineNumber": 309
+        },
+        {
+          "caller": "startStep5",
+          "callee": "this._step.set",
+          "lineNumber": 315
+        },
+        {
+          "caller": "startStep5",
+          "callee": "this._waiting.set",
+          "lineNumber": 316
+        },
+        {
+          "caller": "startStep5",
+          "callee": "setTimeout",
+          "lineNumber": 326
+        },
+        {
+          "caller": "startStep5",
+          "callee": "this._messages.update",
+          "lineNumber": 327
+        },
+        {
+          "caller": "startStep5",
+          "callee": "setTimeout",
+          "lineNumber": 331
+        },
+        {
+          "caller": "startStep5",
+          "callee": "this._waiting.set",
+          "lineNumber": 332
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/student-profile/student-profile.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 27,
+      "nonEmptyLines": 22,
+      "classes": [
+        {
+          "name": "StudentProfileService",
+          "startLine": 7,
+          "endLine": 27,
+          "methods": [
+            "setDisplayName",
+            "loadOrCreateStudentId"
+          ],
+          "properties": [
+            "_studentId",
+            "_displayName",
+            "studentId",
+            "displayName"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "StudentProfileService",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "setDisplayName",
+          "callee": "name.trim",
+          "lineNumber": 15
+        },
+        {
+          "caller": "setDisplayName",
+          "callee": "this._displayName.set",
+          "lineNumber": 16
+        },
+        {
+          "caller": "setDisplayName",
+          "callee": "localStorage.setItem",
+          "lineNumber": 17
+        },
+        {
+          "caller": "loadOrCreateStudentId",
+          "callee": "localStorage.getItem",
+          "lineNumber": 21
+        },
+        {
+          "caller": "loadOrCreateStudentId",
+          "callee": "crypto.randomUUID",
+          "lineNumber": 23
+        },
+        {
+          "caller": "loadOrCreateStudentId",
+          "callee": "localStorage.setItem",
+          "lineNumber": 24
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/app/voice.service.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 102,
+      "nonEmptyLines": 91,
+      "classes": [
+        {
+          "name": "VoiceService",
+          "startLine": 22,
+          "endLine": 102,
+          "methods": [
+            "isSupported",
+            "startListening",
+            "stopListening",
+            "speak",
+            "cleanForSpeech",
+            "cancelSpeech"
+          ],
+          "properties": [
+            "isListening",
+            "transcript",
+            "error",
+            "networkError",
+            "recognition"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "VoiceService",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "startListening",
+          "callee": "this.isSupported",
+          "lineNumber": 35
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.error.set",
+          "lineNumber": 36
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.transcript.set",
+          "lineNumber": 46
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.error.set",
+          "lineNumber": 52
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.error.set",
+          "lineNumber": 54
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.networkError.set",
+          "lineNumber": 55
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.error.set",
+          "lineNumber": 57
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.isListening.set",
+          "lineNumber": 59
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.isListening.set",
+          "lineNumber": 62
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.recognition.start",
+          "lineNumber": 65
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.isListening.set",
+          "lineNumber": 66
+        },
+        {
+          "caller": "startListening",
+          "callee": "this.error.set",
+          "lineNumber": 67
+        },
+        {
+          "caller": "stopListening",
+          "callee": "this.recognition?.stop",
+          "lineNumber": 71
+        },
+        {
+          "caller": "stopListening",
+          "callee": "this.isListening.set",
+          "lineNumber": 72
+        },
+        {
+          "caller": "speak",
+          "callee": "speechSynthesis.cancel",
+          "lineNumber": 77
+        },
+        {
+          "caller": "speak",
+          "callee": "this.cleanForSpeech",
+          "lineNumber": 78
+        },
+        {
+          "caller": "speak",
+          "callee": "speechSynthesis.speak",
+          "lineNumber": 81
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')\n      .replace(/Feedback/gi, 'ผลการเรียนรู้')\n      .replace(/AI Tutor/gi, 'ครูเอไอ')\n      .replace(/Level:/gi, 'ระดับ')\n      // clean up extra whitespace\n      .replace(/\\n{3,}/g, '\\n\\n')\n      .trim",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')\n      .replace(/Feedback/gi, 'ผลการเรียนรู้')\n      .replace(/AI Tutor/gi, 'ครูเอไอ')\n      .replace(/Level:/gi, 'ระดับ')\n      // clean up extra whitespace\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')\n      .replace(/Feedback/gi, 'ผลการเรียนรู้')\n      .replace(/AI Tutor/gi, 'ครูเอไอ')\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')\n      .replace(/Feedback/gi, 'ผลการเรียนรู้')\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace(/Keep Going!/gi, 'ไปต่อได้เลย')\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace(/[☀-➿]/g, '')\n      // common English fragments → Thai\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace(/[\\u{1F000}-\\u{1FFFF}]/gu, '')\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cleanForSpeech",
+          "callee": "text\n      // strip emoji\n      .replace",
+          "lineNumber": 85
+        },
+        {
+          "caller": "cancelSpeech",
+          "callee": "speechSynthesis.cancel",
+          "lineNumber": 100
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

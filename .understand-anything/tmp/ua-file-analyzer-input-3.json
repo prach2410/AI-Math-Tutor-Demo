@@ -1,0 +1,40 @@
+{
+  "projectRoot": "D:/_AI-Math-Tutor-Demo/AI-Math-Tutor-Demo",
+  "batchFiles": [
+    {"path": "src/app/chat/chat.component.ts", "language": "typescript", "sizeLines": 844, "fileCategory": "code"},
+    {"path": "src/app/lesson-complete/lesson-complete.component.ts", "language": "typescript", "sizeLines": 566, "fileCategory": "code"},
+    {"path": "src/app/models/learning.model.ts", "language": "typescript", "sizeLines": 104, "fileCategory": "code"},
+    {"path": "src/app/onboarding/onboarding.component.ts", "language": "typescript", "sizeLines": 666, "fileCategory": "code"},
+    {"path": "src/app/onboarding/onboarding.service.ts", "language": "typescript", "sizeLines": 335, "fileCategory": "code"},
+    {"path": "src/app/student-profile/student-profile.service.ts", "language": "typescript", "sizeLines": 27, "fileCategory": "code"},
+    {"path": "src/app/voice.service.ts", "language": "typescript", "sizeLines": 102, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "src/app/chat/chat.component.ts": [
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/lesson-complete/lesson-complete.component.ts": [
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/parent-feedback/parent-feedback.component.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/models/learning.model.ts": [],
+    "src/app/onboarding/onboarding.component.ts": [
+      "src/app/onboarding/onboarding.service.ts",
+      "src/app/tutor.service.ts",
+      "src/app/voice.service.ts"
+    ],
+    "src/app/onboarding/onboarding.service.ts": [
+      "src/app/models/learning.model.ts",
+      "src/app/student-profile/student-profile.service.ts",
+      "src/app/tutor.service.ts"
+    ],
+    "src/app/student-profile/student-profile.service.ts": [],
+    "src/app/voice.service.ts": []
+  }
+}

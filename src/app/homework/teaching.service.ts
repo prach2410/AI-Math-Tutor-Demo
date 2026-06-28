@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { StudentProfileService } from '../student-profile/student-profile.service';
 
 export interface TeachingStep {
   step: number;
@@ -54,13 +55,15 @@ export interface ExplainResponse {
 
 @Injectable({ providedIn: 'root' })
 export class TeachingService {
-  private http = inject(HttpClient);
+  private http           = inject(HttpClient);
+  private studentProfile = inject(StudentProfileService);
 
   start(problemText: string, latex: string, topic: string, hasFigure: boolean,
         visionModel = '', analysisStartedAt = '', analysisEndedAt = ''): Promise<StartTeachingResponse> {
+    const studentName = this.studentProfile.displayName();
     return firstValueFrom(
       this.http.post<StartTeachingResponse>('/api/teaching/start',
-        { problemText, latex, topic, hasFigure, visionModel, analysisStartedAt, analysisEndedAt })
+        { problemText, latex, topic, hasFigure, visionModel, analysisStartedAt, analysisEndedAt, studentName })
     );
   }
 
@@ -90,9 +93,10 @@ export class TeachingService {
 
   solve(problemText: string, latex: string, topic: string,
         visionModel = '', analysisStartedAt = '', analysisEndedAt = ''): Promise<SolveResponse> {
+    const studentName = this.studentProfile.displayName();
     return firstValueFrom(
       this.http.post<SolveResponse>('/api/teaching/solve',
-        { problemText, latex, topic, visionModel, analysisStartedAt, analysisEndedAt })
+        { problemText, latex, topic, visionModel, analysisStartedAt, analysisEndedAt, studentName })
     );
   }
 

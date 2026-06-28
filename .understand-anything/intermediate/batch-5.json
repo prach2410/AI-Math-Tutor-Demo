@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "document:.claude/skills/project-brain/CHANGELOG.md",
+      "type": "document",
+      "name": "CHANGELOG.md",
+      "filePath": ".claude/skills/project-brain/CHANGELOG.md",
+      "summary": "ไฟล์บันทึกการเปลี่ยนแปลงของ Project Brain skill ใช้ติดตาม update และ version history สำหรับ skill นี้โดยเฉพาะ",
+      "tags": ["documentation", "changelog", "project-brain"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.claude/skills/project-brain/SESSION_SUMMARY.md",
+      "type": "document",
+      "name": "SESSION_SUMMARY.md",
+      "filePath": ".claude/skills/project-brain/SESSION_SUMMARY.md",
+      "summary": "เอกสารสรุปสถานะโปรเจกต์ AI Math Tutor แบบครอบคลุม 12 หัวข้อ ครอบคลุม phase ปัจจุบัน, feature ที่สร้างเสร็จแล้ว, ข้อจำกัดสถาปัตยกรรม, หลักฐาน, คำถามที่ยังเปิดอยู่, active risks, locked decisions, และ working rules สำหรับ AI session",
+      "tags": ["documentation", "project-brain", "session-context", "architecture"],
+      "complexity": "complex",
+      "languageNotes": "ไฟล์นี้ทำหน้าที่เป็น living document ที่ AI อ่านเพื่อโหลด context โปรเจกต์ก่อนเริ่ม session ใหม่ — ใช้ร่วมกับ SKILL.md เป็น system prompt สำหรับ product thinking"
+    },
+    {
+      "id": "document:.claude/skills/project-brain/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".claude/skills/project-brain/SKILL.md",
+      "summary": "ไฟล์ skill definition หลักของ Project Brain skill กำหนด AI roles, product philosophy, strategic rules, review framework, key concepts, และ commands (startup, update-summary, weekly-review, critical-review) เพื่อให้ AI ทำหน้าที่เป็น product thinking partner ของโปรเจกต์",
+      "tags": ["documentation", "project-brain", "skill-definition", "configuration"],
+      "complexity": "complex",
+      "languageNotes": "ไฟล์นี้เป็น system-prompt-in-a-file — มี 26 sections ครอบคลุมตั้งแต่ project philosophy ถึง command protocol สำหรับ AI assistant"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.claude/skills/project-brain/SESSION_SUMMARY.md",
+      "target": "document:.claude/skills/project-brain/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.claude/skills/project-brain/CHANGELOG.md",
+      "target": "document:.claude/skills/project-brain/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

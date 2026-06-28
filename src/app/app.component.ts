@@ -20,6 +20,8 @@ import { LearningJournalUploadComponent } from './learning-journal/learning-jour
 import { DailyLogsComponent } from './learning-journal/daily-logs.component';
 import { TutorService } from './tutor.service';
 import { VoiceService } from './voice.service';
+import { NicknameGateComponent } from './nickname-gate/nickname-gate.component';
+import { StudentProfileService } from './student-profile/student-profile.service';
 
 @Component({
   selector: 'app-root',
@@ -43,6 +45,7 @@ import { VoiceService } from './voice.service';
     DiscoveryBatchesComponent,
     AdminExportComponent,
     FormsModule,
+    NicknameGateComponent,
   ],
   template: `
     @if (adminRoute === 'discovery-batches') {
@@ -56,6 +59,12 @@ import { VoiceService } from './voice.service';
           <div class="header-text">
             <h1 class="header-title">AI Tutor คณิตศาสตร์ ม.2</h1>
             <p class="header-sub">{{ tutor.inProjectBrainMode() ? 'Project Brain Tutor' : tutor.inHomeworkMode() ? '📷 การบ้าน' : tutor.inLearningJournalMode() ? '📚 สิ่งที่เรียนวันนี้' : tutor.inDailyLogsMode() ? '📋 บันทึกการเรียน' : tutor.scenario().title }}</p>
+            @if (tutor.inHomeworkMode() && studentProfile.displayName()) {
+              <div class="student-chip">
+                <span class="student-name">👦 {{ studentProfile.displayName() }}</span>
+                <button class="switch-btn" (click)="switchStudent()">สลับคนเรียน</button>
+              </div>
+            }
           </div>
           <div class="header-right">
             <nav class="scenario-nav">
@@ -196,6 +205,9 @@ import { VoiceService } from './voice.service';
       </nav>
     </div>
 
+    @if (!studentProfile.displayName()) {
+      <app-nickname-gate (confirmed)="onNicknameConfirmed()" />
+    }
     <!-- Project Brain password dialog -->
     @if (showPbDialog()) {
       <div class="pb-overlay" (click)="cancelPbDialog()">
@@ -299,6 +311,33 @@ import { VoiceService } from './voice.service';
     .pb-btn.active { background: #1e40af; color: white; border-color: #1e40af; }
     .camera-btn { border-color: rgba(134,239,172,0.5); }
     .camera-btn.active { background: #16a34a; color: white; border-color: #16a34a; }
+
+    .student-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .student-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .switch-btn {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .switch-btn:hover { background: rgba(255,255,255,0.2); }
 
     /* Project Brain password dialog */
     .pb-overlay {
@@ -737,9 +776,10 @@ import { VoiceService } from './voice.service';
   `]
 })
 export class AppComponent implements OnInit {
-  protected tutor       = inject(TutorService);
-  protected onboarding  = inject(OnboardingService);
-  protected voice       = inject(VoiceService);
+  protected tutor           = inject(TutorService);
+  protected onboarding      = inject(OnboardingService);
+  protected voice           = inject(VoiceService);
+  protected studentProfile  = inject(StudentProfileService);
 
   protected readonly adminRoute = (() => {
     const p = window.location.pathname;
@@ -813,6 +853,8 @@ export class AppComponent implements OnInit {
     }
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
+  protected onNicknameConfirmed(): void {}
+  protected switchStudent(): void { this.studentProfile.setDisplayName(''); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.tutor.resetToHome(); }
   protected goLearn(): void { this.showNotesSheet.set(false); this.tutor.init(); }
   protected openAbout(): void { this.aboutRef?.open(); }
