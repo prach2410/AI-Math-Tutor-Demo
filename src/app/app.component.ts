@@ -820,6 +820,10 @@ export class AppComponent implements OnInit {
 
     this.tutor.init();
 
+    if (!this.landingSeen()) {
+      this.tutor.logEvent('landing_page_viewed');
+    }
+
     if (window.location.search.includes('pb')) {
       this.enterProjectBrain();
     }
@@ -862,6 +866,7 @@ export class AppComponent implements OnInit {
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
   protected onLandingContinue(): void {
+    this.tutor.logEvent('hero_cta_clicked');
     localStorage.setItem('ai_tutor_landing_seen', '1');
     this.landingSeen.set(true);
   }
