@@ -22,6 +22,7 @@ import { TutorService } from './tutor.service';
 import { VoiceService } from './voice.service';
 import { NicknameGateComponent } from './nickname-gate/nickname-gate.component';
 import { StudentProfileService } from './student-profile/student-profile.service';
+import { LandingComponent } from './landing/landing.component';
 
 @Component({
   selector: 'app-root',
@@ -46,12 +47,16 @@ import { StudentProfileService } from './student-profile/student-profile.service
     AdminExportComponent,
     FormsModule,
     NicknameGateComponent,
+    LandingComponent,
   ],
   template: `
     @if (adminRoute === 'discovery-batches') {
       <app-discovery-batches />
     } @else if (adminRoute === 'export') {
       <app-admin-export />
+    } @else {
+    @if (!landingSeen()) {
+      <app-landing (continue)="onLandingContinue()" />
     } @else {
     <div class="layout">
       <header class="header">
@@ -232,6 +237,7 @@ import { StudentProfileService } from './student-profile/student-profile.service
           </div>
         </div>
       </div>
+    }
     }
     }
   `,
@@ -781,6 +787,8 @@ export class AppComponent implements OnInit {
   protected voice           = inject(VoiceService);
   protected studentProfile  = inject(StudentProfileService);
 
+  protected readonly landingSeen = signal<boolean>(localStorage.getItem('ai_tutor_landing_seen') === '1');
+
   protected readonly adminRoute = (() => {
     const p = window.location.pathname;
     if (p.startsWith('/admin/discovery-batches')) return 'discovery-batches';
@@ -853,6 +861,10 @@ export class AppComponent implements OnInit {
     }
   }
   protected chooseMode(mode: 'text' | 'voice'): void { this.tutor.setInteractionMode(mode); }
+  protected onLandingContinue(): void {
+    localStorage.setItem('ai_tutor_landing_seen', '1');
+    this.landingSeen.set(true);
+  }
   protected onNicknameConfirmed(): void {}
   protected switchStudent(): void { this.studentProfile.setDisplayName(''); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.tutor.resetToHome(); }
