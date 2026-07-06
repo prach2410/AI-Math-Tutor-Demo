@@ -9,49 +9,53 @@ export type LearningState =
 export interface ScriptStep {
   aiMessage: string;
   nextState: LearningState;
+  imageUrl?: string;
 }
 
-// Demo Script §6 — 4 fixed turns, keyword-matched in order
+// Demo Script §6 — 4 fixed turns, keyword-matched in order (grounded DLTV ค22101)
 const SCRIPT: ScriptStep[] = [
   {
-    // After initial open-ended question — student says anything about using the formula
+    // Student answers recall with formula — AI probes why it works + which side is AC
     aiMessage:
-      'ดีมาก หนูจำสูตรได้แล้ว 👍 แล้วในสูตรนี้ ด้าน c คือด้านไหนของสามเหลี่ยมมุมฉาก?',
+      'ที่ใช้พีทาโกรัสกับสี่เหลี่ยมนี้ได้เพราะอะไร แล้ว AC (= 50) คือด้านไหนของสามเหลี่ยม?',
     nextState: 'DIAGNOSTIC_PROBE',
+    imageUrl: '/dltv-pilot/rect-abcd.jpg',
   },
   {
-    // Student says "c คือด้านที่ยาวที่สุด" — close but not precise enough
+    // Student says "AC คือด้านที่ยาวที่สุด" — close but not precise
     aiMessage:
-      'ใกล้เคียงแล้ว แต่ขอให้จำให้แม่นกว่านั้นนะ — ด้าน c คือด้านที่อยู่ตรงข้ามมุมฉากเสมอ ' +
-      'ในสามเหลี่ยมมุมฉากด้านนี้มักยาวที่สุด แต่เวลาทำโจทย์ให้เริ่มจากหามุมฉากก่อน แล้วดูด้านตรงข้าม ' +
-      '· ลองอธิบายกลับหน่อยว่าเราจะหาด้าน c จากรูปได้อย่างไร?',
+      'ใกล้แล้ว — แต่ที่ถูกคือ เส้นทแยง AC ตัดสี่เหลี่ยม ABCD ให้เกิด**สามเหลี่ยมมุมฉาก ABC** ' +
+      '(มุมฉากที่ B) · AC จึงเป็นด้านตรงข้ามมุมฉากของสามเหลี่ยมนั้น ไม่ใช่แค่ "ด้านที่ยาวที่สุด" ' +
+      '· ลองอธิบายกลับให้ครูฟังหน่อยว่า ทำไมเราถึงรู้ว่า AC คือด้านตรงข้ามมุมฉาก?',
     nextState: 'EXPLAIN_BACK',
   },
   {
-    // Student explains back correctly about right angle
+    // Student explains back correctly — AI gives transfer problem from แบบฝึกหัด 3
     aiMessage:
-      'ถูกต้องมาก 🎉 ทีนี้ลองใช้กับโจทย์ใหม่ — สามเหลี่ยมมุมฉากมีด้านประกอบมุมฉากยาว 6 และ 8 หน่วย ' +
-      'ด้านตรงข้ามมุมฉากยาวเท่าไร?',
+      'ถูกต้อง 🎉 ทีนี้ลองโจทย์จริงจาก**แบบฝึกหัด 3 ข้อ 2** — ' +
+      'ว่าว MABN มี MA=MB=6, AN=BN=8 และมุมฉากที่ B · หา MN ยาวเท่าไร?',
     nextState: 'TRANSFER_CHECK',
+    imageUrl: '/dltv-pilot/worksheet3-q2.jpg',
   },
   {
-    // Student solves 6-8-10
+    // Student solves 6-8-10 correctly
     aiMessage:
-      'ถูกต้อง ✅ หนูใช้สูตรได้ถูกและรู้ว่าด้าน c คือด้านตรงข้ามมุมฉาก ' +
-      '· เดี๋ยวครูจะเห็นสรุปว่าตอนแรกหนูจำสูตรได้แต่ยังต้องทบทวนการระบุด้าน c และตอนท้ายแก้โจทย์ใหม่ได้แล้ว',
+      'ถูกต้อง ✅ หนูใช้สามเหลี่ยมมุมฉาก MBN (มุมฉากที่ B) ได้ถูก — MN = 10 ' +
+      '· ตอนนี้หนูพร้อมทำ**โจทย์แบ่งรูป** (ข้อ 1, 3) แล้ว ' +
+      '· เดี๋ยวครูจะเห็นสรุปผลการเรียนรู้ของหนูวันนี้',
     nextState: 'EVIDENCE_SUMMARY',
   },
 ];
 
 const FALLBACK =
-  'ลองเล่าให้ครูฟังใหม่นะว่า หนูเข้าใจเรื่องด้าน c ของสามเหลี่ยมมุมฉากว่าอย่างไร?';
+  'ลองเล่าให้ครูฟังใหม่นะ — เราจะรู้ได้อย่างไรว่าด้านไหนคือด้านตรงข้ามมุมฉาก?';
 
 // Keywords that signal the student is on-track for each turn
 const MATCH_KEYWORDS: string[][] = [
-  ['สูตร', 'a²', 'a2', 'พีทาโกรัส', 'b²', 'b2', 'c²', 'c2', 'หา', 'คำนวณ', 'ใช้'],
-  ['ยาวที่สุด', 'ด้านยาว', 'ยาวสุด', 'c คือ', 'hypot'],
-  ['มุมฉาก', 'ตรงข้าม', 'opposite', 'ด้าน c'],
-  ['6', '8', '10', '100', '36', '64', 'c =', 'c='],
+  ['สูตร', 'a²', 'a2', 'พีทาโกรัส', 'b²', 'b2', 'c²', 'c2', '50', 'ac', 'ทแยง', 'หา', 'คำนวณ', 'ใช้'],
+  ['ยาวที่สุด', 'ด้านยาว', 'ยาวสุด', 'ac คือ', 'hypot'],
+  ['มุมฉาก', 'ตรงข้าม', 'opposite', 'ด้าน'],
+  ['6', '8', '10', '100', '36', '64', 'mn', 'mn=', 'mn ='],
 ];
 
 export function getScriptResponse(

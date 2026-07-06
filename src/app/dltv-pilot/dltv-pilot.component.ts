@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LearningStateIndicatorComponent } from './learning-state-indicator.component';
-import { LearningState, getScriptResponse } from './dltv-mock-script';
+import { LearningState, ScriptStep, getScriptResponse } from './dltv-mock-script';
 
 interface ChatMessage {
   role: 'ai' | 'student';
   text: string;
+  imageUrl?: string;
 }
 
 type PilotPage = 'lesson' | 'session' | 'evidence';
@@ -75,7 +76,12 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
                   @if (msg.role === 'ai') {
                     <div class="msg-avatar">🤖</div>
                   }
-                  <div class="msg-bubble">{{ msg.text }}</div>
+                  <div class="msg-bubble">
+                    {{ msg.text }}
+                    @if (msg.imageUrl) {
+                      <img [src]="msg.imageUrl" alt="โจทย์" class="msg-img" />
+                    }
+                  </div>
                   @if (msg.role === 'student') {
                     <div class="msg-avatar">👦</div>
                   }
@@ -132,16 +138,16 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
               <div class="ba-col before">
                 <div class="ba-header">ก่อนได้รับความช่วยเหลือ</div>
                 <ul>
-                  <li>จำสูตร a² + b² = c² ได้</li>
-                  <li>แต่ยังระบุไม่ได้ว่าด้าน c คือด้านตรงข้ามมุมฉาก</li>
-                  <li>สับสนระหว่าง "ด้านที่ยาวที่สุด" กับ "ด้านตรงข้ามมุมฉาก"</li>
+                  <li>ใช้ a² + b² = c² กับโจทย์สี่เหลี่ยม ABCD ได้ (AC = 50)</li>
+                  <li>แต่ระบุ AC ว่า "ด้านที่ยาวที่สุด" — ยังไม่ผูกกับมุมฉาก</li>
+                  <li>prerequisite gap: บทเรียน DLTV ข้ามไปโจทย์แบ่งรูปเลย</li>
                 </ul>
               </div>
               <div class="ba-col after">
                 <div class="ba-header">หลังได้รับความช่วยเหลือ</div>
                 <ul>
-                  <li>ระบุด้าน c ได้ถูกต้อง</li>
-                  <li>แก้โจทย์ 6-8-10 ได้ด้วยตัวเอง</li>
+                  <li>ระบุได้ว่า AC คือด้านตรงข้ามมุมฉาก ABC (ไม่ใช่แค่ยาวที่สุด)</li>
+                  <li>แก้แบบฝึกหัด 3 ข้อ 2 (MN = 10) ได้ด้วยตัวเอง</li>
                   <li>อธิบายกลับเป็นคำพูดตัวเองได้</li>
                 </ul>
               </div>
@@ -150,15 +156,15 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
             <div class="evidence-findings">
               <div class="finding-item">
                 <span class="finding-label">จุดที่พบ:</span>
-                สับสนระหว่าง "ด้านที่ยาวที่สุด" กับ "ด้านตรงข้ามมุมฉาก"
+                นักเรียนจำสูตรได้แต่ยังขาด prerequisite — ยังไม่เชื่อม "เส้นทแยง → สามเหลี่ยมมุมฉาก → ด้านตรงข้ามมุมฉาก"
               </div>
               <div class="finding-item">
                 <span class="finding-label">การช่วยเหลือของ AI:</span>
-                ทบทวนความหมายด้านตรงข้ามมุมฉาก + ให้เด็กอธิบายกลับด้วยคำตัวเอง
+                Diagnostic probe → Scaffold (เส้นทแยง ABCD) → Explain-back → Transfer (ว่าว MABN แบบฝึกหัด 3 ข้อ 2)
               </div>
               <div class="finding-item">
-                <span class="finding-label">ข้อสังเกตสำหรับครู:</span>
-                ควรให้แบบฝึกเพิ่มเรื่องการระบุด้านตรงข้ามมุมฉากจากรูปที่หมุนหลายทิศทาง
+                <span class="finding-label">ข้อเสนอแนะสำหรับครู:</span>
+                ตรวจ<strong>ใบกิจกรรม 2</strong> + <strong>แบบฝึกหัด 3 (ข้อ 1, 3 โจทย์แบ่งรูป)</strong> เพื่อยืนยันว่าเชื่อมโยงได้จริง
               </div>
             </div>
 
@@ -353,6 +359,14 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
       border-bottom-right-radius: 4px;
     }
 
+    .msg-img {
+      display: block;
+      margin-top: 10px;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
     /* typing dots */
     .typing-dots { display: flex; gap: 4px; padding: 14px 18px; align-items: center; }
     .typing-dots span {
@@ -522,10 +536,11 @@ export class DltvPilotComponent {
     this.page.set('session');
     this.turn = 0;
     this.learningState.set('RECALL_CHECK');
-    // AI opens with a question, not an explanation
+    // AI opens with a grounded recall question from DLTV lesson
     this.messages.set([{
       role: 'ai',
-      text: 'จากบทเรียนเมื่อกี้ หนูลองเล่าให้ฟังหน่อยว่า ถ้าเรารู้ความยาวด้านสองด้านของสามเหลี่ยมมุมฉาก เราหาด้านที่เหลือได้อย่างไร?',
+      text: 'จากบทเรียนเมื่อกี้ — สี่เหลี่ยม ABCD กว้าง 30 ยาว 40 หน่วย · หนูจะหาความยาวเส้นทแยงมุม AC ได้อย่างไร?',
+      imageUrl: '/dltv-pilot/rect-abcd.jpg',
     }]);
   }
 
@@ -540,7 +555,9 @@ export class DltvPilotComponent {
     setTimeout(() => {
       const { step } = getScriptResponse(text, this.turn);
       this.learningState.set(step.nextState);
-      this.messages.update((msgs) => [...msgs, { role: 'ai', text: step.aiMessage }]);
+      const aiMsg: ChatMessage = { role: 'ai', text: step.aiMessage };
+      if (step.imageUrl) aiMsg.imageUrl = step.imageUrl;
+      this.messages.update((msgs) => [...msgs, aiMsg]);
       this.aiTyping.set(false);
       if (step.nextState !== 'EVIDENCE_SUMMARY') {
         this.turn++;
