@@ -148,7 +148,7 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
                 <ul>
                   <li>ใช้ a² + b² = c² กับโจทย์สี่เหลี่ยม ABCD ได้ (AC = 50)</li>
                   <li>แต่ระบุ AC ว่า "ด้านที่ยาวที่สุด" — ยังไม่ผูกกับมุมฉาก</li>
-                  <li>prerequisite gap: บทเรียน DLTV ข้ามไปโจทย์แบ่งรูปเลย</li>
+                  <li>จุดพื้นฐานที่ข้ามไป: บทเรียน DLTV ข้ามไปโจทย์แบ่งรูปเลย</li>
                 </ul>
               </div>
               <div class="ba-col after">
@@ -164,11 +164,11 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
             <div class="evidence-findings">
               <div class="finding-item">
                 <span class="finding-label">จุดที่พบ:</span>
-                นักเรียนจำสูตรได้แต่ยังขาด prerequisite — ยังไม่เชื่อม "เส้นทแยง → สามเหลี่ยมมุมฉาก → ด้านตรงข้ามมุมฉาก"
+                นักเรียนจำสูตรได้แต่ยังขาด จุดพื้นฐานที่ข้ามไป — ยังไม่เชื่อม "เส้นทแยง → สามเหลี่ยมมุมฉาก → ด้านตรงข้ามมุมฉาก"
               </div>
               <div class="finding-item">
                 <span class="finding-label">การช่วยเหลือของ AI:</span>
-                Diagnostic probe → Scaffold (เส้นทแยง ABCD) → Explain-back → Transfer (ว่าว MABN แบบฝึกหัด 3 ข้อ 2)
+                ถามเช็คความเข้าใจ → ช่วยชี้จากรูปสี่เหลี่ยม ABCD → ให้เด็กอธิบายกลับ → ทดสอบด้วยโจทย์ใหม่ (ว่าว แบบฝึกหัด 3 ข้อ 2)
               </div>
               <div class="finding-item">
                 <span class="finding-label">ข้อเสนอแนะสำหรับครู:</span>
