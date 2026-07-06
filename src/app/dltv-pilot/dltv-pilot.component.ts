@@ -66,7 +66,8 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
         @if (page() === 'session') {
           <div class="session-page">
 
-            <div class="session-indicator-row">
+            <div class="session-top-row">
+              <button class="btn-back" (click)="page.set('lesson')">← กลับ</button>
               <app-learning-state-indicator [state]="learningState()" />
             </div>
 
@@ -320,11 +321,24 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
       flex-direction: column;
       height: calc(100dvh - 120px);
     }
-    .session-indicator-row {
-      padding: 8px 0 12px;
+    .session-top-row {
       display: flex;
-      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0 12px;
     }
+    .btn-back {
+      padding: 6px 14px;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-back:hover { background: #e2e8f0; }
     .chat-area {
       flex: 1;
       overflow-y: auto;
