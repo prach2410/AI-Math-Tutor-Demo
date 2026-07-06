@@ -41,7 +41,7 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
             <p class="lesson-sub">เริ่มต้นด้วยการเรียนจากบทเรียน DLTV</p>
 
             <a
-              href="https://www.dltv.ac.th/"
+              href="https://dltv.ac.th/teachplan/episode/108101"
               target="_blank"
               rel="noopener"
               class="btn-dltv"
@@ -90,18 +90,23 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
             </div>
 
             @if (learningState() !== 'EVIDENCE_SUMMARY') {
-              <div class="input-row">
-                <input
-                  class="chat-input"
-                  type="text"
-                  [(ngModel)]="draft"
-                  placeholder="พิมพ์คำตอบที่นี่..."
-                  (keydown.enter)="sendMessage()"
-                  [disabled]="aiTyping()"
-                />
-                <button class="btn-send" (click)="sendMessage()" [disabled]="aiTyping() || !draft.trim()">
-                  ส่ง
-                </button>
+              <div class="input-section">
+                @if (messages().length <= 1) {
+                  <p class="input-hint">💬 พิมพ์คำตอบของคุณ แล้วกด <strong>ส่ง</strong> หรือกด Enter</p>
+                }
+                <div class="input-row">
+                  <input
+                    class="chat-input"
+                    type="text"
+                    [(ngModel)]="draft"
+                    placeholder="พิมพ์คำตอบที่นี่..."
+                    (keydown.enter)="sendMessage()"
+                    [disabled]="aiTyping()"
+                  />
+                  <button class="btn-send" (click)="sendMessage()" [disabled]="aiTyping() || !draft.trim()">
+                    ส่ง
+                  </button>
+                </div>
               </div>
             } @else {
               <div class="evidence-cta">
@@ -361,12 +366,20 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
       30% { transform: translateY(-6px); }
     }
 
+    .input-section {
+      border-top: 1px solid #e2e8f0;
+      margin-top: 8px;
+      padding-top: 10px;
+    }
+    .input-hint {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0 0 8px;
+      text-align: center;
+    }
     .input-row {
       display: flex;
       gap: 8px;
-      padding-top: 12px;
-      border-top: 1px solid #e2e8f0;
-      margin-top: 8px;
     }
     .chat-input {
       flex: 1;
