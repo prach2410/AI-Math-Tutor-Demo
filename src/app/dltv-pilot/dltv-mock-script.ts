@@ -10,40 +10,41 @@ export interface ScriptStep {
   aiMessage: string;
   nextState: LearningState;
   imageUrl?: string;
+  suggestedReply?: string;
 }
 
 // Demo Script §6 — 4 fixed turns, keyword-matched in order (grounded DLTV ค22101)
 const SCRIPT: ScriptStep[] = [
   {
-    // Student answers recall with formula — AI probes why it works + which side is AC
     aiMessage:
       'ที่ใช้พีทาโกรัสกับสี่เหลี่ยมนี้ได้เพราะอะไร แล้ว AC (= 50) คือด้านไหนของสามเหลี่ยม?',
     nextState: 'DIAGNOSTIC_PROBE',
     imageUrl: '/dltv-pilot/rect-abcd.jpg',
+    suggestedReply: 'ใช้สูตร a²+b²=c² ได้ AC = 50',
   },
   {
-    // Student says "AC คือด้านที่ยาวที่สุด" — close but not precise
     aiMessage:
-      'ใกล้แล้ว — แต่ที่ถูกคือ เส้นทแยง AC ตัดสี่เหลี่ยม ABCD ให้เกิด**สามเหลี่ยมมุมฉาก ABC** ' +
+      'ใกล้แล้ว — แต่ที่ถูกคือ เส้นทแยง AC ตัดสี่เหลี่ยม ABCD ให้เกิดสามเหลี่ยมมุมฉาก ABC ' +
       '(มุมฉากที่ B) · AC จึงเป็นด้านตรงข้ามมุมฉากของสามเหลี่ยมนั้น ไม่ใช่แค่ "ด้านที่ยาวที่สุด" ' +
       '· ลองอธิบายกลับให้ครูฟังหน่อยว่า ทำไมเราถึงรู้ว่า AC คือด้านตรงข้ามมุมฉาก?',
     nextState: 'EXPLAIN_BACK',
+    suggestedReply: 'AC คือด้านที่ยาวที่สุด',
   },
   {
-    // Student explains back correctly — AI gives transfer problem from แบบฝึกหัด 3
     aiMessage:
-      'ถูกต้อง 🎉 ทีนี้ลองโจทย์จริงจาก**แบบฝึกหัด 3 ข้อ 2** — ' +
+      'ถูกต้อง 🎉 ทีนี้ลองโจทย์จริงจากแบบฝึกหัด 3 ข้อ 2 — ' +
       'ว่าว MABN มี MA=MB=6, AN=BN=8 และมุมฉากที่ B · หา MN ยาวเท่าไร?',
     nextState: 'TRANSFER_CHECK',
     imageUrl: '/dltv-pilot/worksheet3-q2.jpg',
+    suggestedReply: 'ต้องหามุมฉากก่อน แล้วด้านตรงข้ามมุมฉากคือด้านนั้น',
   },
   {
-    // Student solves 6-8-10 correctly
     aiMessage:
       'ถูกต้อง ✅ หนูใช้สามเหลี่ยมมุมฉาก MBN (มุมฉากที่ B) ได้ถูก — MN = 10 ' +
-      '· ตอนนี้หนูพร้อมทำ**โจทย์แบ่งรูป** (ข้อ 1, 3) แล้ว ' +
+      '· ตอนนี้หนูพร้อมทำโจทย์แบ่งรูป (ข้อ 1, 3) แล้ว ' +
       '· เดี๋ยวครูจะเห็นสรุปผลการเรียนรู้ของหนูวันนี้',
     nextState: 'EVIDENCE_SUMMARY',
+    suggestedReply: '6²+8²=100 ดังนั้น MN=10',
   },
 ];
 
@@ -57,6 +58,10 @@ const MATCH_KEYWORDS: string[][] = [
   ['มุมฉาก', 'ตรงข้าม', 'opposite', 'ด้าน'],
   ['6', '8', '10', '100', '36', '64', 'mn', 'mn=', 'mn ='],
 ];
+
+export function getSuggestedReply(turn: number): string | undefined {
+  return SCRIPT[turn]?.suggestedReply;
+}
 
 export function getScriptResponse(
   userMessage: string,

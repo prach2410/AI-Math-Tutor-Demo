@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LearningStateIndicatorComponent } from './learning-state-indicator.component';
-import { LearningState, ScriptStep, getScriptResponse } from './dltv-mock-script';
+import { LearningState, ScriptStep, getScriptResponse, getSuggestedReply } from './dltv-mock-script';
 
 interface ChatMessage {
   role: 'ai' | 'student';
@@ -114,6 +114,13 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
                     ส่ง
                   </button>
                 </div>
+                @if (suggestedReply()) {
+                  <div class="chip-row">
+                    <button class="chip" (click)="sendChip()" [disabled]="aiTyping()">
+                      💬 {{ suggestedReply() }}
+                    </button>
+                  </div>
+                }
               </div>
             } @else {
               <div class="evidence-cta">
@@ -433,6 +440,24 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
     .btn-send:disabled { background: #cbd5e1; cursor: not-allowed; }
     .btn-send:hover:not(:disabled) { background: #6d28d9; }
 
+    .chip-row { margin-top: 8px; }
+    .chip {
+      padding: 8px 14px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      max-width: 100%;
+      text-align: left;
+      transition: background 0.15s;
+      white-space: normal;
+      line-height: 1.4;
+    }
+    .chip:hover:not(:disabled) { background: #dbeafe; }
+    .chip:disabled { opacity: 0.5; cursor: not-allowed; }
+
     .evidence-cta { padding-top: 16px; display: flex; justify-content: center; }
     .btn-evidence {
       padding: 13px 32px;
@@ -543,6 +568,7 @@ export class DltvPilotComponent {
   messages = signal<ChatMessage[]>([]);
   learningState = signal<LearningState>('RECALL_CHECK');
   aiTyping = signal(false);
+  suggestedReply = signal<string | undefined>(undefined);
   draft = '';
   private turn = 0;
 
@@ -550,18 +576,26 @@ export class DltvPilotComponent {
     this.page.set('session');
     this.turn = 0;
     this.learningState.set('RECALL_CHECK');
-    // AI opens with a grounded recall question from DLTV lesson
     this.messages.set([{
       role: 'ai',
       text: 'จากบทเรียนเมื่อกี้ — สี่เหลี่ยม ABCD กว้าง 30 ยาว 40 หน่วย · หนูจะหาความยาวเส้นทแยงมุม AC ได้อย่างไร?',
       imageUrl: '/dltv-pilot/rect-abcd.jpg',
     }]);
+    this.suggestedReply.set(getSuggestedReply(0));
+  }
+
+  sendChip(): void {
+    const text = this.suggestedReply();
+    if (!text) return;
+    this.draft = text;
+    this.sendMessage();
   }
 
   sendMessage(): void {
     const text = this.draft.trim();
     if (!text || this.aiTyping()) return;
     this.draft = '';
+    this.suggestedReply.set(undefined);
 
     this.messages.update((msgs) => [...msgs, { role: 'student', text }]);
     this.aiTyping.set(true);
@@ -575,6 +609,7 @@ export class DltvPilotComponent {
       this.aiTyping.set(false);
       if (step.nextState !== 'EVIDENCE_SUMMARY') {
         this.turn++;
+        this.suggestedReply.set(getSuggestedReply(this.turn));
       }
     }, 900);
   }
@@ -588,5 +623,6 @@ export class DltvPilotComponent {
     this.messages.set([]);
     this.turn = 0;
     this.learningState.set('RECALL_CHECK');
+    this.suggestedReply.set(undefined);
   }
 }
