@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, ViewChild, signal, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DltvPilotComponent } from './dltv-pilot/dltv-pilot.component';
 import { FreeTalkComponent } from './free-talk/free-talk.component';
 import { ProjectBrainTutorComponent } from './project-brain/project-brain-tutor.component';
 import { DiscoveryBatchesComponent } from './admin/discovery-batches/discovery-batches.component';
@@ -48,9 +49,12 @@ import { LandingComponent } from './landing/landing.component';
     FormsModule,
     NicknameGateComponent,
     LandingComponent,
+    DltvPilotComponent,
   ],
   template: `
-    @if (adminRoute === 'discovery-batches') {
+    @if (pilotMode()) {
+      <app-dltv-pilot />
+    } @else if (adminRoute === 'discovery-batches') {
       <app-discovery-batches />
     } @else if (adminRoute === 'export') {
       <app-admin-export />
@@ -788,6 +792,7 @@ export class AppComponent implements OnInit {
   protected studentProfile  = inject(StudentProfileService);
 
   protected readonly landingSeen = signal<boolean>(localStorage.getItem('ai_tutor_landing_seen') === '1');
+  protected readonly pilotMode   = signal<boolean>(new URLSearchParams(window.location.search).get('pilot') === 'dltv');
 
   protected readonly adminRoute = (() => {
     const p = window.location.pathname;
