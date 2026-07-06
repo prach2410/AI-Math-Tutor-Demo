@@ -39,7 +39,20 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
               แหล่งเรียนรู้: DLTV
             </div>
             <h2 class="lesson-title">คณิตศาสตร์ ม.2<br>ทฤษฎีบทพีทาโกรัส (1)</h2>
-            <p class="lesson-sub">เริ่มต้นด้วยการเรียนจากบทเรียน DLTV</p>
+
+            <dl class="lesson-meta">
+              <div><dt>ปีการศึกษา</dt><dd>2569 / 1</dd></div>
+              <div><dt>ชั้น</dt><dd>มัธยมศึกษาปีที่ 2</dd></div>
+              <div><dt>กลุ่มสาระ</dt><dd>คณิตศาสตร์</dd></div>
+              <div><dt>หน่วย</dt><dd>หน่วยการเรียนรู้ที่ 1 · ทฤษฎีบทพีทาโกรัส</dd></div>
+              <div><dt>เรื่อง</dt><dd>ทฤษฎีบทพีทาโกรัส (1) · 19 พ.ค. 69</dd></div>
+              <div><dt>ตัวชี้วัด</dt><dd>ค 2.2 ม.2/5</dd></div>
+            </dl>
+
+            <p class="lesson-concept">
+              <span class="concept-label">สาระสำคัญ</span>
+              ทฤษฎีบทพีทาโกรัสสามารถนำมาใช้แก้ปัญหาคณิตศาสตร์ โดยหาความยาวของด้านใดด้านหนึ่งของรูปสามเหลี่ยมมุมฉากที่ต้องการทราบได้เสมอ เมื่อทราบความยาวของด้านอีกสองด้าน
+            </p>
 
             <a
               href="https://dltv.ac.th/teachplan/episode/108101"
@@ -50,12 +63,31 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
               ▶ เปิดบทเรียน DLTV
             </a>
 
+            <div class="lesson-media">
+              <div class="lesson-media-head">สื่อประกอบการสอน</div>
+              <ul>
+                <li><span class="doc-ico">📄</span> สื่อประกอบการสอน เรื่อง ทฤษฎีบทพีทาโกรัส (1)</li>
+                <li><span class="doc-ico">📄</span> ใบกิจกรรมประกอบการสอนที่ 2</li>
+                <li><span class="doc-ico">📄</span> แบบฝึกหัดประกอบการสอนที่ 3</li>
+              </ul>
+            </div>
+
+            <section class="ai-check-box">
+              <h3 class="ai-check-title">หลังเรียนบทนี้ AI จะช่วยตรวจอะไร</h3>
+              <ol class="ai-check-list">
+                <li>ระบุได้ว่าด้านใดคือด้านตรงข้ามมุมฉาก</li>
+                <li>อธิบายได้ว่าทำไมด้านนั้นจึงเป็น <em>c</em></li>
+                <li>นำหลักการไปใช้กับรูปใหม่ได้ ไม่เลือกจากความยาวเพียงอย่างเดียว</li>
+              </ol>
+              <p class="ai-check-note">AI ใช้บริบทจากบทเรียนนี้เพื่อช่วยตรวจความเข้าใจหลังเรียน โดยไม่แทนที่บทเรียน DLTV และไม่ตัดสินใจแทนครู</p>
+            </section>
+
             <div class="lesson-divider">
               <span>เรียนบทเรียนเสร็จแล้ว?</span>
             </div>
 
             <button class="btn-tutor" (click)="startSession()">
-              ตรวจความเข้าใจกับ AI Tutor →
+              ตรวจความเข้าใจหลังเรียน
             </button>
 
             <p class="lesson-note">AI ไม่ได้มาแทน DLTV หรือครู แต่ช่วยตรวจว่าเข้าใจจริงหรือแค่จำสูตร</p>
@@ -267,6 +299,83 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
     }
     .lesson-sub { color: #64748b; margin: 0; font-size: 15px; }
 
+    /* Lesson metadata — mirrors the real DLTV teachplan page */
+    .lesson-meta {
+      width: 100%;
+      max-width: 360px;
+      box-sizing: border-box;
+      margin: 0;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .lesson-meta > div {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .lesson-meta > div:first-child { border-top: none; }
+    .lesson-meta dt { color: #94a3b8; margin: 0; }
+    .lesson-meta dd { color: #334155; margin: 0; font-weight: 600; }
+
+    .lesson-concept {
+      width: 100%;
+      max-width: 360px;
+      box-sizing: border-box;
+      text-align: left;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #475569;
+    }
+    .concept-label {
+      display: inline-block;
+      font-weight: 700;
+      color: #1e293b;
+      margin-right: 4px;
+    }
+
+    /* Accompanying media — same items the teacher checks on the evidence page */
+    .lesson-media {
+      width: 100%;
+      max-width: 360px;
+      box-sizing: border-box;
+      text-align: left;
+    }
+    .lesson-media-head {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+    .lesson-media ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .lesson-media li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #475569;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .lesson-media .doc-ico { flex-shrink: 0; }
+
     .btn-dltv {
       display: inline-block;
       padding: 14px 32px;
@@ -282,6 +391,39 @@ type PilotPage = 'lesson' | 'session' | 'evidence';
       transition: background 0.2s;
     }
     .btn-dltv:hover { background: #0046a0; }
+
+    /* Secondary "what AI checks" box — stays quieter than the DLTV button */
+    .ai-check-box {
+      width: 100%;
+      max-width: 360px;
+      box-sizing: border-box;
+      text-align: left;
+      background: #faf5ff;
+      border: 1px solid #e9d5ff;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .ai-check-title {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #6b21a8;
+    }
+    .ai-check-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #475569;
+    }
+    .ai-check-list li { margin-bottom: 2px; }
+    .ai-check-list em { font-style: italic; font-weight: 600; color: #6b21a8; }
+    .ai-check-note {
+      margin: 10px 0 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #94a3b8;
+    }
 
     .lesson-divider {
       display: flex;
