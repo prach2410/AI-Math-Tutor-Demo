@@ -173,7 +173,7 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
                       @for (s of day.homeworkSessions; track s.id) {
                         <li class="record-item">
                           <div class="record-main">
-                            <span class="record-topic">{{ s.topic }}</span>
+                            <span class="record-topic">{{ hwTitle(s) }}</span>
                             <span class="record-meta">
                               @if (s.visionModel) { ⚡ {{ s.visionModel }} · {{ hwDuration(s) }}s · }{{ formatTime(s.createdAt) }}
                             </span>
@@ -569,6 +569,14 @@ export class AdminExportComponent implements OnInit {
     if (!s.analysisStartedAt || !s.analysisEndedAt) return '?';
     const ms = new Date(s.analysisEndedAt).getTime() - new Date(s.analysisStartedAt).getTime();
     return (ms / 1000).toFixed(1);
+  }
+
+  // typed problems มี topic ว่าง (ไม่ผ่าน OCR จัดหมวด) → fallback เป็นตัวโจทย์ที่พิมพ์
+  hwTitle(s: HomeworkSession): string {
+    if (s.topic?.trim()) return s.topic;
+    const t = s.problemText?.trim() ?? '';
+    if (!t) return '(ไม่ระบุหัวข้อ)';
+    return t.length > 60 ? t.slice(0, 60) + '…' : t;
   }
 
   hrDuration(r: HomeworkRead): string {

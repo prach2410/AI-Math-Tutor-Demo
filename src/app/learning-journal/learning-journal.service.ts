@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { StudentProfileService } from '../student-profile/student-profile.service';
 
 export interface LearningJournalAnalysis {
   readable: boolean;
@@ -17,11 +18,14 @@ export interface LearningJournalAnalysis {
 
 @Injectable({ providedIn: 'root' })
 export class LearningJournalService {
-  private http = inject(HttpClient);
+  private http           = inject(HttpClient);
+  private studentProfile = inject(StudentProfileService);
 
   analyze(files: File[]): Promise<LearningJournalAnalysis> {
     const formData = new FormData();
     files.forEach(f => formData.append('images', f));
+    const name = this.studentProfile.displayName();
+    if (name) formData.append('studentName', name);
     return firstValueFrom(
       this.http.post<LearningJournalAnalysis>('/api/learning-journal/analyze', formData)
     );
