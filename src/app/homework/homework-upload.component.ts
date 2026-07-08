@@ -1,9 +1,10 @@
 import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { HomeworkService, HomeworkAnalysisResult, HomeworkRead } from './homework.service';
 import { TutorService } from '../tutor.service';
 import { TeachingFlowComponent } from './teaching-flow.component';
 
-type UploadState = 'idle' | 'collecting' | 'analyzing' | 'result' | 'confirmed' | 'history';
+type UploadState = 'idle' | 'typing' | 'collecting' | 'analyzing' | 'result' | 'confirmed' | 'history';
 
 interface SelectedImage {
   file: File;
@@ -13,7 +14,7 @@ interface SelectedImage {
 @Component({
   selector: 'app-homework-upload',
   standalone: true,
-  imports: [TeachingFlowComponent],
+  imports: [TeachingFlowComponent, FormsModule],
   host: { style: 'display: flex; flex-direction: column; flex: 1; min-height: 0;' },
   template: `
     <div class="hw-container">
@@ -36,7 +37,30 @@ interface SelectedImage {
               </div>
               <input #cameraInput type="file" accept="image/*" capture="environment" hidden (change)="addFiles($event)" />
               <input #fileInput type="file" accept="image/*" multiple hidden (change)="addFiles($event)" />
+              <div class="upload-divider">— หรือ —</div>
+              <button class="btn btn-type" (click)="startTyping()">⌨️ พิมพ์โจทย์เอง</button>
+              <p class="upload-type-note">รู้โจทย์อยู่แล้ว? พิมพ์เลย ไม่ต้องรออ่านรูป</p>
               <button class="btn btn-history" (click)="loadHistory()">📚 การบ้านที่อัปไว้</button>
+            </div>
+          }
+
+          @case ('typing') {
+            <div class="typing-zone">
+              <div class="typing-top">
+                <button class="btn btn-ghost btn-sm" (click)="state.set('idle')">← กลับ</button>
+                <p class="typing-heading">⌨️ พิมพ์โจทย์ที่ติด</p>
+              </div>
+              <p class="typing-sub">พิมพ์โจทย์คณิตศาสตร์ที่อยากให้ช่วย แล้วเริ่มเรียนได้เลย</p>
+              <textarea
+                class="typing-input"
+                [(ngModel)]="typedText"
+                placeholder="เช่น หาปริมาตรของตู้ปลาทรงสี่เหลี่ยม กว้าง 30 ซม. ยาว 50 ซม. สูง 40 ซม."
+                rows="4"
+                (keydown.control.enter)="startTypedProblem()">
+              </textarea>
+              <button class="btn btn-analyze" style="width:100%" [disabled]="!typedText.trim()" (click)="startTypedProblem()">
+                🧠 เริ่มเรียนโจทย์นี้
+              </button>
             </div>
           }
 
@@ -560,6 +584,33 @@ interface SelectedImage {
     }
     .btn-history:hover { background: #eff6ff; border-color: #2563eb; }
 
+    /* Type-your-own entry */
+    .upload-divider {
+      font-size: 12px; color: #94a3b8; letter-spacing: 0.03em;
+      margin: 4px 0 0;
+    }
+    .btn-type {
+      background: #eef2ff; color: #4338ca; border: 1.5px solid #c7d2fe;
+      width: 100%; max-width: 280px;
+    }
+    .btn-type:hover { background: #e0e7ff; border-color: #818cf8; }
+    .upload-type-note { font-size: 12px; color: #94a3b8; margin: 0; }
+
+    /* Typing zone */
+    .typing-zone {
+      display: flex; flex-direction: column; gap: 12px;
+      width: 100%; max-width: 480px;
+    }
+    .typing-top { display: flex; align-items: center; gap: 12px; }
+    .typing-heading { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0; }
+    .typing-sub { font-size: 13px; color: #64748b; margin: 0; }
+    .typing-input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px;
+      font-size: 15px; font-family: inherit; resize: vertical; box-sizing: border-box;
+      outline: none; transition: border-color 0.15s; color: #1e293b; line-height: 1.6;
+    }
+    .typing-input:focus { border-color: #2563eb; }
+
     /* History zone */
     .history-zone {
       display: flex;
@@ -652,6 +703,8 @@ export class HomeworkUploadComponent implements OnDestroy {
   protected analyzingMsg        = signal('📖 กำลังอ่านโจทย์...');
   private analyzingTimer?: ReturnType<typeof setInterval>;
 
+  protected typedText = '';
+
   // อ่านโจทย์ใช้เวลา ~35s (typhoon OCR + จัดเรียง) → ข้อความเปลี่ยนตามจังหวะ กันรู้สึกค้าง
   private startAnalyzingTimer(): void {
     this.elapsed.set(0);
@@ -732,6 +785,29 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.state.set('confirmed');
   }
 
+  protected startTyping(): void {
+    this.typedText = '';
+    this.tutor.logEvent('homework_typing_opened');
+    this.state.set('typing');
+  }
+
+  // พิมพ์โจทย์ตรงเข้า teaching flow — ข้าม OCR ให้ path "ติดโจทย์ → ได้รับการสอน" สั้นที่สุด
+  protected startTypedProblem(): void {
+    const text = this.typedText.trim();
+    if (!text) return;
+    this.result.set({
+      readable: true,
+      message: '',
+      problems: [{ index: 1, problemText: text, latex: '', topic: '', hasFigure: false }],
+    });
+    this.currentProblemIndex.set(0);
+    this.visionModel.set('');
+    this.analysisStartedAt.set('');
+    this.analysisEndedAt.set('');
+    this.tutor.logEvent('homework_typed_problem');
+    this.state.set('confirmed');
+  }
+
   protected nextProblem(): void {
     this.currentProblemIndex.update(i => i + 1);
   }
@@ -747,6 +823,7 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.visionModel.set('');
     this.analysisStartedAt.set('');
     this.analysisEndedAt.set('');
+    this.typedText = '';
     this.state.set('idle');
   }
 
