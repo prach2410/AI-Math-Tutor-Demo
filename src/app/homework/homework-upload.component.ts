@@ -58,6 +58,10 @@ interface SelectedImage {
                 rows="4"
                 (keydown.control.enter)="startTypedProblem()">
               </textarea>
+              <div class="typing-hint">
+                <p class="typing-hint-line">💡 เลขยกกำลังพิมพ์ <code>^</code> เช่น <code>2^5</code> · รากพิมพ์เป็นคำ เช่น "รากที่สามของ 27" — AI เข้าใจหมด</p>
+                <p class="typing-hint-line typing-hint-photo">📷 ถ้าโจทย์มีสัญลักษณ์เยอะ กดกลับไป "ถ่ายรูป" ง่ายกว่า</p>
+              </div>
               <button class="btn btn-analyze" style="width:100%" [disabled]="!typedText.trim()" (click)="startTypedProblem()">
                 🧠 เริ่มเรียนโจทย์นี้
               </button>
@@ -610,6 +614,13 @@ interface SelectedImage {
       outline: none; transition: border-color 0.15s; color: #1e293b; line-height: 1.6;
     }
     .typing-input:focus { border-color: #2563eb; }
+    .typing-hint { display: flex; flex-direction: column; gap: 4px; margin-top: -4px; }
+    .typing-hint-line { font-size: 12px; color: #64748b; margin: 0; line-height: 1.6; }
+    .typing-hint-line code {
+      background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px;
+      padding: 0 5px; font-family: monospace; font-size: 12px; color: #1e40af;
+    }
+    .typing-hint-photo { color: #94a3b8; }
 
     /* History zone */
     .history-zone {
