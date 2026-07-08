@@ -215,7 +215,7 @@ interface SelectedImage {
                   @for (r of historyList(); track r.id) {
                     <button class="history-item" (click)="openRead(r)">
                       <div class="hi-top">
-                        <span class="hi-topic">{{ r.topic || 'ไม่ระบุหัวข้อ' }}</span>
+                        <span class="hi-topic">{{ readTitle(r) }}</span>
                         <span class="hi-count">{{ r.problemCount }} ข้อ</span>
                       </div>
                       <p class="hi-time">{{ formatTime(r.createdAt) }}</p>
@@ -816,6 +816,8 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.analysisStartedAt.set('');
     this.analysisEndedAt.set('');
     this.tutor.logEvent('homework_typed_problem');
+    // บันทึกให้โผล่ใน "การบ้านที่อัปไว้" + resume ได้ — fire-and-forget ไม่บล็อกการเข้าเรียน
+    this.homeworkService.saveTyped(text).catch(() => {});
     this.state.set('confirmed');
   }
 
@@ -859,6 +861,14 @@ export class HomeworkUploadComponent implements OnDestroy {
     this.analysisEndedAt.set(r.analysisEndedAt ?? '');
     this.tutor.logEvent('homework_resumed');
     this.state.set('result');
+  }
+
+  // typed reads มี topic ว่าง → ใช้ตัวโจทย์ที่พิมพ์เป็นชื่อรายการแทน
+  protected readTitle(r: HomeworkRead): string {
+    if (r.topic?.trim()) return r.topic;
+    const t = r.problems?.[0]?.problemText?.trim() ?? '';
+    if (!t) return 'ไม่ระบุหัวข้อ';
+    return t.length > 50 ? t.slice(0, 50) + '…' : t;
   }
 
   protected formatTime(iso: string): string {

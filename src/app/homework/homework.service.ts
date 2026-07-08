@@ -49,6 +49,13 @@ export class HomeworkService {
     );
   }
 
+  saveTyped(problemText: string): Promise<{ saved: boolean }> {
+    const studentName = this.studentProfile.displayName();
+    return firstValueFrom(
+      this.http.post<{ saved: boolean }>('/api/homework/typed', { problemText, studentName })
+    );
+  }
+
   listReads(limit = 30): Promise<HomeworkRead[]> {
     const name = this.studentProfile.displayName();
     const nameParam = name ? `&name=${encodeURIComponent(name)}` : '';
