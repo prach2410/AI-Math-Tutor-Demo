@@ -13,6 +13,7 @@ export class StudentProfileService {
 
   setDisplayName(name: string): void {
     const trimmed = name.trim();
+    if (!/\p{L}/u.test(trimmed)) return; // no real letter (e.g. lone combining mark) — keep existing value
     this._displayName.set(trimmed);
     localStorage.setItem(DISPLAY_NAME_KEY, trimmed);
   }

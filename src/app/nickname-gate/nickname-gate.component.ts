@@ -91,7 +91,7 @@ export class NicknameGateComponent {
   nickname = '';
 
   canConfirm(): boolean {
-    return this.nickname.trim().length > 0;
+    return /\p{L}/u.test(this.nickname.trim());
   }
 
   confirm(): void {
