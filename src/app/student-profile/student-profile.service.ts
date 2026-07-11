@@ -19,13 +19,7 @@ export class StudentProfileService {
     const raw = localStorage.getItem(DISPLAY_NAME_KEY);
     if (raw === null) return;
 
-    if (isJunkName(raw)) {
-      // D2 (one-shot heal — Task 30 Part D) — ลบ block นี้ commit ถัดไปหลัง verify
-      this.setDisplayName('คนเก่ง');
-      return;
-    }
-
-    // D1 (permanent guard) — junk ที่ D2 ไม่จับ (เช่นหลังลบ D2 แล้ว) ให้ gate เด้งใหม่ ไม่เดาชื่อ
+    // D1 (permanent guard) — stale junk in localStorage clears itself; gate re-prompts instead of guessing a name
     if (isJunkName(raw)) {
       localStorage.removeItem(DISPLAY_NAME_KEY);
       this._displayName.set('');
