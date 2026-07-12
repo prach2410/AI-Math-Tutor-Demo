@@ -184,10 +184,14 @@ interface JudgeFeedback {
 
             <!-- Answer input -->
             <div class="tf-input-row">
+              <p class="tf-input-hint">
+                💡 มีเลขยกกำลังในคำตอบ? พิมพ์แบบไหนก็ได้ — เช่น
+                <b>n^12</b> · <b>n12</b> · <b>n ยกกำลัง 12</b>
+              </p>
               <textarea
                 class="tf-input"
                 [(ngModel)]="answer"
-                placeholder="พิมพ์คำตอบของคุณที่นี่..."
+                placeholder="พิมพ์คำตอบของคุณที่นี่... (เลขยกกำลังพิมพ์ n12 ก็ได้)"
                 rows="3"
                 [disabled]="submitting() || hintLoading()"
                 (keydown.control.enter)="submit()"
@@ -416,6 +420,11 @@ interface JudgeFeedback {
 
     /* Input */
     .tf-input-row { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .tf-input-hint {
+      margin: 0; padding: 8px 12px; background: #f0f9ff; border: 1px solid #e0f2fe;
+      border-radius: 8px; font-size: 13px; color: #475569; line-height: 1.5;
+    }
+    .tf-input-hint b { color: #0369a1; font-weight: 600; }
     .tf-input {
       width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px;
       font-size: 15px; font-family: inherit; resize: vertical; box-sizing: border-box;
