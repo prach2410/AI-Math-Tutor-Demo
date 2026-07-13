@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LearningStateIndicatorComponent } from './learning-state-indicator.component';
 import { LearningState, ScriptStep, getScriptResponse, getSuggestedReply } from './dltv-mock-script';
@@ -714,6 +714,15 @@ export class DltvPilotComponent {
   draft = '';
   private turn = 0;
 
+  @ViewChild('chatArea') private chatArea?: ElementRef<HTMLDivElement>;
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      const el = this.chatArea?.nativeElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    });
+  }
+
   startSession(): void {
     this.page.set('session');
     this.turn = 0;
@@ -724,6 +733,7 @@ export class DltvPilotComponent {
       imageUrl: '/dltv-pilot/rect-abcd.jpg',
     }]);
     this.suggestedReply.set(getSuggestedReply(0));
+    this.scrollToBottom();
   }
 
   sendChip(): void {
@@ -741,6 +751,7 @@ export class DltvPilotComponent {
 
     this.messages.update((msgs) => [...msgs, { role: 'student', text }]);
     this.aiTyping.set(true);
+    this.scrollToBottom();
 
     setTimeout(() => {
       const { step } = getScriptResponse(text, this.turn);
@@ -749,6 +760,7 @@ export class DltvPilotComponent {
       if (step.imageUrl) aiMsg.imageUrl = step.imageUrl;
       this.messages.update((msgs) => [...msgs, aiMsg]);
       this.aiTyping.set(false);
+      this.scrollToBottom();
       if (step.nextState !== 'EVIDENCE_SUMMARY') {
         this.turn++;
         this.suggestedReply.set(getSuggestedReply(this.turn));
