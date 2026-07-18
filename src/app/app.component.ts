@@ -876,7 +876,7 @@ export class AppComponent implements OnInit {
     this.landingSeen.set(true);
   }
   protected onNicknameConfirmed(): void {}
-  protected switchStudent(): void { this.studentProfile.setDisplayName(''); }
+  protected switchStudent(): void { this.studentProfile.clearDisplayName(); }
   protected goHome(): void  { this.showNotesSheet.set(false); this.tutor.resetToHome(); }
   protected goLearn(): void { this.showNotesSheet.set(false); this.tutor.init(); }
   protected openAbout(): void { this.aboutRef?.open(); }

@@ -33,6 +33,12 @@ export class StudentProfileService {
     localStorage.setItem(DISPLAY_NAME_KEY, trimmed);
   }
 
+  // ล้างชื่อ (สลับคนเรียน) — ข้าม junk guard ของ setDisplayName เพราะ '' คือ intent ที่ตั้งใจ ไม่ใช่ขยะ
+  clearDisplayName(): void {
+    this._displayName.set('');
+    localStorage.removeItem(DISPLAY_NAME_KEY);
+  }
+
   private loadOrCreateStudentId(): string {
     const existing = localStorage.getItem(STUDENT_ID_KEY);
     if (existing) return existing;
