@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ProblemItem } from './homework.service';
 import { TeachingService, TeachingStep, NotesResponse, ConfirmFigureResponse } from './teaching.service';
 
-type FlowState = 'mode-select' | 'loading' | 'confirm' | 'step' | 'done' | 'solve' | 'error';
+type FlowState = 'recall' | 'mode-select' | 'loading' | 'confirm' | 'step' | 'done' | 'solve' | 'error';
 type Verdict   = 'correct' | 'partial' | 'wrong' | null;
 
 interface JudgeFeedback {
@@ -21,6 +21,35 @@ interface JudgeFeedback {
     <div class="tf-container">
 
       @switch (state()) {
+
+        @case ('recall') {
+          <div class="tf-recall">
+            <div class="tf-recall-card">
+              <p class="tf-recall-heading">🔄 ทบทวนสั้นๆ ก่อนเริ่มการบ้านวันนี้</p>
+              <p class="tf-recall-question">{{ recallQuestion() }}</p>
+            </div>
+
+            @if (!recallFeedback()) {
+              <textarea
+                class="tf-input"
+                [(ngModel)]="recallAnswerText"
+                placeholder="ลองตอบสั้นๆ (หรือกดข้ามไปเริ่มการบ้านได้เลย)"
+                rows="2"
+                [disabled]="recallSubmitting()">
+              </textarea>
+              <button
+                class="tf-submit"
+                (click)="submitRecall()"
+                [disabled]="recallSubmitting() || !recallAnswerText.trim()">
+                {{ recallSubmitting() ? 'กำลังส่ง...' : 'ตอบ' }}
+              </button>
+              <button class="tf-btn-secondary" (click)="startAfterRecall()">ข้ามไปเริ่มการบ้าน</button>
+            } @else {
+              <div class="tf-recall-feedback">{{ recallFeedback() }}</div>
+              <button class="tf-submit" (click)="startAfterRecall()">เริ่มการบ้านวันนี้ →</button>
+            }
+          </div>
+        }
 
         @case ('mode-select') {
           <div class="tf-mode-select">
@@ -343,6 +372,19 @@ interface JudgeFeedback {
     .tf-confirm-input-group { display: flex; flex-direction: column; gap: 6px; }
     .tf-confirm-label { font-size: 13px; color: #475569; font-weight: 500; }
 
+    /* Recall (MVP1.5 session continuity) */
+    .tf-recall { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .tf-recall-card {
+      background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .tf-recall-heading  { font-size: 13px; font-weight: 700; color: #1d4ed8; margin: 0; }
+    .tf-recall-question { font-size: 15px; color: #1e293b; margin: 0; line-height: 1.7; }
+    .tf-recall-feedback {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+      padding: 10px 12px; font-size: 14px; color: #166534; line-height: 1.7; white-space: pre-wrap;
+    }
+
     /* Loading */
     .tf-loading {
       display: flex; flex-direction: column; align-items: center;
@@ -588,6 +630,13 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
   protected studentNote  = '';
   private sessionId = '';
 
+  // MVP1.5 session continuity — recall warm-up ก่อนเริ่มการบ้าน
+  protected recallQuestion   = signal('');
+  protected recallFeedback   = signal('');
+  protected recallSubmitting = signal(false);
+  protected recallAnswerText = '';
+  private recallChecked = false;
+
   protected readonly tips = [
     '💡 บวกเลขทุกหลัก — ถ้าผลรวมหาร 3 ลงตัว เลขนั้นก็หาร 3 ลงตัว (729 → 7+2+9=18 ✓)',
     '💡 รากที่สาม: จับกลุ่มทีละ 3 ตัวเหมือนกัน แล้วดึงออกมาได้ 1 ตัว',
@@ -605,7 +654,40 @@ export class TeachingFlowComponent implements OnInit, OnChanges, OnDestroy {
     return v === 'partial' || v === 'wrong';
   }
 
-  ngOnInit(): void { this.state.set('mode-select'); }
+  ngOnInit(): void { this.maybeRecall(); }
+
+  // เช็ค recall ครั้งเดียวตอนเปิด flow · ล้มเหลว/ไม่มี → เข้า mode-select ตามปกติ (fail-safe)
+  private async maybeRecall(): Promise<void> {
+    if (this.recallChecked) { this.state.set('mode-select'); return; }
+    this.recallChecked = true;
+    try {
+      const res = await this.teaching.recall(this.problem.topic);
+      if (res.show && res.recallQuestion) {
+        this.recallQuestion.set(res.recallQuestion);
+        this.recallFeedback.set('');
+        this.recallAnswerText = '';
+        this.state.set('recall');
+        return;
+      }
+    } catch { /* recall เป็น optional — ไม่บล็อกการบ้าน */ }
+    this.state.set('mode-select');
+  }
+
+  protected async submitRecall(): Promise<void> {
+    if (this.recallSubmitting()) return;
+    this.recallSubmitting.set(true);
+    try {
+      const res = await this.teaching.recallAnswer(
+        this.recallQuestion(), this.recallAnswerText, this.problem.topic);
+      this.recallFeedback.set(res.feedback);
+    } catch {
+      this.recallFeedback.set('มาเริ่มการบ้านวันนี้กันเลย!');
+    } finally {
+      this.recallSubmitting.set(false);
+    }
+  }
+
+  protected startAfterRecall(): void { this.state.set('mode-select'); }
 
   ngOnDestroy(): void {
     if (this.tipInterval) { clearInterval(this.tipInterval); this.tipInterval = null; }
