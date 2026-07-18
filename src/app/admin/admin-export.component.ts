@@ -62,6 +62,19 @@ interface ApiResponse {
   homeworkSessions: HomeworkSession[];
 }
 
+interface RecallEvent {
+  id: number;
+  at: string;
+  kind: string;        // shown | miss | answered
+  topic: string;
+  todayTopic: string;
+}
+
+interface RecallEventsData {
+  counts: { shown: number; miss: number; answered: number };
+  recent: RecallEvent[];
+}
+
 const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 
 @Component({
@@ -92,6 +105,36 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
             </div>
           }
         </header>
+
+        @if (recall(); as rc) {
+          <div class="recall-card">
+            <div class="recall-head">
+              <span class="recall-title">🔄 Session Continuity — Recall</span>
+              <button class="recall-refresh" (click)="loadRecall()">↻</button>
+            </div>
+            <div class="recall-stats">
+              <div class="recall-stat"><span class="rs-num">{{ rc.counts.shown }}</span><span class="rs-lbl">shown</span></div>
+              <div class="recall-stat"><span class="rs-num">{{ rc.counts.miss }}</span><span class="rs-lbl">miss (R7)</span></div>
+              <div class="recall-stat"><span class="rs-num">{{ rc.counts.answered }}</span><span class="rs-lbl">answered</span></div>
+            </div>
+            @if (rc.counts.shown + rc.counts.miss > 0) {
+              <p class="recall-r7">R7 shown-rate: {{ recallShownRate(rc) }}% ({{ rc.counts.shown }}/{{ rc.counts.shown + rc.counts.miss }}) — ต่ำ = exact-match แคบไป</p>
+            }
+            @if (rc.recent.length > 0) {
+              <ul class="recall-list">
+                @for (e of rc.recent; track e.id) {
+                  <li class="recall-item">
+                    <span class="recall-kind" [class]="'rk-' + e.kind">{{ e.kind }}</span>
+                    <span class="recall-topic">{{ e.topic }}{{ e.kind === 'miss' ? ' → ' + e.todayTopic : '' }}</span>
+                    <span class="recall-at">{{ formatTime(e.at) }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="recall-empty">ยังไม่มี recall event (forward-only — รอ learner กลับมาด้วย topic เดิม)</p>
+            }
+          </div>
+        }
 
         @if (loading()) {
           <div class="state-center">
@@ -210,6 +253,25 @@ const MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค
       padding: 32px 16px;
       box-sizing: border-box;
     }
+    /* Recall observability card */
+    .recall-card { margin: 14px 16px 0; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .recall-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .recall-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+    .recall-refresh { border: 1px solid #cbd5e1; background: white; border-radius: 6px; cursor: pointer; padding: 2px 8px; font-size: 13px; }
+    .recall-stats { display: flex; gap: 10px; }
+    .recall-stat { flex: 1; text-align: center; background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 4px; }
+    .rs-num { display: block; font-size: 22px; font-weight: 800; color: #1d4ed8; }
+    .rs-lbl { font-size: 11px; color: #64748b; }
+    .recall-r7 { font-size: 12px; color: #475569; margin: 8px 0 0; }
+    .recall-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; }
+    .recall-item { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 6px; border-radius: 6px; background: white; border: 1px solid #eef2f7; }
+    .recall-kind { font-weight: 700; padding: 1px 7px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
+    .rk-shown { background: #dcfce7; color: #166534; }
+    .rk-miss { background: #fee2e2; color: #991b1b; }
+    .rk-answered { background: #dbeafe; color: #1e40af; }
+    .recall-topic { flex: 1; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .recall-at { color: #94a3b8; white-space: nowrap; }
+    .recall-empty { font-size: 12px; color: #94a3b8; margin: 10px 0 0; }
     .admin-container {
       max-width: 680px;
       margin: 0 auto;
@@ -499,7 +561,21 @@ export class AdminExportComponent implements OnInit {
     return `${sd} ${MONTHS_SHORT[sm-1]} – ${ed} ${MONTHS_SHORT[em-1]} ${sy}`;
   });
 
-  ngOnInit() { this.load(); }
+  // recall observability (session continuity) — R7 shown:miss
+  recall = signal<RecallEventsData | null>(null);
+
+  ngOnInit() { this.load(); this.loadRecall(); }
+
+  async loadRecall() {
+    try {
+      this.recall.set(await firstValueFrom(this.http.get<RecallEventsData>('/api/admin/recall-events')));
+    } catch { this.recall.set(null); }
+  }
+
+  recallShownRate(rc: RecallEventsData): number {
+    const total = rc.counts.shown + rc.counts.miss;
+    return total === 0 ? 0 : Math.round((rc.counts.shown / total) * 100);
+  }
 
   prevWeek()  { this.weekOf.set(this.addDays(this.weekOf(), -7)); this.load(); }
   nextWeek()  { this.weekOf.set(this.addDays(this.weekOf(), 7));  this.load(); }
